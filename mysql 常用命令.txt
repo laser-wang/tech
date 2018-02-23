@@ -1,0 +1,355 @@
+/data0/mysql/3306		可用版本
+/data0/mysql/3306/mysql start
+/data0/mysql/3306/mysql stop
+
+
+/usr/local/webserver/mysql/bin/mysqld_safe --user=root &									启动
+/usr/local/webserver/mysql/bin/mysqladmin -uroot -p shutdown 								停止
+/usr/local/webserver/mysql/bin/mysql -h主机地址 -u用户名 －p用户密码								登陆
+/usr/local/webserver/mysql/bin/mysql -utest2 -ptest2
+/usr/local/webserver/mysql/bin/mysql -uroot -p
+
+
+systemctl restart mysqld.service
+mysql -ucaton -p -Ddb_user
+
+
+grant select,insert,update,delete on test.* to test2@localhost identified by "test2";
+
+select * from table limit 10,2								跳过10行，取2行
+mysqldump -u用户名 -p密码 数据库名 表名 --where="筛选条件" > 导出文件路径
+mysqldump mobilesales sales_info --where="true limit 100,10" > mobliesales.sales_info.csv
+mysqldump channel app > /home/zhangdw/app.sql
+mysqldump channel info > /home/zhangdw/info.sql
+mysqldump channel user > /home/zhangdw/user.sql
+mysqldump -uroot -p123456 pay1 > /home/wxw/tmp/pay.sql;
+
+#设置密码
+SET PASSWORD = PASSWORD('XXX');
+
+#查看版本
+select version();
+
+#事务
+show VARIABLES like '%autocommit%'
+set @@autocommit=0 临时设置
+transaction-isolation = {READ-UNCOMMITTED | READ-COMMITTED | REPEATABLE-READ | SERIALIZABLE}
+select @@tx_isolation;				查询事务隔离级别
+
+//分页显示
+pager less;
+
+# 查看表结构
+desc 表名;
+show full columns from `us_permission_template`;
+
+# 查看表大小
+use information_schema;
+select concat(round(sum(data_length/1024/1024),2),'MB') as data_length_MB,  
+    concat(round(sum(index_length/1024/1024),2),'MB') as index_length_MB  
+    from tables where  
+    table_schema='freemedb'  
+    and table_name = 'log_topic20141119';  
+
+# 查看表状态 字符集
+show table status like 'oz_use%';
+show variables like '%max_connections%';
+show status like '%connections%';
+show variables like '%char%'; 
+
+
+#设置客户端字符集
+set names utf8;
+
+#把所有信息都输出
+show full fields from '表名称'; 
+
+# 查看所有用户
+SELECT DISTINCT CONCAT('User: ''',user,'''@''',host,''';') AS query FROM mysql.user;
+show grants for 'open'@'192.168.40.%';
+show databases;	
+show tables;										查看所有数据库
+
+#查看当前登录用户
+select user(); 
+show grants for 你的用户
+
+#查看当前数据库
+select database();
+
+#查看索引
+show index from tblname;
+
+
+创建索引
+create index idx_oz_lottery_accesslog_openid on oz_lottery_accesslog (openid);
+ALTER  TABLE  `py_log_client_b_info_201501`  ADD  INDEX idx_py_log_client_b_info_2015014 (  `apk`  );
+DROP INDEX idx_py_log_client_b_info_2015014 ON py_log_client_b_info_201501;
+
+alter table py_report_sg_ratio drop INDEX idx_py_report_sg_ratio_1;
+ALTER TABLE py_report_sg_ratio ADD UNIQUE idx_py_report_sg_ratio_1 (app_id,ch);
+
+alter table py_report_sg_ratio add constraint idx_py_report_sg_ratio_1 unique(`app_id`,`ch`);
+alter table employee add unique emp_name2(cardnumber);
+
+#查看连接；
+SHOW FULL PROCESSLIST;
+
+#创建数据库
+CREATE DATABASE `db_nms` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+drop database db_sl_user;
+
+#查看数据库编码以及其他状态
+status;
+
+#查看日志在哪里
+show variables like 'log_%';
+
+#新增用户
+CREATE USER root@'192.168.1.%' IDENTIFIED BY 'Root_123';
+grant all privileges on db_nms.* to root@'192.168.1.%' identified by 'Root_123'; 
+flush privileges;
+
+mysql -h192.168.50.103  -usecuritytest -p1qaz2wsx -Dfreemedb -A
+
+
+命令： show processlist; 
+如果是root帐号，你能看到所有用户的当前连接。如果是其它普通帐号，只能看到自己占用的连接。 
+show processlist;只列出前100条，如果想全列出请使用show full processlist; 
+mysql> show processlist;
+
+
+命令： show status;
+命令：show status like '%下面变量%';
+show status like '%connect%';
+
+
+命令：show variables like '%max_connections%'
+
+
+1.导出整个数据库 
+
+　　mysqldump -h192.168.40.186 -uroot -proot123 oz_market imsi_download_summary > ./imsi_ds.sql
+2.导出一个表 
+　　mysqldump -u 用户名 -p 数据库名 表名> 导出的文件名 
+　　mysqldump -u wcnc -p smgp_apps_wcnc users> wcnc_users.sql 
+
+3.导出一个数据库结构 
+mysqldump -u open -p -d --add-drop-table pay_log py_report_sg_data  > /opt/wxw/tmp/py_report_sg_data.sql
+
+　　-d 没有数据 --add-drop-table 在每个create语句之前增加一个drop table 
+
+4.导入数据库 
+　　常用source 命令 
+
+/usr/bin/mysqldump -uopen -h192.168.40.190 -p charging_event yyy_state --where="access_time >= '2015-02-19 00:00:00' and access_time < '2015-02-20 00:00:00'" > /tmp/yyy_state_20150219.csv
+/usr/bin/mysqldump -uopen -h192.168.40.190 -p charging_event yyy_wx_zy_user_binding > /tmp/yyy_wx_zy_user_binding.csv
+
+
+
+#看慢查询设置
+show variables like "%slow%";
+#打开慢查询
+set global slow_query_log=on;
+
+
+#导出到文件
+select * from yyy_state where access_time >= '2015-02-19 00:00:00' and access_time < '2015-02-20 00:00:00' into outfile '/tmp/yyy_state_20150219.csv' fields terminated by ',' enclosed by '\"' lines terminated by '\n'";
+
+#看存储过程
+select `name` from mysql.proc where db = 'your_db_name' and `type` = 'PROCEDURE'
+show procedure status;
+show create procedure proc_name;
+show create function func_name;
+select `name` from mysql.proc where db = 'your_db_name' and `type` = 'PROCEDURE'   //存储过程
+select `name` from mysql.proc where db = 'your_db_name' and `type` = 'FUNCTION'   //函数
+show procedure status; //存储过程
+show function status;     //函数
+
+#看视图
+SELECT * from information_schema.VIEWS   //视图
+SELECT * from information_schema.TABLES   //表
+
+#看触发器
+方法一：
+语法：SHOW TRIGGERS [FROM db_name] [LIKE expr]
+实例：SHOW TRIGGERS\G     //触发器
+方法二：
+对INFORMATION_SCHEMA数据库中的TRIGGERS表查询
+mysql>SELECT * FROM triggers T WHERE trigger_name=”mytrigger” \G
+
+
+修改密码强度
+set global validate_password_policy=0;
+set global validate_password_length=1;
+select @@validate_password_length;
+
+
+mysql的四种启动方式:
+1、mysqld
+启动mysql服务器:./mysqld --defaults-file=/etc/my.cnf --user=root
+客户端连接:
+mysql --defaults-file=/etc/my.cnf
+or
+mysql -S /tmp/mysql.sock
+
+2、mysqld_safe
+启动mysql服务器:./mysqld_safe --defaults-file=/etc/my.cnf --user=root &
+客户端连接:
+mysql --defaults-file=/etc/my.cnf
+or
+mysql -S /tm/mysql.sock
+
+3、mysql.server
+cp -v /usr/local/mysql/support-files/mysql.server /etc/init.d/
+chkconfig --add mysql.server
+启动mysql服务器:service mysql.server {start|stop|restart|reload|force-reload|status}
+客户端连接:同1、2
+
+4、mysqld_multi
+mkdir $MYSQL_BASE/data2
+cat <<-EOF>> /etc/my.cnf
+[mysqld_multi]
+mysqld	= /usr/local/mysql/bin/mysqld_safe
+mysqladmin = /user/local/mysql/bin/mysqladmin
+user = mysqladmin
+password = mysqladmin
+
+5.systemctl start mysqld.service
+
+[mysqld3306]
+port            = 3306
+socket          = /tmp/mysql3306.sock
+pid-file	= /tmp/mysql3306.pid
+skip-external-locking
+key_buffer_size = 16M
+max_allowed_packet = 1M
+table_open_cache = 64
+sort_buffer_size = 512K
+net_buffer_length = 8K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+basedir		= /usr/local/mysql
+datadir		= /usr/local/mysql/data
+
+[mysqld3307]
+port            = 3307
+socket          = /tmp/mysql3307.sock
+pid-file	= /tmp/mysql3307.pid
+skip-external-locking
+key_buffer_size = 16M
+max_allowed_packet = 1M
+table_open_cache = 64
+sort_buffer_size = 512K
+net_buffer_length = 8K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+basedir		= /usr/local/mysql
+datadir		= /usr/local/mysql/data2
+EOF
+
+#mysql -S /tmp/mysql3306.sock
+mysql>GRANT SHUTDOWN ON *.* TO 'mysqladmin'@'localhost' identified by 'mysqladmin' with grant option;
+
+grant insert,update,delete on oz_market.imsi_download_summary to db_user@'192.168.40.%' identified by 'xhsje832';
+
+#mysql -S /tmp/mysql3307.sock
+mysql>GRANT SHUTDOWN ON *.* TO 'mysqladmin'@'localhost' identified by 'mysqladmin' with grant option;
+
+启动mysql服务器:./mysqld_multi --defaults-file=/etc/my.cnf start 3306-3307
+关闭mysql服务器:mysqladmin shutdown
+
+ 1、mysql启动时直接指定的具体参数 
+
+     2、mysql 启动时直接指定位置的配置文件，优先级次 
+   
+     3、mysql 数据目录下的my.cnf 文件 
+
+     4、mysql 读取 /etc/my.cnf 
+
+     5、mysql 默认的参数 
+
+
+CREATE TABLE `apk_cnt_active_all` (
+  `_id` int(10) NOT NULL AUTO_INCREMENT,
+  `apk_n` varchar(200) DEFAULT NULL COMMENT 'apk名称',
+  `apk` varchar(200) NOT NULL COMMENT 'apk包名',
+  `dt` varchar(10) NOT NULL COMMENT '日期',
+  PRIMARY KEY (`_id`),
+  KEY `idx_apk_cnt_active_all_apk` (`apk`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='上月apk使用信息表';
+
+
+#查看my.cnf路径
+./mysqld --verbose --help | grep -A 1 'Default options' 
+strace -e stat64 mysqld --print-defaults 
+
+
+#更改列属性
+ALTER TABLE oz_lottery_record_201604 MODIFY reserve varchar(1000) DEFAULT NULL COMMENT "保留字段";
+ALTER TABLE py_log_client_b_info_201412 MODIFY cp_no varchar(50) DEFAULT NULL COMMENT "cp订单号";
+alter table py_report_sg_sdk add sum_ok decimal(12,2) default null COMMENT '请求确定金额';
+alter table py_report_sg_sdk add cnt_ok int(10) default null COMMENT '请求确定次数';
+alter table py_report_sg_ratio drop app_proportion;
+alter table py_report_sg_data drop cp_proportion;
+
+#移动数据目录方法一:
+mv /var/lib/mysql/* /opt/mysql/
+rm /var/lib/mysql -rf
+创建软连接:
+ln -s /opt/mysql/ /var/lib/
+# rm /var/lib/mysql -rf
+	
+#移动数据目录方法二:
+#更改my.cnf配置文件
+[client]
+#password       = your_password
+port            = 3306
+#socket         = /var/lib/mysql/mysql.sock
+socket=/opt/mysql/mysql.sock
+#pid-file = /var/lib/mysql/Beijingny007.pid
+# Here follows entries for some specific programs
+# The MySQL server
+[mysqld]
+# the following config is set for mysql dir changing
+datadir=/opt/mysql/
+#socket         = /var/lib/mysql/mysql.sock
+#socket=/opt/mysql/mysql.sock
+#innodb_data_home_dir = /var/lib/mysql
+innodb_data_home_dir=/opt/mysql
+slow_query_log_file=/opt/mysql/Beijingny109-slow.log
+log_error=/opt/mysql/Beijingny109.err
+pid_file=/opt/mysql/Beijingny109.pid
+general_log_file=/opt/mysql/Beijingny109.log
+character_sets_dir=/opt/xvdb/mysql/share/charsets/
+lc_messages_dir=/opt/xvdb/mysql/share/
+
+#查看当前个目录状态
+show variables;
+#把mysql目录拷贝到指定目录下
+cp /opt/mysql ./ -pR
+#设置path环境变量
+vi /etc/profile
+
+
+解决 Table "mysql"."innodb_table_stats" not found.  的方法 见：freeme os\销量统计\部署\海外  部署文档
+
+
+//	select
+//		convert_tz(dt, '+00:00', '+08:00') localt_dt,sum(traffic_up)
+//	from cr_data_by_root_user_hour
+//	where
+// 		user_id = '03'
+//		and dt >= convert_tz('2017-05-19 00:00:00', '+08:00', '+00:00')
+//		and dt < convert_tz('2017-05-20 00:00:00', '+08:00', '+00:00')
+//	group by convert_tz(dt, '+00:00', '+08:00')
+
+
+
+
+
+
+
+

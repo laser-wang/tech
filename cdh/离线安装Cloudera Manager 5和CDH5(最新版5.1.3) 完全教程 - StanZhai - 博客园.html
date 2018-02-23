@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)http://www.cnblogs.com/jasondan/p/4011153.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script async="" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/analytics.js"></script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/blog-common.css">
+<link type="text/css" rel="stylesheet" href="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/91938.css">
+<link id="mobile-style" media="only screen and (max-width: 768px)" type="text/css" rel="stylesheet" href="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/bundle-Custom-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/jasondan/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/jasondan/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/jasondan/wlwmanifest.xml">
+<script src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'jasondan', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body><link href="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/jiathis_share.css" rel="stylesheet" type="text/css"><div class="jiathis_style" style="height: auto; position: absolute; z-index: 100000000; top: 2956.4px; right: 0px; overflow: hidden; width: 26px;"><table cellpadding="0" cellspacing="0"><tbody style="background:transparent"><tr><td style="background:transparent"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/r2.gif" style="cursor:pointer;" onmouseover="$CKE.over()" onclick="$CKE.center(this)"></td><td><div><div class="jiadiv_01"><div style="width:100%;background:#F2F2F2;border-bottom:1px solid #E5E5E5;line-height:200%;padding-left:5px;font-size:12px"><table width="100%"><tbody><tr class="jt_sharetitle"><td align="left" style="text-align:left;line-height:25px;font-size:14px;font-weight:bold;color:#000000;">分享到...</td><td align="right" style="text-align:right;"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/img_exit.gif" border="0" style="opacity:0.5;filter:alpha(opacity=50);margin:0 10px;cursor:pointer;" onclick="$CKE.shareClose();"></td></tr></tbody></table></div><div class="jiadiv_02" style="width:100%;" id="jiathis_sers"><a href="javascript:;" onclick="jiathis_sendto(&#39;weixin&#39;);return false;" class="jiatitle"><span class="jtico jtico_weixin">微信</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tsina&#39;);return false;" class="jiatitle"><span class="jtico jtico_tsina">微博</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;copy&#39;);return false;" class="jiatitle"><span class="jtico jtico_copy">复制网址</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;email&#39;);return false;" class="jiatitle"><span class="jtico jtico_email">邮件</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;cqq&#39;);return false;" class="jiatitle"><span class="jtico jtico_cqq">QQ好友</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;qzone&#39;);return false;" class="jiatitle"><span class="jtico jtico_qzone">QQ空间</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;renren&#39;);return false;" class="jiatitle"><span class="jtico jtico_renren">人人网</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;kaixin001&#39;);return false;" class="jiatitle"><span class="jtico jtico_kaixin001">开心网</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;evernote&#39;);return false;" class="jiatitle"><span class="jtico jtico_evernote">印象笔记</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;linkedin&#39;);return false;" class="jiatitle"><span class="jtico jtico_linkedin">领英</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;feixin&#39;);return false;" class="jiatitle"><span class="jtico jtico_feixin">飞信</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;douban&#39;);return false;" class="jiatitle"><span class="jtico jtico_douban">豆瓣</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;twitter&#39;);return false;" class="jiatitle"><span class="jtico jtico_twitter">Twitter</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;fb&#39;);return false;" class="jiatitle"><span class="jtico jtico_fb">Facebook</span></a><a href="javascript:;" onclick="jiathis_sendto(&#39;ishare&#39;);return false;" class="jiatitle"><span class="jtico jtico_ishare">一键分享</span></a><a href="javascript:;" onclick="$CKE.center(this);return false;" class="jiatitle"><span class="jtico jtico_jiathis">查看更多(96)</span></a><div style="clear:both"></div></div><div class="ckepopBottom" style="width:100%;"><div style="float:left;font-size:10px"><a href="http://www.jiathis.com/help/html/what-is-jiathis" class="link_01" style="color:#333333;display:none;" target="_blank">这是什么工具?</a></div><div style="float:right;font-size:11px;margin:0 5px 0 0;"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/img_012.gif" align="absmiddle" border="0"><a href="http://www.jiathis.com/index2" style="color:#333333;padding:0 3px;" class="link_01" target="_blank">JiaThis</a></div><div style="clear:both"></div></div></div></div></td></tr></tbody></table></div><iframe frameborder="0" style="position: absolute; display: none;" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/saved_resource.html"></iframe><div class="jiathis_style" style="height: auto; position: absolute; z-index: 100000000; display: none; top: 50%; left: 50%; overflow: auto;"><div style="border:10px solid #7F7F7F; width:300px;"><div class="jiadiv_01" style="width:300px;"><div style="background:#F2F2F2;line-height:100%;height:30px;overflow:hidden;width:300px;"><table width="100%" style="margin:5px 0 0 0;"><tbody><tr class="jt_sharetitle" style="line-height:20px!important;"><td align="left" style="text-align:left;font-size:12px;">分享到各大网站</td><td align="right"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/img_exit.gif" border="0" style="margin:0 4px;cursor:pointer;" onclick="$CKE.centerClose();"></td></tr></tbody></table></div><div class="searchTxtCont"><div style="background:url(http://v3.jiathis.com/code/images/img_so.gif) no-repeat center;height:30px; width:281px"><form onsubmit="return false;"><input class="searchTxt" name="" type="text" onclick="this.value=&#39;&#39;;this.style.color=&#39;#000&#39;;" value="输入网站名或拼音缩写" onkeyup="$CKE.choose(this);"></form></div></div><div id="jiathis_sharelist" class="jiadiv_02" style="width:300px;height:300px;overflow-y:auto;"><a href="javascript:;" onclick="jiathis_sendto(&#39;weixin&#39;);return false;" class="jiatitle"><span class="jtico jtico_weixin">微信</span><input type="hidden" value="weixin,微信,wx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tsina&#39;);return false;" class="jiatitle"><span class="jtico jtico_tsina">微博</span><input type="hidden" value="tsina,微博,xlwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;cqq&#39;);return false;" class="jiatitle"><span class="jtico jtico_cqq">QQ好友</span><input type="hidden" value="cqq,QQ好友,cqq"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;qzone&#39;);return false;" class="jiatitle"><span class="jtico jtico_qzone">QQ空间</span><input type="hidden" value="qzone,QQ空间,qqkj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;copy&#39;);return false;" class="jiatitle"><span class="jtico jtico_copy">复制网址</span><input type="hidden" value="copy,复制网址,fzwz"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;fav&#39;);return false;" class="jiatitle"><span class="jtico jtico_fav">收藏夹</span><input type="hidden" value="fav,收藏夹,scj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;print&#39;);return false;" class="jiatitle"><span class="jtico jtico_print">打印</span><input type="hidden" value="print,打印,dy"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;email&#39;);return false;" class="jiatitle"><span class="jtico jtico_email">邮件</span><input type="hidden" value="email,邮件,yj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;renren&#39;);return false;" class="jiatitle"><span class="jtico jtico_renren">人人网</span><input type="hidden" value="renren,人人网,rrw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;kaixin001&#39;);return false;" class="jiatitle"><span class="jtico jtico_kaixin001">开心网</span><input type="hidden" value="kaixin001,开心网,kxw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;evernote&#39;);return false;" class="jiatitle"><span class="jtico jtico_evernote">印象笔记</span><input type="hidden" value="evernote,印象笔记,evernote"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;linkedin&#39;);return false;" class="jiatitle"><span class="jtico jtico_linkedin">领英</span><input type="hidden" value="linkedin,领英,linkedin"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;feixin&#39;);return false;" class="jiatitle"><span class="jtico jtico_feixin">飞信</span><input type="hidden" value="feixin,飞信,fx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;douban&#39;);return false;" class="jiatitle"><span class="jtico jtico_douban">豆瓣</span><input type="hidden" value="douban,豆瓣,db"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;twitter&#39;);return false;" class="jiatitle"><span class="jtico jtico_twitter">Twitter</span><input type="hidden" value="twitter,Twitter,twitter"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;fb&#39;);return false;" class="jiatitle"><span class="jtico jtico_fb">Facebook</span><input type="hidden" value="fb,Facebook,facebook"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;ishare&#39;);return false;" class="jiatitle"><span class="jtico jtico_ishare">一键分享</span><input type="hidden" value="ishare,一键分享,yjfx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;ujian&#39;);return false;" class="jiatitle"><span class="jtico jtico_ujian">猜你喜欢</span><input type="hidden" value="ujian,猜你喜欢,cnxh"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;yixin&#39;);return false;" class="jiatitle"><span class="jtico jtico_yixin">易信</span><input type="hidden" value="yixin,易信,yx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;huaban&#39;);return false;" class="jiatitle"><span class="jtico jtico_huaban">花瓣网</span><input type="hidden" value="huaban,花瓣网,hbw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tqq&#39;);return false;" class="jiatitle"><span class="jtico jtico_tqq">腾讯微博</span><input type="hidden" value="tqq,腾讯微博,txwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;googleplus&#39;);return false;" class="jiatitle"><span class="jtico jtico_googleplus">Google+</span><input type="hidden" value="googleplus,Google+,googlej"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;alibaba&#39;);return false;" class="jiatitle"><span class="jtico jtico_alibaba">阿里巴巴</span><input type="hidden" value="alibaba,阿里巴巴,albb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;xiaoyou&#39;);return false;" class="jiatitle"><span class="jtico jtico_xiaoyou">朋友网</span><input type="hidden" value="xiaoyou,朋友网,pyw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;sdonote&#39;);return false;" class="jiatitle"><span class="jtico jtico_sdonote">麦库记事</span><input type="hidden" value="sdonote,麦库记事,mkjs"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;baidu&#39;);return false;" class="jiatitle"><span class="jtico jtico_baidu">百度搜藏</span><input type="hidden" value="baidu,百度搜藏,bdsc"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;gmail&#39;);return false;" class="jiatitle"><span class="jtico jtico_gmail">Gmail邮箱</span><input type="hidden" value="gmail,Gmail邮箱,gmailyx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;ydnote&#39;);return false;" class="jiatitle"><span class="jtico jtico_ydnote">有道云笔记</span><input type="hidden" value="ydnote,有道云笔记,ydybj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tianya&#39;);return false;" class="jiatitle"><span class="jtico jtico_tianya">天涯社区</span><input type="hidden" value="tianya,天涯社区,tysq"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tieba&#39;);return false;" class="jiatitle"><span class="jtico jtico_tieba">百度贴吧</span><input type="hidden" value="tieba,百度贴吧,bdtb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;qingbiji&#39;);return false;" class="jiatitle"><span class="jtico jtico_qingbiji">轻笔记</span><input type="hidden" value="qingbiji,轻笔记,qbj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tifeng&#39;);return false;" class="jiatitle"><span class="jtico jtico_tifeng">凤凰微博</span><input type="hidden" value="tifeng,凤凰微博,fhwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;fanfou&#39;);return false;" class="jiatitle"><span class="jtico jtico_fanfou">饭否</span><input type="hidden" value="fanfou,饭否,ff"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;mingdao&#39;);return false;" class="jiatitle"><span class="jtico jtico_mingdao">明道</span><input type="hidden" value="mingdao,明道,md"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;douban9dian&#39;);return false;" class="jiatitle"><span class="jtico jtico_douban9dian">豆瓣9点</span><input type="hidden" value="douban9dian,豆瓣9点,db9d"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;google&#39;);return false;" class="jiatitle"><span class="jtico jtico_google">谷歌</span><input type="hidden" value="google,谷歌,gg"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;buzz&#39;);return false;" class="jiatitle"><span class="jtico jtico_buzz">谷歌Buzz</span><input type="hidden" value="buzz,谷歌Buzz,ggbuzz"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;youdao&#39;);return false;" class="jiatitle"><span class="jtico jtico_youdao">有道书签</span><input type="hidden" value="youdao,有道书签,ydsq"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;qq&#39;);return false;" class="jiatitle"><span class="jtico jtico_qq">QQ书签</span><input type="hidden" value="qq,QQ书签,qqsq"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;msn&#39;);return false;" class="jiatitle"><span class="jtico jtico_msn">MSN</span><input type="hidden" value="msn,MSN,msn"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;pinterest&#39;);return false;" class="jiatitle"><span class="jtico jtico_pinterest">Pinterest</span><input type="hidden" value="pinterest,Pinterest,pinterest"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;duitang&#39;);return false;" class="jiatitle"><span class="jtico jtico_duitang">堆糖</span><input type="hidden" value="duitang,堆糖,dt"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tyaolan&#39;);return false;" class="jiatitle"><span class="jtico jtico_tyaolan">摇篮微博</span><input type="hidden" value="tyaolan,摇篮微博,ylwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;hi&#39;);return false;" class="jiatitle"><span class="jtico jtico_hi">百度空间</span><input type="hidden" value="hi,百度空间,bdkj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;hotmail&#39;);return false;" class="jiatitle"><span class="jtico jtico_hotmail">Hotmail邮箱</span><input type="hidden" value="hotmail,Hotmail邮箱,hotmailyx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;xqw&#39;);return false;" class="jiatitle"><span class="jtico jtico_xqw">雪球</span><input type="hidden" value="xqw,雪球,xqw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;hexun&#39;);return false;" class="jiatitle"><span class="jtico jtico_hexun">和讯</span><input type="hidden" value="hexun,和讯,hx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;139mail&#39;);return false;" class="jiatitle"><span class="jtico jtico_139mail">139邮箱</span><input type="hidden" value="139mail,139邮箱,139yx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;189mail&#39;);return false;" class="jiatitle"><span class="jtico jtico_189mail">189邮箱</span><input type="hidden" value="189mail,189邮箱,189yx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;189cn&#39;);return false;" class="jiatitle"><span class="jtico jtico_189cn">翼友圈</span><input type="hidden" value="189cn,翼友圈,yyq"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tpeople&#39;);return false;" class="jiatitle"><span class="jtico jtico_tpeople">人民微博</span><input type="hidden" value="tpeople,人民微博,rmwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;txinhua&#39;);return false;" class="jiatitle"><span class="jtico jtico_txinhua">新华微博</span><input type="hidden" value="txinhua,新华微博,xhwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;translate&#39;);return false;" class="jiatitle"><span class="jtico jtico_translate">谷歌翻译</span><input type="hidden" value="translate,谷歌翻译,ggfy"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tuita&#39;);return false;" class="jiatitle"><span class="jtico jtico_tuita">推他</span><input type="hidden" value="tuita,推他,tt"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;mop&#39;);return false;" class="jiatitle"><span class="jtico jtico_mop">猫扑推客</span><input type="hidden" value="mop,猫扑推客,mptk"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;meilishuo&#39;);return false;" class="jiatitle"><span class="jtico jtico_meilishuo">美丽说</span><input type="hidden" value="meilishuo,美丽说,mls"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;mogujie&#39;);return false;" class="jiatitle"><span class="jtico jtico_mogujie">蘑菇街</span><input type="hidden" value="mogujie,蘑菇街,mgj"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;ganniu&#39;);return false;" class="jiatitle"><span class="jtico jtico_ganniu">赶牛网</span><input type="hidden" value="ganniu,赶牛网,gnw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;poco&#39;);return false;" class="jiatitle"><span class="jtico jtico_poco">Poco网</span><input type="hidden" value="poco,Poco网,pocow"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;leihou&#39;);return false;" class="jiatitle"><span class="jtico jtico_leihou">雷猴网</span><input type="hidden" value="leihou,雷猴网,lhw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;thexun&#39;);return false;" class="jiatitle"><span class="jtico jtico_thexun">和讯微博</span><input type="hidden" value="thexun,和讯微博,hxwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;dream163&#39;);return false;" class="jiatitle"><span class="jtico jtico_dream163">游戏江湖</span><input type="hidden" value="dream163,游戏江湖,yxjh"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;jcrb&#39;);return false;" class="jiatitle"><span class="jtico jtico_jcrb">法律微博</span><input type="hidden" value="jcrb,法律微博,flwb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;tumblr&#39;);return false;" class="jiatitle"><span class="jtico jtico_tumblr">Tumblr</span><input type="hidden" value="tumblr,Tumblr,tumblr"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;reddit&#39;);return false;" class="jiatitle"><span class="jtico jtico_reddit">Reddit</span><input type="hidden" value="reddit,Reddit,reddit"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;instapaper&#39;);return false;" class="jiatitle"><span class="jtico jtico_instapaper">Instapaper</span><input type="hidden" value="instapaper,Instapaper,instapaper"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;pocket&#39;);return false;" class="jiatitle"><span class="jtico jtico_pocket">Pocket</span><input type="hidden" value="pocket,Pocket,pocket"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;caimi&#39;);return false;" class="jiatitle"><span class="jtico jtico_caimi">财迷</span><input type="hidden" value="caimi,财迷,cm"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;iwo&#39;);return false;" class="jiatitle"><span class="jtico jtico_iwo">WO+分享</span><input type="hidden" value="iwo,WO+分享,iwo"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;waakee&#39;);return false;" class="jiatitle"><span class="jtico jtico_waakee">挖客网</span><input type="hidden" value="waakee,挖客网,wkw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;cyzone&#39;);return false;" class="jiatitle"><span class="jtico jtico_cyzone">创业邦</span><input type="hidden" value="cyzone,创业邦,cyb"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;99earth&#39;);return false;" class="jiatitle"><span class="jtico jtico_99earth">救救地球</span><input type="hidden" value="99earth,救救地球,jjdq"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;chouti&#39;);return false;" class="jiatitle"><span class="jtico jtico_chouti">抽屉网</span><input type="hidden" value="chouti,抽屉网,ctw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;dig24&#39;);return false;" class="jiatitle"><span class="jtico jtico_dig24">递客网</span><input type="hidden" value="dig24,递客网,dkw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;yijee&#39;);return false;" class="jiatitle"><span class="jtico jtico_yijee">易集网</span><input type="hidden" value="yijee,易集网,yjw"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;pdfonline&#39;);return false;" class="jiatitle"><span class="jtico jtico_pdfonline">Pdf在线转换</span><input type="hidden" value="pdfonline,Pdf在线转换,pdfzxzh"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;printfriendly&#39;);return false;" class="jiatitle"><span class="jtico jtico_printfriendly">友好打印</span><input type="hidden" value="printfriendly,友好打印,yhdy"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;w3c&#39;);return false;" class="jiatitle"><span class="jtico jtico_w3c">W3c验证</span><input type="hidden" value="w3c,W3c验证,w3cyz"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;bitly&#39;);return false;" class="jiatitle"><span class="jtico jtico_bitly">Bit.ly</span><input type="hidden" value="bitly,Bit.ly,bitly"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;digg&#39;);return false;" class="jiatitle"><span class="jtico jtico_digg">Digg</span><input type="hidden" value="digg,Digg,digg"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;mailru&#39;);return false;" class="jiatitle"><span class="jtico jtico_mailru">Mail.ru</span><input type="hidden" value="mailru,Mail.ru,mail.ru"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;diigo&#39;);return false;" class="jiatitle"><span class="jtico jtico_diigo">Diigo</span><input type="hidden" value="diigo,Diigo,diigo"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;friendfeed&#39;);return false;" class="jiatitle"><span class="jtico jtico_friendfeed">FriendFeed</span><input type="hidden" value="friendfeed,FriendFeed,friendfeed"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;myspace&#39;);return false;" class="jiatitle"><span class="jtico jtico_myspace">Myspace</span><input type="hidden" value="myspace,Myspace,myspace"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;mixx&#39;);return false;" class="jiatitle"><span class="jtico jtico_mixx">Mixx</span><input type="hidden" value="mixx,Mixx,mixx"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;netlog&#39;);return false;" class="jiatitle"><span class="jtico jtico_netlog">NetLog</span><input type="hidden" value="netlog,NetLog,netlog"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;netvibes&#39;);return false;" class="jiatitle"><span class="jtico jtico_netvibes">Netvibes</span><input type="hidden" value="netvibes,Netvibes,netvibes"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;phonefavs&#39;);return false;" class="jiatitle"><span class="jtico jtico_phonefavs">Phonefavs</span><input type="hidden" value="phonefavs,Phonefavs,phonefavs"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;pingfm&#39;);return false;" class="jiatitle"><span class="jtico jtico_pingfm">Ping.fm</span><input type="hidden" value="pingfm,Ping.fm,ping.fm"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;plaxo&#39;);return false;" class="jiatitle"><span class="jtico jtico_plaxo">Plaxo</span><input type="hidden" value="plaxo,Plaxo,plaxo"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;delicious&#39;);return false;" class="jiatitle"><span class="jtico jtico_delicious">Delicious</span><input type="hidden" value="delicious,Delicious,delicious"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;wong&#39;);return false;" class="jiatitle"><span class="jtico jtico_wong">Mister Wong</span><input type="hidden" value="wong,Mister Wong,misterwong"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;stumbleupon&#39;);return false;" class="jiatitle"><span class="jtico jtico_stumbleupon">Stumbleupon</span><input type="hidden" value="stumbleupon,Stumbleupon,stumbleupon"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;plurk&#39;);return false;" class="jiatitle"><span class="jtico jtico_plurk">Plurk</span><input type="hidden" value="plurk,Plurk,plurk"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;funp&#39;);return false;" class="jiatitle"><span class="jtico jtico_funp">Funp</span><input type="hidden" value="funp,Funp,funp"></a><a href="javascript:;" onclick="jiathis_sendto(&#39;myshare&#39;);return false;" class="jiatitle"><span class="jtico jtico_myshare">Myshare</span><input type="hidden" value="myshare,Myshare,myshare"></a><div style="clear:both"></div></div><div class="centerBottom"><div style="float:left;font-size:10px;"><a href="http://www.jiathis.com/help/html/what-is-jiathis" class="link_01" style="color:#333333;display:none;" target="_blank">这是什么工具?</a></div><div style="float:right;font-size:11px;margin:0 10px 0 0;"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/img_012.gif" align="absmiddle" border="none">&nbsp;<a href="http://www.jiathis.com/index2" style="color:#333333;" class="link_01" target="_blank">JiaThis</a></div><div style="clear:both"></div></div></div></div></div><iframe frameborder="0" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/jiathis_utility.html" style="display: none;"></iframe>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/jasondan/"><img id="blogLogo" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/jasondan/">Stan Zhai's Blog</a></h1>
+<h2>——不忘初心，方得始终</h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/jasondan/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/StanZhai">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/jasondan/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="http://www.cnblogs.com/jasondan/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 101&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 622</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post"><div class="postIcon"></div>
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/jasondan/p/4011153.html">离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="cnblogs-markdown"><h2 id="关于cdh和cloudera-manager">关于CDH和Cloudera Manager</h2>
+<p>CDH (Cloudera's Distribution, including Apache Hadoop)，是Hadoop众多分支中的一种，由Cloudera维护，基于稳定版本的Apache Hadoop构建，并集成了很多补丁，可直接用于生产环境。</p>
+<p>Cloudera Manager则是为了便于在集群中进行Hadoop等大数据处理相关的服务安装和监控管理的组件，对集群中主机、Hadoop、Hive、Spark等服务的安装配置管理做了极大简化。</p>
+<h2 id="系统环境">系统环境</h2>
+<ul>
+<li>实验环境：Mac下VMware虚拟机</li>
+<li>操作系统：CentOS 6.5 x64 (至少内存2G以上，这里内存不够的同学建议还是整几台真机配置比较好，将CDH的所有组件全部安装会占用很多内存，我已开始设置的虚拟机内存是1G，安装过程中直接卡死了)</li>
+<li>Cloudera Manager：5.1.3</li>
+<li>CDH: 5.1.3</li>
+</ul>
+<h2 id="安装说明">安装说明</h2>
+<p><strong>官方参考文档：</strong><br>
+<a href="http://www.cloudera.com/content/cloudera/en/documentation/cloudera-manager/v5-latest/Cloudera-Manager-Installation-Guide/cm5ig_install_path_C.html" class="uri">http://www.cloudera.com/content/cloudera/en/documentation/cloudera-manager/v5-latest/Cloudera-Manager-Installation-Guide/cm5ig_install_path_C.html</a></p>
+<p>官方共给出了3中安装方式：第一种方法必须要求所有机器都能连网，由于最近各种国外的网站被墙的厉害，我尝试了几次各种超时错误，巨耽误时间不说，一旦失败，重装非常痛苦。第二种方法下载很多包。第三种方法对系统侵入性最小,最大优点可实现全离线安装，而且重装什么的都非常方便。后期的集群统一包升级也非常好。这也是我之所以选择离线安装的原因。</p>
+<h2 id="相关包的下载地址">相关包的下载地址</h2>
+<p>Cloudera Manager下载地址：<br>
+<a href="http://archive.cloudera.com/cm5/cm/5/cloudera-manager-el6-cm5.1.3_x86_64.tar.gz" class="uri">http://archive.cloudera.com/cm5/cm/5/cloudera-manager-el6-cm5.1.3_x86_64.tar.gz</a>，<br>
+下载信息：<br>
+<a href="http://www.cloudera.com/content/cloudera/en/documentation/cloudera-manager/v5-latest/Cloudera-Manager-Version-and-Download-Information/Cloudera-Manager-Version-and-Download-Information.html#cmvd_topic_1" class="uri">http://www.cloudera.com/content/cloudera/en/documentation/cloudera-manager/v5-latest/Cloudera-Manager-Version-and-Download-Information/Cloudera-Manager-Version-and-Download-Information.html#cmvd_topic_1</a></p>
+<p>CDH安装包地址：<a href="http://archive.cloudera.com/cdh5/parcels/latest/" class="uri">http://archive.cloudera.com/cdh5/parcels/latest/</a>，由于我们的操作系统为CentOS6.5，需要下载以下文件：</p>
+<ul>
+<li>CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel</li>
+<li>CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel.sha1</li>
+<li>manifest.json</li>
+</ul>
+<p><strong>注意</strong>：与CDH4的不同，原来安装CDH4的时候还需要下载IMPALA、Cloudera Search(SOLR)，CDH5中将他们包含在一起了，所以只需要下载一个CDH5的包就可以了。</p>
+<h2 id="准备工作系统环境搭建">准备工作：系统环境搭建</h2>
+<p>以下操作均用root用户操作。</p>
+<h3 id="网络配置所有节点">1. 网络配置(所有节点)</h3>
+<p><code>vi /etc/sysconfig/network</code>修改hostname：</p>
+<pre><code class="hljs ini"><span class="hljs-attr">NETWORKING</span>=<span class="hljs-literal">yes</span>
+<span class="hljs-attr">HOSTNAME</span>=n1</code></pre>
+<p>通过<code>service network restart</code>重启网络服务生效。</p>
+<p><code>vi /etc/hosts</code>,修改ip与主机名的对应关系</p>
+<pre><code class="hljs css">192<span class="hljs-selector-class">.168</span><span class="hljs-selector-class">.1</span><span class="hljs-selector-class">.106</span>   <span class="hljs-selector-tag">n1</span>
+192<span class="hljs-selector-class">.168</span><span class="hljs-selector-class">.1</span><span class="hljs-selector-class">.107</span>   <span class="hljs-selector-tag">n2</span>
+192<span class="hljs-selector-class">.168</span><span class="hljs-selector-class">.1</span><span class="hljs-selector-class">.108</span>   <span class="hljs-selector-tag">n3</span></code></pre>
+<p><strong>注意：</strong>这里需要将每台机器的ip及主机名对应关系都写进去，本机的也要写进去，否则启动Agent的时候会提示hostname解析错误。</p>
+<h3 id="打通ssh设置ssh无密码登陆所有节点">2.打通SSH，设置ssh无密码登陆（所有节点）</h3>
+<p>在主节点上执行<code>ssh-keygen -t rsa</code>一路回车，生成无密码的密钥对。</p>
+<p>将公钥添加到认证文件中：<code>cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</code>，并设置authorized_keys的访问权限：<code>chmod 600 ~/.ssh/authorized_keys</code>。</p>
+<p>scp文件到所有datenode节点：</p>
+<pre><code class="hljs ruby">scp ~<span class="hljs-regexp">/.ssh/authorized</span>_keys root@n2<span class="hljs-symbol">:~/</span>.ssh/</code></pre>
+<p><strong>测试：</strong>在主节点上ssh n2，正常情况下，不需要密码就能直接登陆进去了。</p>
+<h3 id="安装oracle的java所有节点">3.安装Oracle的Java（所有节点）</h3>
+<p>CentOS，自带OpenJdk，不过运行CDH5需要使用Oracle的Jdk，需要Java 7的支持。</p>
+<p>卸载自带的OpenJdk，使用<code>rpm -qa | grep java</code>查询java相关的包，使用<code>rpm -e --nodeps 包名</code>卸载之。</p>
+<p>去Oracle的官网下载jdk的rpm安装包，并使用<code>rpm -ivh 包名</code>安装之。</p>
+<p>由于是rpm包并不需要我们来配置环境变量，我们只需要配置一个全局的JAVA_HOME变量即可，执行命令：</p>
+<pre><code class="hljs ruby">echo <span class="hljs-string">"JAVA_HOME=/usr/java/latest/"</span> <span class="hljs-meta">&gt;&gt; </span>/etc/environment</code></pre>
+<h3 id="安装配置mysql主节点">4.安装配置MySql（主节点）</h3>
+<p>通过<code>yum install mysql-server</code>安装mysql服务器。<code>chkconfig mysqld on</code>设置开机启动，并<code>service mysqld start</code>启动mysql服务，并根据提示设置root的初试密码：<code>mysqladmin  -u root password 'xxxx'</code>。</p>
+<p><code>mysql -uroot -pxxxx</code>进入mysql命令行，创建以下数据库：</p>
+<pre><code class="hljs sql">#hive
+<span class="hljs-keyword">create</span> <span class="hljs-keyword">database</span> hive <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">CHARSET</span> utf8 <span class="hljs-keyword">COLLATE</span> utf8_general_ci;
+#activity monitor
+<span class="hljs-keyword">create</span> <span class="hljs-keyword">database</span> amon <span class="hljs-keyword">DEFAULT</span> <span class="hljs-keyword">CHARSET</span> utf8 <span class="hljs-keyword">COLLATE</span> utf8_general_ci;</code></pre>
+<p>设置root授权访问以上所有的数据库：</p>
+<pre><code class="hljs sql">#授权root用户在主节点拥有所有数据库的访问权限
+<span class="hljs-keyword">grant</span> all <span class="hljs-keyword">privileges</span> <span class="hljs-keyword">on</span> *.* <span class="hljs-keyword">to</span> <span class="hljs-string">'root'</span>@<span class="hljs-string">'n1'</span> <span class="hljs-keyword">identified</span> <span class="hljs-keyword">by</span> <span class="hljs-string">'xxxx'</span> <span class="hljs-keyword">with</span> <span class="hljs-keyword">grant</span> <span class="hljs-keyword">option</span>;
+<span class="hljs-keyword">flush</span> <span class="hljs-keyword">privileges</span>;</code></pre>
+<p><strong>官方MySql配置文档：</strong><a href="http://www.cloudera.com/content/cloudera/en/documentation/cloudera-manager/v5-latest/Cloudera-Manager-Installation-Guide/cm5ig_mysql.html#cmig_topic_5_5" class="uri">http://www.cloudera.com/content/cloudera/en/documentation/cloudera-manager/v5-latest/Cloudera-Manager-Installation-Guide/cm5ig_mysql.html#cmig_topic_5_5</a></p>
+<h3 id="关闭防火墙和selinux">5.关闭防火墙和SELinux</h3>
+<p><strong>注意：</strong> 需要在所有的节点上执行，因为涉及到的端口太多了，临时关闭防火墙是为了安装起来更方便，安装完毕后可以根据需要设置防火墙策略，保证集群安全。</p>
+<p>关闭防火墙：</p>
+<pre><code class="hljs nginx"><span class="hljs-attribute">service</span> iptables stop （临时关闭）  
+chkconfig iptables <span class="hljs-literal">off</span> （重启后生效）</code></pre>
+<p>关闭SELINUX（实际安装过程中发现没有关闭也是可以的，不知道会不会有问题，还需进一步进行验证）:</p>
+<pre><code class="hljs dts">setenforce <span class="hljs-number">0</span> （临时生效）  
+修改 <span class="hljs-meta-keyword">/etc/</span>selinux/config 下的 SELINUX=disabled （重启后永久生效）</code></pre>
+<h3 id="所有节点配置ntp服务">6.所有节点配置NTP服务</h3>
+<p>集群中所有主机必须保持时间同步，如果时间相差较大会引起各种问题。 具体思路如下：</p>
+<p>master节点作为ntp服务器与外界对时中心同步时间，随后对所有datanode节点提供时间同步服务。</p>
+<p>所有datanode节点以master节点为基础同步时间。</p>
+<p>所有节点安装相关组件：<code>yum install ntp</code>。完成后，配置开机启动：<code>chkconfig ntpd on</code>,检查是否设置成功：<code>chkconfig --list ntpd</code>其中2-5为on状态就代表成功。</p>
+<p><strong>主节点配置</strong></p>
+<p>在配置之前，先使用ntpdate手动同步一下时间，免得本机与对时中心时间差距太大，使得ntpd不能正常同步。这里选用65.55.56.206作为对时中心,<code>ntpdate -u 65.55.56.206</code>。</p>
+<p>ntp服务只有一个配置文件，配置好了就OK。 这里只给出有用的配置，不需要的配置都用#注掉，这里就不在给出：</p>
+<pre><code class="hljs groovy">driftfile <span class="hljs-regexp">/var/</span>lib<span class="hljs-regexp">/ntp/</span>drift
+restrict <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>
+restrict <span class="hljs-number">-6</span> ::<span class="hljs-number">1</span>
+restrict <span class="hljs-keyword">default</span> nomodify notrap 
+server <span class="hljs-number">65.55</span><span class="hljs-number">.56</span><span class="hljs-number">.206</span> prefer
+includefile <span class="hljs-regexp">/etc/</span>ntp<span class="hljs-regexp">/crypto/</span>pw
+keys <span class="hljs-regexp">/etc/</span>ntp/keys</code></pre>
+<p>配置文件完成，保存退出，启动服务，执行如下命令：<code>service ntpd start</code></p>
+<p>检查是否成功，用ntpstat命令查看同步状态，出现以下状态代表启动成功：</p>
+<pre><code class="hljs delphi">synchronised <span class="hljs-keyword">to</span> NTP server () at stratum <span class="hljs-number">2</span>
+time correct <span class="hljs-keyword">to</span> within <span class="hljs-number">74</span> ms
+polling server every <span class="hljs-number">128</span> s</code></pre>
+<p>如果出现异常请等待几分钟，一般等待5-10分钟才能同步。</p>
+<p><strong>配置ntp客户端（所有datanode节点）</strong></p>
+<pre><code class="hljs cpp">driftfile /var/lib/ntp/drift
+<span class="hljs-keyword">restrict</span> <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>
+<span class="hljs-keyword">restrict</span> <span class="hljs-number">-6</span> ::<span class="hljs-number">1</span>
+<span class="hljs-keyword">restrict</span> <span class="hljs-keyword">default</span> kod nomodify notrap nopeer noquery
+<span class="hljs-keyword">restrict</span> <span class="hljs-number">-6</span> <span class="hljs-keyword">default</span> kod nomodify notrap nopeer noquery
+<span class="hljs-meta">#这里是主节点的主机名或者ip</span>
+server n1
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys</code></pre>
+<p>ok保存退出，请求服务器前，请先使用ntpdate手动同步一下时间：<code>ntpdate -u n1</code> (主节点ntp服务器)</p>
+<p>这里可能出现同步失败的情况，请不要着急，一般是本地的ntp服务器还没有正常启动，一般需要等待5-10分钟才可以正常同步。启动服务：<code>service ntpd start</code></p>
+<p>因为是连接内网，这次启动等待的时间会比master节点快一些，但是也需要耐心等待一会儿。</p>
+<h2 id="正式开工">正式开工</h2>
+<h3 id="安装cloudera-manager-server-和agent">安装Cloudera Manager Server 和Agent</h3>
+<p><strong>主节点解压安装</strong></p>
+<p>cloudera manager的目录默认位置在/opt下，解压：<code>tar xzvf cloudera-manager*.tar.gz</code>将解压后的cm-5.1.3和cloudera目录放到/opt目录下。</p>
+<p><strong>为Cloudera Manager 5建立数据库</strong></p>
+<p>首先需要去MySql的官网下载JDBC驱动，<a href="http://dev.mysql.com/downloads/connector/j/" class="uri">http://dev.mysql.com/downloads/connector/j/</a>，解压后，找到mysql-connector-java-5.1.33-bin.jar，放到/opt/cm-5.1.3/share/cmf/lib/中。</p>
+<p>在主节点初始化CM5的数据库：</p>
+<pre><code class="hljs dts"><span class="hljs-meta-keyword">/opt/</span>cm<span class="hljs-number">-5.1</span><span class="hljs-number">.3</span><span class="hljs-meta-keyword">/share/</span>cmf<span class="hljs-meta-keyword">/schema/</span>scm_prepare_database.sh mysql cm -hlocalhost -uroot -pxxxx --scm-host localhost scm scm scm</code></pre>
+<p><strong>Agent配置</strong></p>
+<p>修改/opt/cm-5.1.3/etc/cloudera-scm-agent/config.ini中的server_host为主节点的主机名。</p>
+<p><strong>同步Agent到其他节点</strong></p>
+<p><code>scp -r /opt/cm-5.1.3 root@n2:/opt/</code></p>
+<p><strong>在所有节点创建cloudera-scm用户</strong></p>
+<pre><code class="hljs groovy">useradd --system --home=<span class="hljs-regexp">/opt/</span>cm<span class="hljs-number">-5.1</span><span class="hljs-number">.3</span><span class="hljs-regexp">/run/</span>cloudera-scm-server<span class="hljs-regexp">/ --no-create-home --shell=/</span>bin/<span class="hljs-literal">false</span> --comment <span class="hljs-string">"Cloudera SCM User"</span> cloudera-scm</code></pre>
+<p><strong>准备Parcels，用以安装CDH5</strong></p>
+<p>将CHD5相关的Parcel包放到主节点的/opt/cloudera/parcel-repo/目录中（parcel-repo需要手动创建）。</p>
+<p>相关的文件如下：</p>
+<ul>
+<li>CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel</li>
+<li>CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel.sha1</li>
+<li>manifest.json</li>
+</ul>
+<p>最后将CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel.sha1，重命名为CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel.sha，这点必须注意，否则，系统会重新下载CDH-5.1.3-1.cdh5.1.3.p0.12-el6.parcel文件。</p>
+<p><strong>相关启动脚本</strong></p>
+<!--在主节点上将/opt/cm-5.1.3/etc/init.d/cloudera-scm-server复制到/etc/init.d/，并通过`chkconfig cloudera-scm-server on`设置服务开机自动启动。-->
+<p>通过<code>/opt/cm-5.1.3/etc/init.d/cloudera-scm-server start</code>启动服务端。</p>
+<!--在所有的agent节点上，将/opt/cm-5.1.3/etc/init.d/cloudera-scm-agent复制到/etc/init.d/中，并通过`chkconfig cloudera-scm-agent on`设置服务开机自动启动。-->
+<p>通过<code>/opt/cm-5.1.3/etc/init.d/cloudera-scm-agent start</code>启动Agent服务。</p>
+<p>我们启动的其实是个service脚本，需要停止服务将以上的start参数改为stop就可以了，重启是restart。</p>
+<h2 id="cdh5的安装配置">CDH5的安装配置</h2>
+<p>Cloudera Manager Server和Agent都启动以后，就可以进行CDH5的安装配置了。</p>
+<p>这时可以通过浏览器访问主节点的7180端口测试一下了（由于CM Server的启动需要花点时间，这里可能要等待一会才能访问），默认的用户名和密码均为admin：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/081814526243432.png"></p>
+<p>可以看到，免费版本的CM5已经没有原来50个节点数量的限制了。</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/081858319212908.png" style="width: 803px;"></p>
+<p>各个Agent节点正常启动后，可以在当前管理的主机列表中看到对应的节点。选择要安装的节点，点继续。</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/081859390464715.png" style="width: 803px;"></p>
+<p>接下来，出现以下包名，说明本地Parcel包配置无误，直接点继续就可以了。</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/122315154687724.png" style="width: 803px;"></p>
+<p>点击，继续，如果配置本地Parcel包无误，那么下图中的已下载，应该是瞬间就完成了，然后就是耐心等待分配过程就行了，大约10多分钟吧，取决于内网网速。</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/081901008436304.png"></p>
+<p>接下来是服务器检查，可能会遇到以下问题：</p>
+<pre><code class="hljs dts">Cloudera 建议将 <span class="hljs-meta-keyword">/proc/</span>sys<span class="hljs-meta-keyword">/vm/</span>swappiness 设置为 <span class="hljs-number">0</span>。当前设置为 <span class="hljs-number">60</span>。使用 sysctl 命令在运行时更改该设置并编辑 <span class="hljs-meta-keyword">/etc/</span>sysctl.conf 以在重启后保存该设置。您可以继续进行安装，但可能会遇到问题，Cloudera Manager 报告您的主机由于交换运行状况不佳。以下主机受到影响：</code></pre>
+<p>通过<code>echo 0 &gt; /proc/sys/vm/swappiness</code>即可解决。</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130004528902110.png" style="width: 803px;"></p>
+<p>接下来是选择安装服务：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130053226401588.png" style="width: 803px;"></p>
+<p>服务配置，一般情况下保持默认就可以了（Cloudera Manager会根据机器的配置自动进行配置，如果需要特殊调整，自行进行设置就可以了）：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130054489837966.png" style="width: 803px;"></p>
+<p>接下来是数据库的设置，检查通过后就可以进行下一步的操作了：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130056080776298.png" style="width: 803px;"></p>
+<p>下面是集群设置的审查页面，我这里都是保持默认配置的：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130057327498132.png" style="width: 803px;"></p>
+<p>终于到安装各个服务的地方了，注意，这里安装Hive的时候可能会报错，因为我们使用了MySql作为hive的元数据存储，hive默认没有带mysql的驱动，通过以下命令拷贝一个就行了：</p>
+<pre><code class="hljs dts">cp <span class="hljs-meta-keyword">/opt/</span>cm<span class="hljs-number">-5.1</span><span class="hljs-number">.3</span><span class="hljs-meta-keyword">/share/</span>cmf<span class="hljs-meta-keyword">/lib/</span>mysql-connector-java<span class="hljs-number">-5.1</span><span class="hljs-number">.33</span>-bin.jar <span class="hljs-meta-keyword">/opt/</span>cloudera<span class="hljs-meta-keyword">/parcels/</span>CDH<span class="hljs-number">-5.1</span><span class="hljs-number">.3</span><span class="hljs-number">-1.</span>cdh5<span class="hljs-number">.1</span><span class="hljs-number">.3</span>.p0<span class="hljs-number">.12</span><span class="hljs-meta-keyword">/lib/</span>hive<span class="hljs-meta-keyword">/lib/</span></code></pre>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130058331875062.png" style="width: 803px;"></p>
+<p>服务的安装过程大约半小时内就可以完成：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130105142164316.png" style="width: 803px;"></p>
+<p>安装完成后，就可以进入集群界面看一下集群的当前状况了。</p>
+<p>这里可能会出现<code>无法发出查询：对 Service Monitor 的请求超时</code>的错误提示，如果各个组件安装没有问题，一般是因为服务器比较卡导致的，过一会刷新一下页面就好了：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130108478574819.png" style="width: 803px;"></p>
+<h2 id="测试">测试</h2>
+<p>在集群的一台机器上执行以下模拟Pi的示例程序：</p>
+<pre><code class="hljs dts">sudo -u hdfs hadoop jar <span class="hljs-meta-keyword">/opt/</span>cloudera<span class="hljs-meta-keyword">/parcels/</span>CDH<span class="hljs-meta-keyword">/lib/</span>hadoop-mapreduce/hadoop-mapreduce-examples.jar pi <span class="hljs-number">10</span> <span class="hljs-number">100</span></code></pre>
+<p>执行过程需要花一定的时间，通过YARN的后台也可以看到MapReduce的执行状态：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130121439669223.png" style="width: 803px;"></p>
+<p>MapReduce执行过程中终端的输出如下：</p>
+<pre><code class="hljs delphi">Number <span class="hljs-keyword">of</span> Maps  = <span class="hljs-number">10</span>
+Samples per Map = <span class="hljs-number">100</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#0</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#1</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#2</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#3</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#4</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#5</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#6</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#7</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#8</span>
+Wrote input <span class="hljs-keyword">for</span> Map <span class="hljs-string">#9</span>
+Starting Job
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">34</span> INFO client.RMProxy: Connecting <span class="hljs-keyword">to</span> ResourceManager at n1/<span class="hljs-number">192.168</span>.<span class="hljs-number">1.161</span>:<span class="hljs-number">8032</span>
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">36</span> INFO input.FileInputFormat: Total input paths <span class="hljs-keyword">to</span> process : <span class="hljs-number">10</span>
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">37</span> INFO mapreduce.JobSubmitter: number <span class="hljs-keyword">of</span> splits:<span class="hljs-number">10</span>
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">39</span> INFO mapreduce.JobSubmitter: Submitting tokens <span class="hljs-keyword">for</span> job: job_1413132307582_0001
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">40</span> INFO impl.YarnClientImpl: Submitted application application_1413132307582_0001
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">40</span> INFO mapreduce.Job: The url <span class="hljs-keyword">to</span> track the job: http:<span class="hljs-comment">//n1:8088/proxy/application_1413132307582_0001/</span>
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">15</span>:<span class="hljs-number">40</span> INFO mapreduce.Job: Running job: job_1413132307582_0001
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">17</span>:<span class="hljs-number">13</span> INFO mapreduce.Job: Job job_1413132307582_0001 running <span class="hljs-keyword">in</span> uber mode : false
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">17</span>:<span class="hljs-number">13</span> INFO mapreduce.Job:  map <span class="hljs-number">0</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">18</span>:<span class="hljs-number">02</span> INFO mapreduce.Job:  map <span class="hljs-number">10</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">18</span>:<span class="hljs-number">25</span> INFO mapreduce.Job:  map <span class="hljs-number">20</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">18</span>:<span class="hljs-number">35</span> INFO mapreduce.Job:  map <span class="hljs-number">30</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">18</span>:<span class="hljs-number">45</span> INFO mapreduce.Job:  map <span class="hljs-number">40</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">18</span>:<span class="hljs-number">53</span> INFO mapreduce.Job:  map <span class="hljs-number">50</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">01</span> INFO mapreduce.Job:  map <span class="hljs-number">60</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">09</span> INFO mapreduce.Job:  map <span class="hljs-number">70</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">17</span> INFO mapreduce.Job:  map <span class="hljs-number">80</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">25</span> INFO mapreduce.Job:  map <span class="hljs-number">90</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">33</span> INFO mapreduce.Job:  map <span class="hljs-number">100</span>% reduce <span class="hljs-number">0</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">51</span> INFO mapreduce.Job:  map <span class="hljs-number">100</span>% reduce <span class="hljs-number">100</span>%
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">53</span> INFO mapreduce.Job: Job job_1413132307582_0001 completed successfully
+<span class="hljs-number">14</span>/<span class="hljs-number">10</span>/<span class="hljs-number">13</span> <span class="hljs-number">01</span>:<span class="hljs-number">19</span>:<span class="hljs-number">56</span> INFO mapreduce.Job: Counters: <span class="hljs-number">49</span>
+    <span class="hljs-keyword">File</span> System Counters
+        <span class="hljs-keyword">FILE</span>: Number <span class="hljs-keyword">of</span> bytes <span class="hljs-keyword">read</span>=<span class="hljs-number">91</span>
+        <span class="hljs-keyword">FILE</span>: Number <span class="hljs-keyword">of</span> bytes written=<span class="hljs-number">1027765</span>
+        <span class="hljs-keyword">FILE</span>: Number <span class="hljs-keyword">of</span> <span class="hljs-keyword">read</span> operations=<span class="hljs-number">0</span>
+        <span class="hljs-keyword">FILE</span>: Number <span class="hljs-keyword">of</span> large <span class="hljs-keyword">read</span> operations=<span class="hljs-number">0</span>
+        <span class="hljs-keyword">FILE</span>: Number <span class="hljs-keyword">of</span> <span class="hljs-keyword">write</span> operations=<span class="hljs-number">0</span>
+        HDFS: Number <span class="hljs-keyword">of</span> bytes <span class="hljs-keyword">read</span>=<span class="hljs-number">2560</span>
+        HDFS: Number <span class="hljs-keyword">of</span> bytes written=<span class="hljs-number">215</span>
+        HDFS: Number <span class="hljs-keyword">of</span> <span class="hljs-keyword">read</span> operations=<span class="hljs-number">43</span>
+        HDFS: Number <span class="hljs-keyword">of</span> large <span class="hljs-keyword">read</span> operations=<span class="hljs-number">0</span>
+        HDFS: Number <span class="hljs-keyword">of</span> <span class="hljs-keyword">write</span> operations=<span class="hljs-number">3</span>
+    Job Counters
+        Launched map tasks=<span class="hljs-number">10</span>
+        Launched reduce tasks=<span class="hljs-number">1</span>
+        Data-local map tasks=<span class="hljs-number">10</span>
+        Total time spent by all maps <span class="hljs-keyword">in</span> occupied slots (ms)=<span class="hljs-number">118215</span>
+        Total time spent by all reduces <span class="hljs-keyword">in</span> occupied slots (ms)=<span class="hljs-number">11894</span>
+        Total time spent by all map tasks (ms)=<span class="hljs-number">118215</span>
+        Total time spent by all reduce tasks (ms)=<span class="hljs-number">11894</span>
+        Total vcore-seconds taken by all map tasks=<span class="hljs-number">118215</span>
+        Total vcore-seconds taken by all reduce tasks=<span class="hljs-number">11894</span>
+        Total megabyte-seconds taken by all map tasks=<span class="hljs-number">121052160</span>
+        Total megabyte-seconds taken by all reduce tasks=<span class="hljs-number">12179456</span>
+    Map-Reduce Framework
+        Map input records=<span class="hljs-number">10</span>
+        Map output records=<span class="hljs-number">20</span>
+        Map output bytes=<span class="hljs-number">180</span>
+        Map output materialized bytes=<span class="hljs-number">340</span>
+        Input split bytes=<span class="hljs-number">1380</span>
+        Combine input records=<span class="hljs-number">0</span>
+        Combine output records=<span class="hljs-number">0</span>
+        Reduce input groups=<span class="hljs-number">2</span>
+        Reduce shuffle bytes=<span class="hljs-number">340</span>
+        Reduce input records=<span class="hljs-number">20</span>
+        Reduce output records=<span class="hljs-number">0</span>
+        Spilled Records=<span class="hljs-number">40</span>
+        Shuffled Maps =<span class="hljs-number">10</span>
+        Failed Shuffles=<span class="hljs-number">0</span>
+        Merged Map outputs=<span class="hljs-number">10</span>
+        GC time elapsed (ms)=<span class="hljs-number">1269</span>
+        CPU time spent (ms)=<span class="hljs-number">9530</span>
+        Physical memory (bytes) snapshot=<span class="hljs-number">3792773120</span>
+        <span class="hljs-keyword">Virtual</span> memory (bytes) snapshot=<span class="hljs-number">16157274112</span>
+        Total committed heap usage (bytes)=<span class="hljs-number">2856624128</span>
+    Shuffle Errors
+        BAD_ID=<span class="hljs-number">0</span>
+        CONNECTION=<span class="hljs-number">0</span>
+        IO_ERROR=<span class="hljs-number">0</span>
+        WRONG_LENGTH=<span class="hljs-number">0</span>
+        WRONG_MAP=<span class="hljs-number">0</span>
+        WRONG_REDUCE=<span class="hljs-number">0</span>
+    <span class="hljs-keyword">File</span> Input Format Counters
+        Bytes <span class="hljs-keyword">Read</span>=<span class="hljs-number">1180</span>
+    <span class="hljs-keyword">File</span> Output Format Counters
+        Bytes Written=<span class="hljs-number">97</span>
+Job Finished <span class="hljs-keyword">in</span> <span class="hljs-number">262.659</span> seconds
+Estimated value <span class="hljs-keyword">of</span> Pi is <span class="hljs-number">3.14800000000000000000</span></code></pre>
+<h3 id="检查hue">检查Hue</h3>
+<p>首次登陆Hue会让设置一个初试的用户名和密码，设置好，登陆到后台，会做一次检查，一切正常后会提示：</p>
+<p><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/130130098264300.png" style="width: 803px;"></p>
+<p>到这里表明我们的集群可以使用了。</p>
+<h2 id="遇到的问题">遇到的问题</h2>
+<p>Agent启动后，安装阶段“当前管理的主机”中显示的节点不全，每次刷新显示的都不一样。</p>
+<p>Agent的错误日志表现如下：</p>
+<pre><code class="hljs sql">[18/Nov/2014 21:12:56 +0000] 22681 MainThread agent ERROR Heartbeating to master:7182 failed.
+Traceback (most recent <span class="hljs-keyword">call</span> <span class="hljs-keyword">last</span>):
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/src/cmf/agent.py"</span>, line <span class="hljs-number">820</span>, <span class="hljs-keyword">in</span> send_heartbeat
+    response = <span class="hljs-keyword">self</span>.requestor.request(<span class="hljs-string">'heartbeat'</span>, dict(request=heartbeat))
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/ipc.py"</span>, line <span class="hljs-number">139</span>, <span class="hljs-keyword">in</span> request
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>.issue_request(call_request, message_name, request_datum)
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/ipc.py"</span>, line <span class="hljs-number">255</span>, <span class="hljs-keyword">in</span> issue_request
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>.read_call_response(message_name, buffer_decoder)
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/ipc.py"</span>, line <span class="hljs-number">235</span>, <span class="hljs-keyword">in</span> read_call_response
+    <span class="hljs-keyword">raise</span> <span class="hljs-keyword">self</span>.read_error(writers_schema, readers_schema, decoder)
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/ipc.py"</span>, line <span class="hljs-number">244</span>, <span class="hljs-keyword">in</span> read_error
+    <span class="hljs-keyword">return</span> AvroRemoteException(datum_reader.<span class="hljs-keyword">read</span>(decoder))
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/io.py"</span>, line <span class="hljs-number">444</span>, <span class="hljs-keyword">in</span> <span class="hljs-keyword">read</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>.read_data(<span class="hljs-keyword">self</span>.writers_schema, <span class="hljs-keyword">self</span>.readers_schema, decoder)
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/io.py"</span>, line <span class="hljs-number">448</span>, <span class="hljs-keyword">in</span> read_data
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> DatumReader.match_schemas(writers_schema, readers_schema):
+  <span class="hljs-keyword">File</span> <span class="hljs-string">"/home/opt/cm-5.2.0/lib64/cmf/agent/build/env/lib/python2.6/site-packages/avro-1.6.3-py2.6.egg/avro/io.py"</span>, line <span class="hljs-number">379</span>, <span class="hljs-keyword">in</span> match_schemas
+    w_type = writers_schema.<span class="hljs-keyword">type</span>
+AttributeError: <span class="hljs-string">'NoneType'</span> <span class="hljs-keyword">object</span> has <span class="hljs-keyword">no</span> <span class="hljs-keyword">attribute</span> <span class="hljs-string">'type'</span></code></pre>
+<p>这是由于在主节点上启动了Agent后，又将Agent scp到了其他节点上导致的，首次启动Agent，它会生成一个uuid，路径为：<code>/opt/cm-5.1.3/lib/cloudera-scm-agent/uuid</code>,这样的话每台机器上的Agent的uuid都是一样的了，就会出现紊乱的情况。</p>
+<p><strong>解决方案：</strong></p>
+<p>删除<code>/opt/cm-5.1.3/lib/cloudera-scm-agent/</code>目录下的所有文件。</p>
+<p>清空主节点CM数据库。</p>
+<p><strong>最佳实践</strong></p>
+<p>在内网单独搭建yum的repo，然后CM的管理界面安装Agent，这样安装比较快，也不会出现什么问题。</p>
+<p>如果手动添加添加Agent的话，需要注意启动之前删除相关的标示文件，否则Server端在数据库中记录Agent的信息，还得清理数据库中的信息，就麻烦了。</p>
+</div><div id="MySignature" style="display: block;"><p class="feedbackItem">
+据说看到好文章不推荐的人，服务器容易宕机！<br>
+本文版权归<a href="http://www.cnblogs.com/jasondan/" target="_blank">翟士丹(Stan Zhai)</a>和<a href="http://www.cnblogs.com/" target="_blank">博客园</a>共有，原创文章，未经允许不得转载，否则保留追究法律责任的权利。
+</p></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/jasondan/category/520511.html" target="_blank">大数据</a></div>
+<div id="EntryTag"></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(4011153,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;ab2221a6-b4a3-e011-a53f-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/jasondan/" target="_blank"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/20140925144843.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/jasondan/">StanZhai</a><br>
+            <a href="http://home.cnblogs.com/u/jasondan/followees">关注 - 21</a><br>
+            <a href="http://home.cnblogs.com/u/jasondan/followers">粉丝 - 384</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;ab2221a6-b4a3-e011-a53f-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(4011153,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">7</span>
+    </div>
+    <div class="buryit" onclick="votePost(4011153,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/jasondan/p/4020452.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/jasondan/p/4020452.html" title="发布于2014-10-12 13:27">CentOS安装Nvidia显卡驱动提示Nouveau正在使用的问题</a><br><a href="http://www.cnblogs.com/jasondan/p/4031092.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/jasondan/p/4031092.html" title="发布于2014-10-17 14:35">Linux下Ruby开发配置</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2014-10-13 01:44</span> <a href="http://www.cnblogs.com/jasondan/">StanZhai</a> 阅读(<span id="post_view_count">37819</span>) 评论(<span id="post_comment_count">25</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=4011153" rel="nofollow">编辑</a> <a href="http://www.cnblogs.com/jasondan/p/4011153.html#" onclick="AddToWz(4011153);return false;">收藏</a></div>
+	</div>
+	<script src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/highlight.min.js"></script><script>markdown_highlight();</script><script type="text/javascript">var allowComments=true,cb_blogId=91938,cb_entryId=4011153,cb_blogApp=currentBlogApp,cb_blogUserGuid='ab2221a6-b4a3-e011-a53f-842b2b196315',cb_entryCreatedDate='2014/10/13 1:44:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder">
+<br>
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3042536" class="layer">#1楼</a><a name="3042536" id="comment_anchor_3042536"></a>  <span class="comment_date">2014-10-13 09:14</span> <a id="a_comment_author_3042536" href="http://home.cnblogs.com/u/75327/" target="_blank">键盘人生</a> <a href="http://msg.cnblogs.com/send/%E9%94%AE%E7%9B%98%E4%BA%BA%E7%94%9F" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3042536" class="blog_comment_body">剑不错</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3042536,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3042536,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3042541" class="layer">#2楼</a><a name="3042541" id="comment_anchor_3042541"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2014-10-13 09:20</span> <a id="a_comment_author_3042541" href="http://www.cnblogs.com/jasondan/" target="_blank">StanZhai</a> <a href="http://msg.cnblogs.com/send/StanZhai" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3042541" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3042536" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3042536);">@</a>
+键盘人生<br>哈哈，其实是把伞</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3042541,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3042541,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3042541_avatar" style="display:none;">http://pic.cnblogs.com/face/312243/20140925144843.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3045061" class="layer">#3楼</a><a name="3045061" id="comment_anchor_3045061"></a>  <span class="comment_date">2014-10-16 15:13</span> <a id="a_comment_author_3045061" href="http://home.cnblogs.com/u/682184/" target="_blank">hjinp</a> <a href="http://msg.cnblogs.com/send/hjinp" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3045061" class="blog_comment_body">大神您好！我启动Cloudera Manager Agent的时候，失败了，日志如下，<br>请大神指点<br><br>[16/Oct/2014 15:04:03 +0000] 4398 MainThread agent        ERROR    Failed to connect to newly launched supervisor. Agent will exit<br>[16/Oct/2014 15:04:03 +0000] 4398 MainThread agent        INFO     Stopping agent...<br>[16/Oct/2014 15:04:03 +0000] 4398 MainThread agent        INFO     No extant cgroups; unmounting any cgroup roots</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3045061,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3045061,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3127774" class="layer">#4楼</a><a name="3127774" id="comment_anchor_3127774"></a>  <span class="comment_date">2015-02-11 14:15</span> <a id="a_comment_author_3127774" href="http://www.cnblogs.com/shy0417/" target="_blank">异想天开de</a> <a href="http://msg.cnblogs.com/send/%E5%BC%82%E6%83%B3%E5%A4%A9%E5%BC%80de" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3127774" class="blog_comment_body">您好我想问下，整个过程都必须要在root下进行吗或者还是普通用户也可以呢？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3127774,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3127774,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3127774_avatar" style="display:none;">http://pic.cnblogs.com/face/575589/20140509011513.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3197077" class="layer">#5楼</a><a name="3197077" id="comment_anchor_3197077"></a>  <span class="comment_date">2015-05-31 10:23</span> <a id="a_comment_author_3197077" href="http://home.cnblogs.com/u/88228/" target="_blank">小蓝</a> <a href="http://msg.cnblogs.com/send/%E5%B0%8F%E8%93%9D" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3197077" class="blog_comment_body">你的文章，帮了我的大忙，非常感谢！希望继续书写博客，加油！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3197077,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3197077,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3238396" class="layer">#6楼</a><a name="3238396" id="comment_anchor_3238396"></a>  <span class="comment_date">2015-07-30 18:29</span> <a id="a_comment_author_3238396" href="http://home.cnblogs.com/u/792357/" target="_blank">熊喵喵</a> <a href="http://msg.cnblogs.com/send/%E7%86%8A%E5%96%B5%E5%96%B5" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3238396" class="blog_comment_body">大神。有个问题烦扰我几天了。我用的系统是red hat 而不是CentOS。server能正常启动 然而启动agent的时候，首先是一堆python包。我都根据日志安装完成。最后安装六七个之后，遇到了一个包根本找不到，错误日志如下：ImportError: No module named clusterstats.log.streaming.file<br>我查阅网上很多资料。就是没发现有人有类似的问题，而且大部分的博客都是也CentOs系统安装的。非常无奈。并且也查阅了Python里面貌似不存在此类模块。求大神指点： red hat系统是不是无法安装agent</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3238396,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3238396,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3238768" class="layer">#7楼</a><a name="3238768" id="comment_anchor_3238768"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-07-31 10:35</span> <a id="a_comment_author_3238768" href="http://www.cnblogs.com/jasondan/" target="_blank">StanZhai</a> <a href="http://msg.cnblogs.com/send/StanZhai" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3238768" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3238396" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3238396);">@</a>
+熊喵喵<br>理论上说RedHat应该也可以的，不过我也没试过RetHat上安装CDH，这个你得靠自己解决下了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3238768,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3238768,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3238768_avatar" style="display:none;">http://pic.cnblogs.com/face/312243/20140925144843.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3238783" class="layer">#8楼</a><a name="3238783" id="comment_anchor_3238783"></a>  <span class="comment_date">2015-07-31 10:47</span> <a id="a_comment_author_3238783" href="http://home.cnblogs.com/u/792357/" target="_blank">熊喵喵</a> <a href="http://msg.cnblogs.com/send/%E7%86%8A%E5%96%B5%E5%96%B5" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3238783" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3238768" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3238768);">@</a>
+StanZhai<br>好吧，谢谢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3238783,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3238783,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3250987" class="layer">#9楼</a><a name="3250987" id="comment_anchor_3250987"></a>  <span class="comment_date">2015-08-20 16:22</span> <a id="a_comment_author_3250987" href="http://home.cnblogs.com/u/459368/" target="_blank">xiaoliang123</a> <a href="http://msg.cnblogs.com/send/xiaoliang123" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3250987" class="blog_comment_body">大神，我按照您的步骤安装，提示都成功了，但是为什么我通过浏览器访问不了，请指导下，谢谢，或者加下我的QQ：2695941702，麻烦您了，我纠结好多天了，<br>[root@Master etc]# /opt/cm-5.1.3/etc/init.d/cloudera-scm-server start<br>Starting cloudera-scm-server:                              [  OK  ]<br>[root@Master etc]# /opt/cm-5.1.3/etc/init.d/cloudera-scm-agent start<br>Starting cloudera-scm-agent:                               [  OK  ]<br><br><a href="http://10.128.90.42/" target="_blank">http://10.128.90.42</a>:7180/cmf/login访问地址是这这样写的吧，内网的，但是就是访问不了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3250987,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3250987,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3251091" class="layer">#10楼</a><a name="3251091" id="comment_anchor_3251091"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2015-08-20 17:52</span> <a id="a_comment_author_3251091" href="http://www.cnblogs.com/jasondan/" target="_blank">StanZhai</a> <a href="http://msg.cnblogs.com/send/StanZhai" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3251091" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3250987" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3250987);">@</a>
+xiaoliang123<br>估计是你ip或网络配置有问题吧，你直接telnet 10.128.90.42 7180看看能不能访问到目标端口，如果不能，登录到cm所在的机器上使用curl <a href="http://localhost/" target="_blank">http://localhost</a>:7180/cmf/login看看服务启动是否正常，在检查下防火墙是不是关了，ip是不是写成公网ip了。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3251091,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3251091,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3251091_avatar" style="display:none;">http://pic.cnblogs.com/face/312243/20140925144843.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3256844" class="layer">#11楼</a><a name="3256844" id="comment_anchor_3256844"></a>  <span class="comment_date">2015-08-30 04:24</span> <a id="a_comment_author_3256844" href="http://home.cnblogs.com/u/804779/" target="_blank">ok0722</a> <a href="http://msg.cnblogs.com/send/ok0722" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3256844" class="blog_comment_body">谢谢 Stan Zhai！这篇文章帮助我成功的安装了CDH hadoop 5.3.6。在我安装的过程中遇到了以下三点问题，希望能够帮助碰到同样问题的同学们：<br>1.关于对时中心65.55.56.206，在我的安装环境中没同步成功，后来使用了ip202.120.2.101<br>2.如果安装impala，在impala daemon节点上还需要安装perl yum install perl<br>3.如果安装hue，需要在相关节点上安装 yum install python-lxml<br>对于2,3点，因为我使用的是CentOS-6.6-x86_64-minimal.iso，所以不清楚更完整的centos版本是不是还用装上面两个依赖</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3256844,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3256844,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3298719" class="layer">#12楼</a><a name="3298719" id="comment_anchor_3298719"></a>  <span class="comment_date">2015-11-04 12:05</span> <a id="a_comment_author_3298719" href="http://home.cnblogs.com/u/530702/" target="_blank">sky88088</a> <a href="http://msg.cnblogs.com/send/sky88088" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3298719" class="blog_comment_body">前几天尝试过，结果失败了，看来是缺少了sha文件……<br>这两天看着博主的教程再搞一次试试</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3298719,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3298719,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3315159" class="layer">#13楼</a><a name="3315159" id="comment_anchor_3315159"></a>  <span class="comment_date">2015-11-26 18:51</span> <a id="a_comment_author_3315159" href="http://home.cnblogs.com/u/845808/" target="_blank">Hzerppen</a> <a href="http://msg.cnblogs.com/send/Hzerppen" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3315159" class="blog_comment_body">请问有没有在一个单机上装了CDH后在当前这个集群重新添加主机的经验，忘QQ交流：652274049</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3315159,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3315159,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3369175" class="layer">#14楼</a><a name="3369175" id="comment_anchor_3369175"></a>  <span class="comment_date">2016-03-01 10:40</span> <a id="a_comment_author_3369175" href="http://www.cnblogs.com/52hadoop/" target="_blank">沙漠里的小鱼</a> <a href="http://msg.cnblogs.com/send/%E6%B2%99%E6%BC%A0%E9%87%8C%E7%9A%84%E5%B0%8F%E9%B1%BC" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3369175" class="blog_comment_body">请教一下  在主节点上  /opt/cm-5.1.3/etc/init.d/cloudera-scm-server start启动服务端      还需要在主节点上启动/opt/cm-5.1.3/etc/init.d/cloudera-scm-agent start启动Agen服务吗  <br>还是只在主节点上启动/opt/cm-5.1.3/etc/init.d/cloudera-scm-server start  而在其他节点上启动/opt/cm-5.1.3/etc/init.d/cloudera-scm-agent start</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3369175,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3369175,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3375099" class="layer">#15楼</a><a name="3375099" id="comment_anchor_3375099"></a>  <span class="comment_date">2016-03-08 22:00</span> <a id="a_comment_author_3375099" href="http://home.cnblogs.com/u/908594/" target="_blank">co2y</a> <a href="http://msg.cnblogs.com/send/co2y" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3375099" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3238783" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3238783);">@</a>
+熊喵喵<br>这个包在/opt/cm-x.x.x/share/cmf/python/Lib下 ，请问你在redhat上最终成功了吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3375099,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3375099,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3388886" class="layer">#16楼</a><a name="3388886" id="comment_anchor_3388886"></a>  <span class="comment_date">2016-03-23 09:33</span> <a id="a_comment_author_3388886" href="http://home.cnblogs.com/u/919734/" target="_blank">wtaisi</a> <a href="http://msg.cnblogs.com/send/wtaisi" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3388886" class="blog_comment_body">通过/opt/cm-5.1.3/etc/init.d/cloudera-scm-server start启动服务端。<br>通过/opt/cm-5.1.3/etc/init.d/cloudera-scm-agent start启动Agent服务。<br><br>这两句话的意思是在所有的节点上启动吗？还是哪些接线启动呢？谢谢</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3388886,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3388886,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3392589" class="layer">#17楼</a><a name="3392589" id="comment_anchor_3392589"></a>[<span class="louzhu">楼主</span>]  <span class="comment_date">2016-03-26 19:53</span> <a id="a_comment_author_3392589" href="http://www.cnblogs.com/jasondan/" target="_blank">StanZhai</a> <a href="http://msg.cnblogs.com/send/StanZhai" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3392589" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3388886" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3388886);">@</a>
+wtaisi<br>在主节点上启动就可以啦</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3392589,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3392589,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3392589_avatar" style="display:none;">http://pic.cnblogs.com/face/312243/20140925144843.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3395821" class="layer">#18楼</a><a name="3395821" id="comment_anchor_3395821"></a>  <span class="comment_date">2016-03-30 16:40</span> <a id="a_comment_author_3395821" href="http://home.cnblogs.com/u/919734/" target="_blank">wtaisi</a> <a href="http://msg.cnblogs.com/send/wtaisi" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3395821" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3392589" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3392589);">@</a>
+StanZhai<br>谢谢，我有三台机器，hadoop1,hadoop2,hadoop3，我只在hadoop1启动的话，那其他两台什么时候安装集群服务呢？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3395821,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3395821,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3473610" class="layer">#19楼</a><a name="3473610" id="comment_anchor_3473610"></a>  <span class="comment_date">2016-07-20 20:41</span> <a id="a_comment_author_3473610" href="http://home.cnblogs.com/u/995745/" target="_blank">silencat</a> <a href="http://msg.cnblogs.com/send/silencat" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3473610" class="blog_comment_body">清空主节点CM数据库。<br>这一句，主节点的CM数据库是在哪？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3473610,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3473610,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3601788" class="layer">#20楼</a><a name="3601788" id="comment_anchor_3601788"></a>  <span class="comment_date">2017-01-11 21:36</span> <a id="a_comment_author_3601788" href="http://www.cnblogs.com/pojishou/" target="_blank">破击手</a> <a href="http://msg.cnblogs.com/send/%E7%A0%B4%E5%87%BB%E6%89%8B" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3601788" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3256844" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3256844);">@</a>
+ok0722<br>我hue搞了半天连不上，也找不到答案，原来是这个问题。非常感谢啊！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3601788,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3601788,&#39;Bury&#39;,this)">反对(0)</a></div><span id="comment_3601788_avatar" style="display:none;">http://pic.cnblogs.com/face/631803/20140508170635.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3619904" class="layer">#21楼</a><a name="3619904" id="comment_anchor_3619904"></a>  <span class="comment_date">2017-02-16 13:18</span> <a id="a_comment_author_3619904" href="http://home.cnblogs.com/u/1096709/" target="_blank">黑米饭</a> <a href="http://msg.cnblogs.com/send/%E9%BB%91%E7%B1%B3%E9%A5%AD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3619904" class="blog_comment_body">楼主，你好，我按照你的步骤安装CDH，到启动sqoop2的时候报错，始终解决不了，报错信息有以下几个<br>下午10点51:49.056	INFO	org.apache.sqoop.repository.derby.DerbyRepositoryHandler	<br>Can't fetch repository structure version.<br>org.apache.commons.dbcp.SQLNestedException: Borrow prepareStatement from pool failed<br>	<br>Caused by: java.sql.SQLSyntaxErrorException: Schema 'SQOOP' does not exist<br>	<br>Caused by: java.sql.SQLException: Schema 'SQOOP' does not exist<br>	<br>Caused by: ERROR 42Y07: Schema 'SQOOP' does not exist<br>	<br><br>下午10点51:49.060	ERROR	org.apache.sqoop.core.SqoopServer	<br>Server startup failure<br>org.apache.sqoop.common.SqoopException: REPO_0002:Repository structures are not in suitable state, might require upgrade<br>	<br>下午10点51:49.061	ERROR	org.apache.sqoop.server.ServerInitializer	<br>Sqoop server failed to start<br>java.lang.RuntimeException: Failure in server initialization<br>	<br>Caused by: org.apache.sqoop.common.SqoopException: REPO_0002:Repository structures are not in suitable state, might require upgrade<br>	<br>麻烦楼主给点指导</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3619904,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3619904,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3652200" class="layer">#22楼</a><a name="3652200" id="comment_anchor_3652200"></a>  <span class="comment_date">2017-03-27 09:40</span> <a id="a_comment_author_3652200" href="http://www.cnblogs.com/lgq123/" target="_blank">天上的心lgq</a> <a href="http://msg.cnblogs.com/send/%E5%A4%A9%E4%B8%8A%E7%9A%84%E5%BF%83lgq" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3652200" class="blog_comment_body"><a href="http://www.cnblogs.com/jasondan/p/4011153.html#3619904" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3619904);">@</a>
+黑米饭<br>更新下sqoop 重新启动就好了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3652200,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3652200,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3705024" class="layer">#23楼</a><a name="3705024" id="comment_anchor_3705024"></a>  <span class="comment_date">2017-06-01 17:11</span> <a id="a_comment_author_3705024" href="http://home.cnblogs.com/u/788999/" target="_blank">L_喂--</a> <a href="http://msg.cnblogs.com/send/L_%E5%96%82--" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3705024" class="blog_comment_body">博主有没有遇到过使用Ubuntu16.04？或者有没有类似的人用Ubuntu装CDH，到了hue的时候还是报错 Unexpected error. Unable to verify database connection.？其他hive和oozie连接没问题。试了lxml好像没起作用</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3705024,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3705024,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3728812" class="layer">#24楼</a><a name="3728812" id="comment_anchor_3728812"></a>  <span class="comment_date">2017-07-05 11:27</span> <a id="a_comment_author_3728812" href="http://home.cnblogs.com/u/1194172/" target="_blank">小熊维维尼</a> <a href="http://msg.cnblogs.com/send/%E5%B0%8F%E7%86%8A%E7%BB%B4%E7%BB%B4%E5%B0%BC" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3728812" class="blog_comment_body">楼主，我用了 一台虚拟机，按照上面方法安装，总是在“群集设置”那个页面出现错误，后来登陆之后返现“HostManger未启动”，上面这套方法必须集群才能用么，单机不可以么？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3728812,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3728812,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="http://www.cnblogs.com/jasondan/p/4011153.html#3754916" class="layer">#25楼</a><a name="3754916" id="comment_anchor_3754916"></a><span id="comment-maxId" style="display:none;">3754916</span><span id="comment-maxDate" style="display:none;">2017/8/10 16:55:42</span>  <span class="comment_date">2017-08-10 16:55</span> <a id="a_comment_author_3754916" href="http://home.cnblogs.com/u/1217152/" target="_blank">xiaozuoxin</a> <a href="http://msg.cnblogs.com/send/xiaozuoxin" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3754916" class="blog_comment_body">你好 我的安装环境是 centos6.8 各个环境都是安装你的要求来做的， 但是安装服务到  hive metastore  数据库的时候 失败了，<br>好多次 都是这样的问题</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3754916,&#39;Digg&#39;,this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3754916,&#39;Bury&#39;,this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="http://www.cnblogs.com/jasondan/p/4011153.html#" onclick="return RefreshPage();">刷新页面</a><a href="http://www.cnblogs.com/jasondan/p/4011153.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.gcpowertools.com.cn/products/activereports_overview.htm?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=AR&amp;utm_campaign=community" target="_blank">【推荐】报表开发有捷径：快速设计轻松集成，数据可视化和交互</a><br><a href="https://cloud.tencent.com/act/free?fromSource=gwzcw.562633.562633.562633" target="_blank">【推荐】腾讯云 普惠云计算 0门槛体验</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a href="http://activity.huaweicloud.com/mobiletest/index.html?utm_source=cnblogs&amp;utm_medium=MediaB&amp;utm_campaign=%E5%8D%8E%E4%B8%BA%E4%BA%91-10%E6%9C%88%E5%B9%BF%E5%91%8A%E6%8A%95%E6%94%BE&amp;utm_content=%E5%8D%9A%E5%AE%A2%E5%9B%AD%E5%86%85%E9%A1%B5C1%E7%9F%A9%E5%BD%A2&amp;utm_term=%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91%E4%BA%91-mobiletest" target="_blank"><img width="300" height="250" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/24442-20171024183729457-421799845.jpg" alt="华为云C2_1024"></a></div>
+
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/22446/" target="_blank"><img width="468" height="60" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/24442-20171001085719794-417760373.jpg" alt="阿里云1001"></a></div>
+
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div style="text-align:center;"><img src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/20140925144844.png" style="border: 1px solid #ccc;padding: 2px;margin-bottom: 5px;"></div>
+<div>对技术充满热情，对未知领域充满好奇，热爱各种折腾的程序员，码龄10年有余，对多个领域略知一二，时常苦于不求甚解，学艺不精。近几年专注于大数据领域，对Spark有一定研究。</div>
+<div>喜欢自由，热爱开源
+<a class="github-button" href="https://github.com/stanzhai" data-style="mega" data-count-href="/stanzhai/followers" data-count-api="/users/stanzhai#followers" data-count-aria-label="# followers on GitHub" aria-label="Follow @stanzhai on GitHub">Follow @stanzhai</a>
+<br>TechBlog：<a href="http://stanzhai.site/" target="_blank">stanzhai.site</a></div><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/jasondan/">StanZhai</a><br>园龄：<a href="http://home.cnblogs.com/u/jasondan/" title="入园时间：2011-07-01">6年3个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/jasondan/followers/">384</a><br>关注：<a href="http://home.cnblogs.com/u/jasondan/followees/">21</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;ab2221a6-b4a3-e011-a53f-842b2b196315&#39;)">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style="display:none"></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div class="search"><input id="q" type="search" results="0" placeholder="搜索" onkeydown="return zzk_go_enter(event);"></div><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+<div id="widget_my_google" class="div_my_zzk"><input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/jasondan/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/jasondan/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/jasondan/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/jasondan/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/jasondan/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/jasondan/tag/hadoop/">hadoop</a>(1)</li><li><a href="http://www.cnblogs.com/jasondan/tag/spark/">spark</a>(1)</li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+<h3 class="catListTitle">随笔分类<span style="font-size:11px;font-weight:normal">(120)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/jasondan/category/520512.html">.Net(18)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/jasondan/category/319344.html">iPhone(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/jasondan/category/520513.html">Linux(12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/jasondan/category/541422.html">Node.js(8)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/jasondan/category/520509.html">Web(18)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/jasondan/category/520511.html">大数据(16)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/jasondan/category/548000.html">开源项目(3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/jasondan/category/518417.html">爬虫&amp;舆情(6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/jasondan/category/520515.html">数据库(12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="http://www.cnblogs.com/jasondan/category/522149.html">算法(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="http://www.cnblogs.com/jasondan/category/520510.html">游戏(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_11" href="http://www.cnblogs.com/jasondan/category/520514.html">杂七杂八(23)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(100)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/jasondan/archive/2017/10.html">2017年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/jasondan/archive/2017/09.html">2017年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/jasondan/archive/2017/05.html">2017年5月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/jasondan/archive/2017/03.html">2017年3月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/jasondan/archive/2017/02.html">2017年2月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/jasondan/archive/2017/01.html">2017年1月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/jasondan/archive/2016/12.html">2016年12月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/jasondan/archive/2016/11.html">2016年11月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/jasondan/archive/2015/05.html">2015年5月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="http://www.cnblogs.com/jasondan/archive/2015/01.html">2015年1月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_10" href="http://www.cnblogs.com/jasondan/archive/2014/12.html">2014年12月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_11" href="http://www.cnblogs.com/jasondan/archive/2014/11.html">2014年11月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_12" href="http://www.cnblogs.com/jasondan/archive/2014/10.html">2014年10月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_13" href="http://www.cnblogs.com/jasondan/archive/2014/09.html">2014年9月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_14" href="http://www.cnblogs.com/jasondan/archive/2014/08.html">2014年8月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_15" href="http://www.cnblogs.com/jasondan/archive/2014/07.html">2014年7月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_16" href="http://www.cnblogs.com/jasondan/archive/2014/06.html">2014年6月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_17" href="http://www.cnblogs.com/jasondan/archive/2014/05.html">2014年5月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_18" href="http://www.cnblogs.com/jasondan/archive/2014/04.html">2014年4月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_19" href="http://www.cnblogs.com/jasondan/archive/2014/03.html">2014年3月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_20" href="http://www.cnblogs.com/jasondan/archive/2014/02.html">2014年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_21" href="http://www.cnblogs.com/jasondan/archive/2014/01.html">2014年1月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_22" href="http://www.cnblogs.com/jasondan/archive/2013/12.html">2013年12月 (7)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_23" href="http://www.cnblogs.com/jasondan/archive/2013/09.html">2013年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_24" href="http://www.cnblogs.com/jasondan/archive/2012/11.html">2012年11月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_25" href="http://www.cnblogs.com/jasondan/archive/2012/10.html">2012年10月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_26" href="http://www.cnblogs.com/jasondan/archive/2012/05.html">2012年5月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_27" href="http://www.cnblogs.com/jasondan/archive/2012/02.html">2012年2月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_28" href="http://www.cnblogs.com/jasondan/archive/2011/09.html">2011年9月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_29" href="http://www.cnblogs.com/jasondan/archive/2011/08.html">2011年8月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_30" href="http://www.cnblogs.com/jasondan/archive/2011/07.html">2011年7月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_31" href="http://www.cnblogs.com/jasondan/archive/2011/04.html">2011年4月 (9)</a> </li>
+
+</ul>
+
+</div>
+
+</div><div id="sidebar_scorerank" class="sidebar-block">
+<div class="catListBlogRank">
+<h3 class="catListTitle">积分与排名</h3>
+<ul>
+	<li class="liScore">
+		积分 -	120499
+	</li>
+	<li class="liRank">
+		排名 -	2238
+	</li>
+</ul>
+</div>
+
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jasondan/p/7660521.html#3809420">1. Re:合并Spark社区代码的正确姿势</a></li>
+        <li class="recent_comment_body">哥你哪家公司，还需要人吗？</li>
+        <li class="recent_comment_author">--Ideasex</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jasondan/p/3490470.html#3783968">2. Re:Sql合并两个select查询</a></li>
+        <li class="recent_comment_body">好吧，我也不确定该如何称呼lz 的这种查询方法，如有不对还请楼主纠正</li>
+        <li class="recent_comment_author">--woali</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jasondan/p/3490470.html#3783966">3. Re:Sql合并两个select查询</a></li>
+        <li class="recent_comment_body">两条sql , union , lz 的派生查询 纠结中。。。求教大神</li>
+        <li class="recent_comment_author">--woali</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jasondan/p/3490470.html#3783965">4. Re:Sql合并两个select查询</a></li>
+        <li class="recent_comment_body">SELECT a.selfid, a.guestid as a, b.selfid, b.guestid as b FROM (select selfid,guestid from userjio......</li>
+        <li class="recent_comment_author">--woali</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jasondan/p/3490470.html#3783962">5. Re:Sql合并两个select查询</a></li>
+        <li class="recent_comment_body">这样写 效率和 union 比起 那个效率更高，直接写两条sql 和 union and lz 写法 哪种效率 更好</li>
+        <li class="recent_comment_author">--woali</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView fixedReadRank">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/jasondan/p/4011153.html">1. 离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程(37815)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/3497757.html">2. 我为开源做贡献，网页正文提取——Html2Article(18880)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/3491258.html">3. MySql使用show processlist查看正在执行的Sql语句(15898)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/6380597.html">4. 【福利】成为专业程序员路上用到的各种优秀资料、神器及框架(15276)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/4145305.html">5. 【强烈谴责】博客园园友随意抄袭他人文章并作为自己原创的行为(10524)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/jasondan/p/4145305.html">1. 【强烈谴责】博客园园友随意抄袭他人文章并作为自己原创的行为(175)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/3497757.html">2. 我为开源做贡献，网页正文提取——Html2Article(87)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/6380597.html">3. 【福利】成为专业程序员路上用到的各种优秀资料、神器及框架(78)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/3319853.html">4. 今天把骗子耍了一把(76)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/luoo-down.html">5. 落网的音乐很好听的，你造么？不能下载啊，怎么破？(44)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView fixedRecRank">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/jasondan/p/4145305.html">1. 【强烈谴责】博客园园友随意抄袭他人文章并作为自己原创的行为(210)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/6380597.html">2. 【福利】成为专业程序员路上用到的各种优秀资料、神器及框架(196)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/3319853.html">3. 今天把骗子耍了一把(68)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/3497757.html">4. 我为开源做贡献，网页正文提取——Html2Article(57)</a></li><li><a href="http://www.cnblogs.com/jasondan/p/luoo-down.html">5. 落网的音乐很好听的，你造么？不能下载啊，怎么破？(55)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2017 StanZhai
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+<!--PageEndHtml Block Begin-->
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async="" defer="" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/buttons.js"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+  $('div.post,div.day,div.entrylistItem').prepend('<div class="postIcon"></div>');
+  $('.postSeparator').after('<div class="postIcon"></div>');
+  $('#homepage_top_pager').remove();
+  $('.topicListFooter:first').append($('.topicListFooter:last .pager').html());
+  $('.topicListFooter a:contains("上一页")').addClass('prev');
+  $('.topicListFooter a:contains("下一页")').addClass('next');
+  $('#comments_pager_top,#under_post_news,#under_post_kb,#ad_text_under_commentbox,#site_nav_under').remove();
+  // 搜索框
+  $('#blog-sidecolumn').prepend('<div class="search"><input id="q" type="search" results="0" placeholder="搜索" onkeydown="return zzk_go_enter(event);"/></div>');
+  // 没有评论时移除评论框
+  if ($('#blog-comments-placeholder *').length == 0) {
+    $('#blog-comments-placeholder').remove();
+  }
+  if ($('.topicListFooter').length != 1) {
+    $('.topicListFooter:last').remove();
+  }
+  // 处理页面滚动过长的问题
+  $(window).scroll(function () {
+    var readRank = '.catListView:first';
+    var recRank = '.catListView:last';
+    var blogRank = $('.catListBlogRank');
+    var top = blogRank.offset().top + blogRank.height();
+    if ($(window).scrollTop() > top) {
+      $(readRank).addClass('fixedReadRank');
+      $(recRank).addClass('fixedRecRank');
+    } else {
+      $(readRank).removeClass('fixedReadRank');
+      $(recRank).removeClass('fixedRecRank');
+    } 
+  });
+});
+</script>
+<!-- JiaThis Button BEGIN -->
+<script type="text/javascript">
+var jiathis_config={
+  data_track_clickback:true,
+  showClose:true,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/jiathis_r.js" charset="utf-8"></script><script src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/ckepop.js" charset="utf-8"></script><script src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/ckecenterpop.js" charset="utf-8"></script><script type="text/javascript" src="./离线安装Cloudera Manager 5和CDH5(最新版5.1.3) 完全教程 - StanZhai - 博客园_files/plugin.client.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+<!--PageEndHtml Block End-->
+
+
+</body></html>

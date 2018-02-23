@@ -1,0 +1,11 @@
+//此文件是给InfoQ中文站专用，勿删。修改请联系Gary
+if (Math.random() < 0.3333) {
+  $(".text_info .random_links").before('<div style="margin-bottom:5px"><b>【QCon北京2017】将于 4 月 16～18 日在北京国家会议中心举行。来自海外的Google、Facebook、Airbnb、LinkedIn、Confluent、AppDynamics，国内的百度、阿里巴巴、腾讯、京东、滴滴出行、爱奇艺、微博等公司的大咖讲师已就位，豪华技术盛宴等你开启。<a href="http://2017.qconbeijing.com/apply?utm_source=infoq&utm_medium=textads" target="_blank">现在报名即享8折特惠</a>。</b></div>')
+  console.log('请关注infoq微信帐号:infoqchina');
+} else if(Math.random()>=0.3333&&Math.random()<0.6666){
+  $(".text_info .random_links").before('<div style="margin-bottom:5px"><b>【GMTC北京2017】将于 6 月 9～10日在北京·国际会议中心举行。本届大会主题为智能时代的大前端，将带来11+热点专题，涵盖Native动态化、新技术、性能优化、移动AI等热门技术，及Web框架实践、移动架构等一手实践，目前最低价6折售票火热进行中，团购更优惠，过期不候哦，请猛戳<a href="http://gmtc.geekbang.org/?utm_source=infoq&utm_campaign=wenzhang&utm_term=end" target="_blank">大会官网</a>报名吧！</b></div>')
+  console.log('请关注infoq微信帐号:infoqchina');
+}else{
+  $(".text_info .random_links").before('<div style="margin-bottom:5px"><b>【ArchSummit深圳2017】来深圳遇见最精彩的技术案例！低延迟系统架构、推荐系统架构、电商核心架构等技术架构如何落地？财猫金融CTO巨建华、高升控股技术VP唐文、欢聚时代安全中心总监韩方等上百位技术专家为我们准备了哪些技术内容？<a href="http://sz2017.archsummit.com/?utm_source=infoq&utm_medium=wenzhangbottm&utm_term=wenzilian&utm_content=7zhe" target="_blank">7折报名最后一周，更多技术内容点击这里。</a></b></div>')
+  console.log('请关注infoq微信帐号:infoqchina');
+}

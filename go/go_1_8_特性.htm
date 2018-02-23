@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)http://tonybai.com/2017/02/03/some-changes-in-go-1-8/ -->
+<html class="no-js"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./note_files/shares.php" charset="utf-8"></script>
+    						<title>Go 1.8中值得关注的几个变化 | Tony Bai</title>			
+														<meta name="keywords" content="AES,buildmode,C,Cgo,ChaCha20,cloudflare,Compiler,Context,database/sql,defer,GC,Go,Go1,go1.4,Go1.7,go1.8,Go2,gobug,Golang,GOPATH,GOROOT,gotoolchain,govendor,http,HTTP/2-Push,HTTP2,https,Interface,json,ldd,Mutex,nm,Performance,plugins,Poly1305,pprof,Slice,sort,SSA,struct,TIOBE,TLS,X25519,XML,标准库">
+		<meta name="description" content="在已经过去的2016年，Go语言继在2009年之后再次成为编程语言界的明星- 问鼎TIOBE 2016年度语言。这与Go team、Go community和全世界的Gophers的努力是分不开的。按计划在这个2月份，Go team将正式发布Go 1.8版本(截">
+		<meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+		<link rel="shortcut icon" href="http://tonybai.com/favicon.ico" type="image/x-icon">
+		<link rel="alternate" type="application/rss+xml" title="Tony Bai » Feed" href="http://tonybai.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Tony Bai » 评论 Feed" href="http://tonybai.com/comments/feed/">
+
+			<script type="text/javascript" async="" src="./note_files/ga.js"></script><script type="text/javascript" async="" src="./note_files/ga.js"></script><script type="text/javascript">//<![CDATA[
+			// Google Analytics for WordPress by Yoast v4.2.8 | http://yoast.com/wordpress/google-analytics/
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-1218078-9']);
+							_gaq.push(['_trackPageview']);
+			(function () {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+			//]]></script>
+			<link rel="alternate" type="application/rss+xml" title="Tony Bai » Go 1.8中值得关注的几个变化 评论 Feed" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/feed/">
+<link rel="stylesheet" id="wp-recentcomments-css" href="./note_files/wp-recentcomments.css" type="text/css" media="screen">
+<link rel="stylesheet" id="normalize-css" href="./note_files/normalize.css" type="text/css" media="screen">
+<link rel="stylesheet" id="style-css" href="./note_files/style.css" type="text/css" media="screen">
+<script type="text/javascript" src="./note_files/l10n.js"></script>
+<script type="text/javascript" src="./note_files/html5shiv.js"></script>
+<script type="text/javascript" src="./note_files/jquery.js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tonybai.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tonybai.com/wp-includes/wlwmanifest.xml"> 
+<link rel="index" title="Tony Bai" href="http://tonybai.com/">
+<link rel="start" title="本不是第一篇的第一篇" href="http://tonybai.com/2004/09/15/the-first-blog/">
+<link rel="prev" title="以Kubeadm方式安装的Kubernetes集群的探索" href="http://tonybai.com/2017/01/24/explore-kubernetes-cluster-installed-by-kubeadm/">
+<link rel="next" title="TensorFlow入门：零基础建立第一个神经网络" href="http://tonybai.com/2017/02/06/build-your-first-neural-network-with-tensorflow/">
+<meta name="generator" content="WordPress 3.2.1">
+<link rel="shortlink" href="http://tonybai.com/?p=2143">
+
+<!-- All in One SEO Pack 2.0.2 by Michael Torbert of Semper Fi Web Design[313,367] -->
+<meta name="description" content="在已经过去的2016年，Go语言继在2009年之后再次成为编程语言界的明星- 问鼎TIOBE 2016年度语言。这与Go team、Go">
+
+<meta name="keywords" content="aes, buildmode, c, cgo, chacha20, cloudflare, compiler, context, database/sql, defer, gc, go, go1, go1.4, go1.7, go1.8, go2, gobug, golang, gopath, goroot, gotoolchain, govendor, http, http/2-push, http2, https, interface, json, ldd, mutex, nm, performance, plugins, poly1305, pprof, slice, sort, ssa, struct, tiobe, tls, x25519, xml, 标准库,buildmode,c,cgo,chacha20,cloudflare,compiler,context,database/sql,defer,gc,go,go1,go1.4,go1.7,go1.8,go2,gobug,golang,gopath,goroot,gotoolchain,govendor,http,http/2-push,http2,https,interface,json,ldd,mutex,nm,performance,plugins,poly1305,pprof,slice,sort,ssa,struct,tiobe,tls,x25519,xml,标准库,技术志">
+
+<link rel="canonical" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/">
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-1218078-9']);
+		  _gaq.push(['_trackPageview']);
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+<!-- /all in one seo pack -->
+	<link href="./note_files/bdsstyle.css" rel="stylesheet" type="text/css"><script src="./note_files/logger.js"></script></head>
+<body><iframe frameborder="0" style="display: none;" src="./note_files/saved_resource.html"></iframe><div id="bdshare_s" style="display: block;"><iframe id="bdsIfr" style="position:absolute;display:none;z-index:9999;" frameborder="0" src="./note_files/saved_resource(2).html"></iframe><div id="bdshare_l" style="display: none;"><div id="bdshare_l_c"><h6>分享到</h6><ul><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_mshare mshare">一键分享</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_qzone qqkj">QQ空间</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_tsina xlwb">新浪微博</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_bdysc bdysc">百度云收藏</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_renren rrw">人人网</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_tqq txwb">腾讯微博</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_bdxc bdxc">百度相册</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_kaixin001 kxw">开心网</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_tqf txpy">腾讯朋友</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_tieba bdtb">百度贴吧</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_douban db">豆瓣网</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_tsohu shwb">搜狐微博</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_bdhome bdhome">百度新首页</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_sqq sqq">QQ好友</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_thx thx">和讯微博</a></li><li><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="bds_more">更多...</a></li></ul><p><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" class="goWebsite">百度分享</a></p></div></div></div><link href="./note_files/jiathis_counter.css" rel="stylesheet" type="text/css"><link href="./note_files/jiathis_share.css" rel="stylesheet" type="text/css"><iframe frameborder="0" style="position: absolute; display: none; opacity: 0;" src="./note_files/saved_resource(3).html"></iframe><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; top: 50%; left: 50%; overflow: auto;"></div><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; overflow: auto;"></div><iframe frameborder="0" src="./note_files/jiathis_utility.html" style="display: none;"></iframe>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                <a id="logo" href="http://tonybai.com/">
+                   Tony Bai                </a>
+        	    <p class="description">一个程序员的心路历程</p>
+            </div>
+            <div>
+                <div class="menu"><ul><li class="page_item page-item-13"><a href="http://tonybai.com/about/" title="关于我">关于我</a></li><li class="page_item page-item-1917"><a href="http://tonybai.com/articles/" title="文章列表">文章列表</a></li></ul></div>
+            </div>
+        </div>
+    </div>
+</header>
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+<div class="col-8" id="main">
+	<div class="res-cons">
+					<article class="post">
+				<h1 class="post-title">Go 1.8中值得关注的几个变化</h1>
+				<ul class="post-meta">
+					<li>二月 3, 2017</li>
+					<li class="comment-count"><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#comments" title="《Go 1.8中值得关注的几个变化》上的评论">3 条评论</a></li>
+				</ul>
+				<div class="post-content">
+					<p>在已经过去的<a href="http://tonybai.com/2017/01/03/2016-summary/">2016年</a>，<a href="http://tonybai.com/tag/golang">Go语言</a>继在2009年之后再次成为编程语言界的明星- 问鼎<a href="http://www.tiobe.com/tiobe-index/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://www.tiobe.com&#39;]);">TIOBE</a> 2016年度语言。这与Go team、Go community和全世界的Gophers的努力是分不开的。按计划在这个2月份，Go team将正式发布Go 1.8版本(截至目前，Go的最新版本是<a href="https://github.com/golang/go/releases/tag/go1.8rc3" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">Go 1.8rc3</a>)。在这里我们一起来看一下在Go 1.8版本中都有哪些值得Gopher们关注的变化。</p>
+<h3>一、语言（Language）</h3>
+<p>Go 1.8版本依旧坚守Go Team之前的承诺，即<a href="https://golang.org/doc/go1compat.html" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://golang.org&#39;]);">Go1兼容性</a>：使用Go 1.7及以前版本编写的Go代码，理论上都可以通过Go 1.8进行编译并运行。因此在臆想中的<a href="https://dave.cheney.net/2016/10/25/introducing-go-2-0" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://dave.cheney.net&#39;]);">Go 2.0</a>变成现实之前，每个Go Release版本在语言这方面的“改变”都会是十分微小的。</p>
+<h4>1、仅tags不同的两个struct可以相互做显式类型转换</h4>
+<p>在Go 1.8版本以前，两个struct即便字段个数相同且每个字段类型均一样，但如果某个字段的tag描述不一样，这两个struct相互间也不能做显式类型转换，比如：</p>
+<pre><code>//go18-examples/language/structtag.go
+package main
+
+import "fmt"
+
+type XmlEventRegRequest struct {
+    AppID     string `xml:"appid"`
+    NeedReply int    `xml:"Reply,omitempty"`
+}
+
+type JsonEventRegRequest struct {
+    AppID     string `json:"appid"`
+    NeedReply int    `json:"reply,omitempty"`
+}
+
+func convert(in *XmlEventRegRequest) *JsonEventRegRequest {
+    out := &amp;JsonEventRegRequest{}
+    *out = (JsonEventRegRequest)(*in)
+    return out
+}
+
+func main() {
+    in := XmlEventRegRequest{
+        AppID:     "wx12345678",
+        NeedReply: 1,
+    }
+    out := convert(&amp;in)
+    fmt.Println(out)
+}
+
+</code></pre>
+<p>采用Go 1.7.4版本go compiler进行编译，我们会得到如下错误输出：</p>
+<pre><code>$go build structtag.go
+# command-line-arguments
+./structtag.go:17: cannot convert *in (type XmlEventRegRequest) to type JsonEventRegRequest
+</code></pre>
+<p>但在Go 1.8中，gc将忽略tag值的不同，使得显式类型转换成为可能：</p>
+<pre><code>$go run structtag.go
+&amp;{wx12345678 1}
+</code></pre>
+<p>改变虽小，但带来的便利却不小，否则针对上面代码中的convert，我们只能做逐一字段赋值了。</p>
+<h4>2、浮点常量的指数部分至少支持16bits长</h4>
+<p>在Go 1.8版本之前的<a href="https://golang.org/ref/spec" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://golang.org&#39;]);">The Go Programming Language Specificaton</a>中，关于浮点数常量的指数部分的描述如下：</p>
+<pre><code>Represent floating-point constants, including the parts of a complex constant, with a mantissa of at least 256 bits and a signed exponent of at least 32 bits.
+</code></pre>
+<p>在Go 1.8版本中，文档中对于浮点数常量指数部分的长度的实现的条件放宽了，由支持最少32bit，放宽到最少支持16bits：</p>
+<pre><code>Represent floating-point constants, including the parts of a complex constant, with a mantissa of at least 256 bits and a signed binary exponent of at least 16 bits.
+</code></pre>
+<p>但Go 1.8版本go compiler实际仍然支持至少32bits的指数部分长度，因此这个改变对现存的所有Go源码不会造成影响。</p>
+<h3>二、标准库（Standard Library）</h3>
+<p>Go号称是一门”Batteries Included”编程语言。“Batteries Included”指的就是Go语言强大的标准库。使用Go标准库，你可以完成绝大部分你想要的功能，而无需再使用第三方库。Go语言的每次版本更新，都会在标准库环节增加强大的功能、提升性能或是提高使用上的便利性。每次版本更新，标准库也是改动最大的部分。这次也不例外，我们逐一来看。</p>
+<h4>1、便于slice sort的sort.Slice函数</h4>
+<p>在Go 1.8之前我们要对一个slice进行sort，需要定义出实现了下面接口的slice type：</p>
+<pre><code>//$GOROOT/src/sort.go
+... ...
+type Interface interface {
+    // Len is the number of elements in the collection.
+    Len() int
+    // Less reports whether the element with
+    // index i should sort before the element with index j.
+    Less(i, j int) bool
+    // Swap swaps the elements with indexes i and j.
+    Swap(i, j int)
+}
+
+</code></pre>
+<p>标准库定义了一些应对常见类型slice的sort类型以及对应的函数：</p>
+<pre><code>StringSlice -&gt; sort.Strings
+IntSlice -&gt; sort.Ints
+Float64Slice -&gt; sort.Float64s
+</code></pre>
+<p>但即便如此，对于用户定义的struct或其他自定义类型的slice进行排序仍需定义一个新type，比如下面这个例子中的TiboeIndexByRank：</p>
+<pre><code>//go18-examples/stdlib/sort/sortslice-before-go18.go
+package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+type Lang struct {
+    Name string
+    Rank int
+}
+
+type TiboeIndexByRank []Lang
+
+func (l TiboeIndexByRank) Len() int           { return len(l) }
+func (l TiboeIndexByRank) Less(i, j int) bool { return l[i].Rank &lt; l[j].Rank }
+func (l TiboeIndexByRank) Swap(i, j int)      { l[i], l[j] = l[j], l[i] }
+
+func main() {
+    langs := []Lang{
+        {"rust", 2},
+        {"go", 1},
+        {"swift", 3},
+    }
+    sort.Sort(TiboeIndexByRank(langs))
+    fmt.Printf("%v\n", langs)
+}
+
+$go run sortslice-before-go18.go
+[{go 1} {rust 2} {swift 3}]
+
+</code></pre>
+<p>从上面的例子可以看到，我们要对[]Lang这个slice进行排序，我们就需要为之定义一个专门用于排序的类型：这里是TiboeIndexByRank，并让其实现sort.Interface接口。使用过sort包的gophers们可能都意识到了，我们在为新的slice type实现sort.Interface接口时，那三个方法的Body几乎每次都是一样的。为了使得gopher们在排序slice时编码更为简化和便捷，减少copy&amp;paste，Go 1.8为slice type新增了三个函数：Slice、SliceStable和SliceIsSorted。我们重新用Go 1.8的sort.Slice函数实现上面例子中的排序需求，代码如下：</p>
+<pre><code>//go18-examples/stdlib/sort/sortslice-in-go18.go
+package main
+
+import (
+    "fmt"
+    "sort"
+)
+
+type Lang struct {
+    Name string
+    Rank int
+}
+
+func main() {
+    langs := []Lang{
+        {"rust", 2},
+        {"go", 1},
+        {"swift", 3},
+    }
+    sort.Slice(langs, func(i, j int) bool { return langs[i].Rank &lt; langs[j].Rank })
+    fmt.Printf("%v\n", langs)
+}
+
+$go run sortslice-in-go18.go
+[{go 1} {rust 2} {swift 3}]
+</code></pre>
+<p>实现sort，需要三要素：Len、Swap和Less。在1.8之前，我们通过实现sort.Interface实现了这三个要素；而在1.8版本里，Slice函数通过reflect获取到swap和length，通过结合闭包实现的less参数让Less要素也具备了。我们从下面sort.Slice的源码可以看出这一点：</p>
+<pre><code>// $GOROOT/src/sort/sort.go
+... ...
+func Slice(slice interface{}, less func(i, j int) bool) {
+    rv := reflect.ValueOf(slice)
+    swap := reflect.Swapper(slice)
+    length := rv.Len()
+    quickSort_func(lessSwap{less, swap}, 0, length, maxDepth(length))
+}
+
+</code></pre>
+<h4>2、支持HTTP/2 Push</h4>
+<p>继在<a href="http://tonybai.com/2016/02/21/some-changes-in-go-1-6/">Go 1.6版本</a>全面支持<a href="https://en.wikipedia.org/wiki/HTTP/2" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://en.wikipedia.org&#39;]);">HTTP/2</a>之后，Go 1.8又新增了对<a href="https://en.wikipedia.org/wiki/HTTP/2_Server_Push" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://en.wikipedia.org&#39;]);">HTTP/2 Push</a>的支持。<a href="https://en.wikipedia.org/wiki/HTTP/2" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://en.wikipedia.org&#39;]);">HTTP/2</a>是在<a href="http://tonybai.com/2015/04/30/go-and-https/">HTTPS</a>的基础上的下一代HTTP协议，虽然当前HTTPS的应用尚不是十分广泛。而<a href="https://tools.ietf.org/html/rfc7540#section-8.2" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://tools.ietf.org&#39;]);">HTTP/2 Push</a>是HTTP/2的一个重要特性，无疑其提出的初衷也仍然是为了改善网络传输性能，提高Web服务的用户侧体验。这里我们可以借用知名网络提供商<a href="https://blog.cloudflare.com/announcing-support-for-http-2-server-push-2/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://blog.cloudflare.com&#39;]);">Cloudflare blog</a>上的一幅示意图来诠释HTTP/2 Push究竟是什么：</p>
+<p><img src="./note_files/cloudflare-http2-server-push.png" alt="img{512x368}"></p>
+<p>从上图中，我们可以看到：当Browser向Server发起Get page.html请求后，在同一条TCP Connection上，Server主动将style.css和image.png两个资源文件推送(Push)给了Browser。这是由于Server端启用了HTTP/2 Push机制，并预测判断Browser很可能会在接下来发起Get style.css和image.png两个资源的请求。这是一种典型的：“你可能会需要，但即使你不要，我也推给你”的处世哲学^0^。这种机制虽然在一定程度上能改善网络传输性能（减少Client发起Get的次数），但也可能造成带宽的浪费，因为这些主动推送给Browser的资源很可能是Browser所不需要的或是已经在Browser cache中存在的资源。</p>
+<p>接下来，我们来看看Go 1.8是如何在net/http包中提供对HTTP/2 Push的支持的。由于HTTP/2是基于HTTPS的，因此我们先使用generate_cert.go生成程序所需的私钥和证书：</p>
+<pre><code>// 在go18-examples/stdlib/http2-push目录下，执行：
+
+$go run $GOROOT/src/crypto/tls/generate_cert.go --host 127.0.0.1
+2017/01/27 10:58:01 written cert.pem
+2017/01/27 10:58:01 written key.pem
+</code></pre>
+<p>支持HTTP/2 Push的server端代码如下：</p>
+<pre><code>// go18-examples/stdlib/http2-push/server.go
+
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+)
+
+const mainJS = `document.write('Hello World!');`
+
+func main() {
+    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        if r.URL.Path != "/" {
+            http.NotFound(w, r)
+            return
+        }
+        pusher, ok := w.(http.Pusher)
+        if ok {
+            // If it's a HTTP/2 Server.
+            // Push is supported. Try pushing rather than waiting for the browser.
+            if err := pusher.Push("/static/img/gopherizeme.png", nil); err != nil {
+                log.Printf("Failed to push: %v", err)
+            }
+        }
+        fmt.Fprintf(w, `&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Hello Go 1.8&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;img src="/static/img/gopherizeme.png"&gt;&lt;/img&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+`)
+    })
+    log.Fatal(http.ListenAndServeTLS(":8080", "./cert.pem", "./key.pem", nil))
+}
+</code></pre>
+<p>运行这段代码，打开Google Chrome浏览器，输入：https://127.0.0.1:8080，忽略浏览器的访问非受信网站的警告，继续浏览你就能看到下面的页面（这里打开了Chrome的“检查”功能）：</p>
+<p><img src="./note_files/http2-push-demo.png" alt="img{512x368}"></p>
+<p>从示例图中的“检查”窗口，我们可以看到<a href="https://gopherize.me/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://gopherize.me&#39;]);">gopherizeme.png</a>这个image资源就是Server主动推送给客户端的，这样浏览器在Get /后无需再发起一次Get /static/img/gopherizeme.png的请求了。</p>
+<p>而这一切的背后，其实是HTTP/2的ResponseWriter实现了Go 1.8新增的http.Pusher interface：</p>
+<pre><code>// $GOROOT/src/net/http/http.go
+
+// Pusher is the interface implemented by ResponseWriters that support
+// HTTP/2 server push. For more background, see
+// https://tools.ietf.org/html/rfc7540#section-8.2.
+type Pusher interface {
+    ... ...
+    Push(target string, opts *PushOptions) error
+}
+</code></pre>
+<h4>3、支持HTTP Server优雅退出</h4>
+<p>Go 1.8中增加对HTTP Server优雅退出(gracefullly exit)的支持，对应的新增方法为：</p>
+<pre><code>func (srv *Server) Shutdown(ctx context.Context) error
+</code></pre>
+<p>和server.Close在调用时瞬间关闭所有active的Listeners和所有状态为New、Active或idle的connections不同，server.Shutdown首先关闭所有active Listeners和所有处于idle状态的Connections，然后无限等待那些处于active状态的connection变为idle状态后，关闭它们并server退出。如果有一个connection依然处于active状态，那么server将一直block在那里。因此Shutdown接受一个context参数，调用者可以通过context传入一个Shutdown等待的超时时间。一旦超时，Shutdown将直接返回。对于仍然处理active状态的Connection，就任其自生自灭（通常是进程退出后，自动关闭）。通过Shutdown的源码我们也可以看出大致的原理：</p>
+<pre><code>// $GOROOT/src/net/http/server.go
+... ...
+func (srv *Server) Shutdown(ctx context.Context) error {
+    atomic.AddInt32(&amp;srv.inShutdown, 1)
+    defer atomic.AddInt32(&amp;srv.inShutdown, -1)
+
+    srv.mu.Lock()
+    lnerr := srv.closeListenersLocked()
+    srv.closeDoneChanLocked()
+    srv.mu.Unlock()
+
+    ticker := time.NewTicker(shutdownPollInterval)
+    defer ticker.Stop()
+    for {
+        if srv.closeIdleConns() {
+            return lnerr
+        }
+        select {
+        case &lt;-ctx.Done():
+            return ctx.Err()
+        case &lt;-ticker.C:
+        }
+    }
+}
+
+</code></pre>
+<p>我们来编写一个例子：</p>
+<pre><code>// go18-examples/stdlib/graceful/server.go
+
+import (
+    "context"
+    "io"
+    "log"
+    "net/http"
+    "os"
+    "os/signal"
+    "time"
+)
+
+func main() {
+    exit := make(chan os.Signal)
+    signal.Notify(exit, os.Interrupt)
+
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        log.Println("Handle a new request:", *r)
+        time.Sleep(10 * time.Second)
+        log.Println("Handle the request ok!")
+        io.WriteString(w, "Finished!")
+    })
+
+    srv := &amp;http.Server{
+        Addr:    ":8080",
+        Handler: http.DefaultServeMux,
+    }
+
+    go func() {
+        if err := srv.ListenAndServe(); err != nil {
+            log.Printf("listen: %s\n", err)
+        }
+    }()
+
+    &lt;-exit // wait for SIGINT
+    log.Println("Shutting down server...")
+
+    // Wait no longer than 30 seconds before halting
+    ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+    err := srv.Shutdown(ctx)
+
+    log.Println("Server gracefully stopped:", err)
+}
+
+</code></pre>
+<p>在上述例子中，我们通过<a href="http://tonybai.com/2012/09/21/signal-handling-in-go/">设置Linux Signal的处理函数</a>来拦截Linux Interrupt信号并处理。我们通过context给Shutdown传入30s的超时参数，这样Shutdown在退出之前会给各个Active connections 30s的退出时间。下面分为几种情况run一下这个例子：</p>
+<p>a)  当前无active connections</p>
+<p>在这种情况下，我们run上述demo，ctrl + C后，上述demo直接退出：</p>
+<pre><code>$go run server.go
+^C2017/02/02 15:13:16 Shutting down server...
+2017/02/02 15:13:16 Server gracefully stopped: &lt;nil&gt;
+</code></pre>
+<p>b) 当前有未处理完的active connections，ctx 超时</p>
+<p>为了模拟这一情况，我们修改一下参数。让每个request handler的sleep时间为30s，而Shutdown ctx的超时时间改为10s。我们再来运行这个demo，并通过curl命令连接该server(curl  -v http://localhost:8080)，待连接成功后，再立即ctrl+c停止Server，待约10s后，我们得到如下日志：</p>
+<pre><code>$go run server.go
+2017/02/02 15:15:57 Handle a new request: {GET / HTTP/1.1 1 1 map[User-Agent:[curl/7.30.0] Accept:[*/*]] {} &lt;nil&gt; 0 [] false localhost:8080 map[] map[] &lt;nil&gt; map[] [::1]:52590 / &lt;nil&gt; &lt;nil&gt; &lt;nil&gt; 0xc420016700}
+^C2017/02/02 15:15:59 Shutting down server...
+2017/02/02 15:15:59 listen: http: Server closed
+2017/02/02 15:16:09 Server gracefully stopped: context deadline exceeded
+</code></pre>
+<p>c) 当前有未处理完的active connections，ctx超时之前，这些connections处理ok了</p>
+<p>我们将上述demo的参数还原，即request handler sleep 10s，而Shutdown ctx超时时间为30s，运行这个Demo后，通过curl命令连接该server，待连接成功后，再立即ctrl+c停止Server。等待约10s后，我们得到如下日志：</p>
+<pre><code>$go run server.go
+2017/02/02 15:19:56 Handle a new request: {GET / HTTP/1.1 1 1 map[User-Agent:[curl/7.30.0] Accept:[*/*]] {} &lt;nil&gt; 0 [] false localhost:8080 map[] map[] &lt;nil&gt; map[] [::1]:52605 / &lt;nil&gt; &lt;nil&gt; &lt;nil&gt; 0xc420078500}
+^C2017/02/02 15:19:59 Shutting down server...
+2017/02/02 15:19:59 listen: http: Server closed
+2017/02/02 15:20:06 Handle the request ok!
+2017/02/02 15:20:06 Server gracefully stopped: &lt;nil&gt;
+</code></pre>
+<p>可以看出，当ctx超时之前，request处理ok，connection关闭。这时不再有active connection和idle connection了，Shutdown成功返回，server立即退出。</p>
+<h4>4、Mutex Contention Profiling</h4>
+<p>Go 1.8中runtime新增了对Mutex和RWMutex的profiling(剖析)支持。golang team成员，负责从go user角度去看待go team的work是否满足用户需求的<a href="https://github.com/rakyll" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">Jaana B. Dogan</a>在其个人站点上写了一篇<a href="https://rakyll.org/mutexprofile/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://rakyll.org&#39;]);">介绍mutex profiling的文章</a>，这里借用一下其中的Demo：</p>
+<pre><code>//go18-examples/stdlib/mutexprofile/mutexprofile.go
+
+package main
+
+import (
+    "net/http"
+    _ "net/http/pprof"
+    "runtime"
+    "sync"
+)
+
+func main() {
+    var mu sync.Mutex
+    var items = make(map[int]struct{})
+
+    runtime.SetMutexProfileFraction(5)
+    for i := 0; i &lt; 1000*1000; i++ {
+        go func(i int) {
+            mu.Lock()
+            defer mu.Unlock()
+            items[i] = struct{}{}
+        }(i)
+    }
+
+    http.ListenAndServe(":8888", nil)
+}
+</code></pre>
+<p>运行该程序后，在浏览器中输入：http://localhost:8888/debug/pprof/mutex，你就可以看到有关该程序的mutex profile（耐心等待一小会儿，因为数据的采样需要一点点时间^0^）：</p>
+<pre><code>--- mutex:
+cycles/second=2000012082
+sampling period=5
+378803564 776 @ 0x106c4d1 0x13112ab 0x1059991
+</code></pre>
+<p>构建该程序，然后通过下面命令：</p>
+<pre><code>go build mutexprofile.go
+./mutexprofile
+go tool pprof mutexprofile http://localhost:8888/debug/pprof/mutex?debug=1
+</code></pre>
+<p>可以进入pprof交互界面，这个是所有用过<a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/">go pprof工具</a>的<a href="http://tonybai.com/2016/04/18/my-experience-of-gopherchina2016/">gophers</a>们所熟知的：</p>
+<pre><code>$go tool pprof mutexprofile http://localhost:8888/debug/pprof/mutex?debug=1
+Fetching profile from http://localhost:8888/debug/pprof/mutex?debug=1
+Saved profile in /Users/tony/pprof/pprof.mutexprofile.localhost:8888.contentions.delay.003.pb.gz
+Entering interactive mode (type "help" for commands)
+(pprof) list
+Total: 12.98s
+ROUTINE ======================== main.main.func1 in /Users/tony/Test/GoToolsProjects/src/github.com/bigwhite/experiments/go18-examples/stdlib/mutexprofile/mutexprofile.go
+         0     12.98s (flat, cum)   100% of Total
+         .          .     17:            mu.Lock()
+         .          .     18:            defer mu.Unlock()
+         .          .     19:            items[i] = struct{}{}
+         .          .     20:        }(i)
+         .          .     21:    }
+         .     12.98s     22:
+         .          .     23:    http.ListenAndServe(":8888", nil)
+         .          .     24:}
+ROUTINE ======================== runtime.goexit in /Users/tony/.bin/go18rc2/src/runtime/asm_amd64.s
+         0     12.98s (flat, cum)   100% of Total
+         .          .   2192:    RET
+         .          .   2193:
+         .          .   2194:// The top-most function running on a goroutine
+         .          .   2195:// returns to goexit+PCQuantum.
+         .          .   2196:TEXT runtime·goexit(SB),NOSPLIT,$0-0
+         .     12.98s   2197:    BYTE    $0x90    // NOP
+         .          .   2198:    CALL    runtime·goexit1(SB)    // does not return
+         .          .   2199:    // traceback from goexit1 must hit code range of goexit
+         .          .   2200:    BYTE    $0x90    // NOP
+         .          .   2201:
+         .          .   2202:TEXT runtime·prefetcht0(SB),NOSPLIT,$0-8
+ROUTINE ======================== sync.(*Mutex).Unlock in /Users/tony/.bin/go18rc2/src/sync/mutex.go
+    12.98s     12.98s (flat, cum)   100% of Total
+         .          .    121:            return
+         .          .    122:        }
+         .          .    123:        // Grab the right to wake someone.
+         .          .    124:        new = (old - 1&lt;&lt;mutexWaiterShift) | mutexWoken
+         .          .    125:        if atomic.CompareAndSwapInt32(&amp;m.state, old, new) {
+    12.98s     12.98s    126:            runtime_Semrelease(&amp;m.sema)
+         .          .    127:            return
+         .          .    128:        }
+         .          .    129:        old = m.state
+         .          .    130:    }
+         .          .    131:}
+(pprof) top10
+1.29s of 1.29s total (  100%)
+      flat  flat%   sum%        cum   cum%
+     1.29s   100%   100%      1.29s   100%  sync.(*Mutex).Unlock
+         0     0%   100%      1.29s   100%  main.main.func1
+         0     0%   100%      1.29s   100%  runtime.goexit
+
+</code></pre>
+<p>go pprof的另外一个用法就是在go test时，mutexprofile同样支持这一点：</p>
+<pre><code>go test -mutexprofile=mutex.out
+go tool pprof &lt;test.binary&gt; mutex.out
+</code></pre>
+<h4>5、其他重要改动</h4>
+<p>Go 1.8标准库还有两个值得注意的改动，一个是：crypto/tls，另一个是database/sql。</p>
+<p>在<a href="http://tonybai.com/2015/04/30/go-and-https/">HTTPS</a>逐渐成为主流的今天，各个编程语言对HTTPS连接的底层加密协议- <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://en.wikipedia.org&#39;]);">TLS协议</a>支持的成熟度日益被人们所关注。Go 1.8给广大Gophers们带来了一个更为成熟、性能更好、更为安全的TLS实现，同时也增加了对一些TLS领域最新协议规范的支持。无论你是实现TLS Server端，还是Client端，都将从中获益。</p>
+<p>Go 1.8在crypto/tls中提供了基于ChaCha20-Poly1305的cipher suite，其中ChaCha20是一种stream cipher算法；而Poly1305则是一种code authenticator算法。它们共同组成一个TLS suite。使用这个suite，将使得你的web service或站点<a href="https://blog.cloudflare.com/do-the-chacha-better-mobile-performance-with-cryptography/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://blog.cloudflare.com&#39;]);">具有更好的mobile浏览性能</a>，这是因为传统的AES算法实现在没有<a href="http://en.wikipedia.org/wiki/AES_instruction_set" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://en.wikipedia.org&#39;]);">硬件支持</a>的情况下cost更多。因此，如果你在使用tls时没有指定cipher suite，那么Go 1.8会根据硬件支持情况（是否有AES的硬件支持），来决定是使用ChaCha20还是AES算法。除此之外，crypto/tls还实现了更为安全和高效的<a href="https://www.rfc-editor.org/rfc/rfc7748.txt" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://www.rfc-editor.org&#39;]);">X25519</a>密钥交换算法等。</p>
+<p><a href="http://tonybai.com/2014/11/04/some-changes-in-go-1-4/">Go 1.4</a>以来，database/sql包的变化很小，但对于该包的feature需求却在与日俱增。终于在Go 1.8这个dev cycle中，<a href="https://github.com/kardianos/govendor" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">govendor</a>的作者<a href="https://github.com/kardianos" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">Daniel Theophanes</a>在<a href="https://github.com/bradfitz" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">Brad Fitzpatrick</a>的“指导”下，开始对database/sql进行“大规模”的改善。在Go 1.8中，借助于context.Context的帮助，database/sql增加了Cancelable Queries、SQL Database Type、Multiple Result Sets、Database ping、Named Parameters和Transaction Isolation等新Features。在<a href="https://blog.gopheracademy.com/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://blog.gopheracademy.com&#39;]);">GopherAcademy</a>的Advent 2016系列文章中，我们可以看到<a href="https://blog.gopheracademy.com/advent-2016/database_sql/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://blog.gopheracademy.com&#39;]);">Daniel Theophanes亲手撰写的文章</a>，文章针对Go 1.8 database/sql包新增的features作了详细解释。</p>
+<h3>三、Go工具链（Go Toolchain）</h3>
+<p>在目前市面上的主流编程语言中，如果说Go的工具链在成熟度和完善度方面排第二，那没有语言敢称自己是第一吧^_^。Go 1.8在Go Toolchain上继续做着持续地改进，下面我们来逐一看看。</p>
+<h4>1、Plugins</h4>
+<p>Go在1.8版本中提供了对Plugin的初步支持，并且这种支持仅限于<a href="http://tonybai.com/tag/linux">Linux</a>。plugin这个术语在不同语言、不同情景上下文中有着不同的含义，那么什么是Go Plugin呢？</p>
+<p>Go Plugin为Go程序提供了一种在运行时加载代码、执行代码以改变运行行为的能力，它实质上由两个部分组成：</p>
+<ul>
+<li>go build -buildmode=plugin xx.go 构建xx.so plugin文件</li>
+<li>利用plugin包在运行时动态加载xx.so并执行xx.so中的代码</li>
+</ul>
+<p>C程序员看到这里肯定会有似曾相识的赶脚，因为这和传统的<a href="http://tonybai.com/2010/12/13/also-talk-about-shared-library/">动态共享库</a>在概念上十分类似：</p>
+<pre><code>go build -buildmode=plugin xx.go 类似于 gcc -o xx.so -shared xx.c
+go plugin包 类似于 linux上的dlopen/dlsym或windows上的LoadLibrary
+</code></pre>
+<p>我们来看一个例子！我们先来建立一个名为foo.so的go plugin：</p>
+<pre><code>//go18-examples/gotoolchain/plugins/foo.go
+
+package main
+
+import "fmt"
+
+var V int
+var v int
+
+func init() {
+        V = 17
+        v = 23
+        fmt.Println("init function in plugin foo")
+}
+
+func Foo(in string) string {
+        return "Hello, " + in
+}
+
+func foo(in string) string {
+        return "hello, " + in
+}
+
+</code></pre>
+<p>通过go build命令将foo.go编译为foo.so：</p>
+<pre><code># go build -buildmode=plugin foo.go
+# ldd foo.so
+    linux-vdso.so.1 =&gt;  (0x00007ffe47f67000)
+    libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f9d06f4b000)
+    libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f9d06b82000)
+    /lib64/ld-linux-x86-64.so.2 (0x000055c69cfcf000)
+
+# nm foo.so|grep Foo
+0000000000150010 t local.plugin/unnamed-69e21ef38d16a3fee5eb7b9e515c27a389067879.Foo
+0000000000150010 T plugin/unnamed-69e21ef38d16a3fee5eb7b9e515c27a389067879.Foo
+000000000036a0dc D type..namedata.Foo.
+
+</code></pre>
+<p>我们看到go plugin的.so文件就是一个标准的Linux动态共享库文件，我们可以通过nm命令查看.so中定义的各种符号。接下来，我们来load这个.so，并查找并调用相应符号：</p>
+<pre><code>//go18-examples/gotoolchain/plugins/main.go
+
+package main
+
+import (
+        "fmt"
+        "plugin"
+        "time"
+)
+
+func init() {
+        fmt.Println("init in main program")
+}
+
+func loadPlugin(i int) {
+        fmt.Println("load plugin #", i)
+        var err error
+        fmt.Println("before opening the foo.so")
+
+        p, err := plugin.Open("foo.so")
+        if err != nil {
+                fmt.Println("plugin Open error:", err)
+                return
+        }
+        fmt.Println("after opening the foo.so")
+
+        f, err := p.Lookup("Foo")
+        if err != nil {
+                fmt.Println("plugin Lookup symbol Foo error:", err)
+        } else {
+                fmt.Println(f.(func(string) string)("gophers"))
+        }
+
+        f, err = p.Lookup("foo")
+        if err != nil {
+                fmt.Println("plugin Lookup symbol foo error:", err)
+        } else {
+                fmt.Println(f.(func(string) string)("gophers"))
+        }
+
+        v, err := p.Lookup("V")
+        if err != nil {
+                fmt.Println("plugin Lookup symbol V error:", err)
+        } else {
+                fmt.Println(*v.(*int))
+        }
+
+        v, err = p.Lookup("v")
+        if err != nil {
+                fmt.Println("plugin Lookup symbol v error:", err)
+        } else {
+                fmt.Println(*v.(*int))
+        }
+        fmt.Println("load plugin #", i, "done")
+}
+
+func main() {
+        var counter int = 1
+        for {
+                loadPlugin(counter)
+                counter++
+                time.Sleep(time.Second * 30)
+        }
+}
+
+</code></pre>
+<p>执行这个程序：</p>
+<pre><code># go run main.go
+init in main program
+load plugin # 1
+before opening the foo.so
+init function in plugin foo
+after opening the foo.so
+Hello, gophers
+plugin Lookup symbol foo error: plugin: symbol foo not found in plugin plugin/unnamed-69e21ef38d16a3fee5eb7b9e515c27a389067879
+17
+plugin Lookup symbol v error: plugin: symbol v not found in plugin plugin/unnamed-69e21ef38d16a3fee5eb7b9e515c27a389067879
+load plugin # 1 done
+
+load plugin # 2
+before opening the foo.so
+after opening the foo.so
+Hello, gophers
+plugin Lookup symbol foo error: plugin: symbol foo not found in plugin plugin/unnamed-69e21ef38d16a3fee5eb7b9e515c27a389067879
+17
+plugin Lookup symbol v error: plugin: symbol v not found in plugin plugin/unnamed-69e21ef38d16a3fee5eb7b9e515c27a389067879
+load plugin # 2 done
+... ...
+</code></pre>
+<p>我们来分析一下这个执行结果！</p>
+<p>a) foo.go中的代码也包含在main package下，但只是当foo.so被第一次加载时，foo.go中的init函数才会被执行；<br>
+b) foo.go中的exported function和variable才能被Lookup到，如Foo、V；查找unexported的变量和函数符号将得到error信息，如：“symbol foo not found in plugin”；<br>
+c) Lookup返回的是plugin.Symbol类型的值，plugin.Symbol是一个指向plugin中变量或函数的指针；<br>
+d) foo.go中的init在后续重复加载中并不会被执行。</p>
+<p>注意：plugin.Lookup是goroutine-safe的。</p>
+<p>在golang-dev group上，有人曾问过：buildmode=c-shared和buildmode=plugin有何差别？Go team member给出的答案如下：</p>
+<pre><code>The difference is mainly on the program that loads the shared library.
+
+For c-shared, we can't assume anything about the host, so the c-shared dynamic library must be self-contained, but for plugin, we know the host program will be a Go program built with the same runtime version, so the toolchain can omit at least the runtime package from the dynamic library, and possibly more if it's certain that some packages are linked into the host program. (This optimization hasn't be implemented yet, but we need the distinction to enable this kind of optimization in the future.)
+</code></pre>
+<h4>2、默认的GOPATH</h4>
+<p>Go team在Go 1.8以及后续版本会更加注重”Go语言的亲民性”，即进一步降低Go的入门使用门槛，让大家更加Happy的使用Go。对于一个Go初学者来说，一上来就进行GOPATH的设置很可能让其感到有些迷惑，甚至有挫折感，就像建立Java开发环境需要设置JAVA_HOME和CLASSPATH一样。Gophers们期望能做到Go的安装即可用。因此Go 1.8就在这方面做出了改进：支持默认的GOPATH。</p>
+<p>在Linux/Mac系下，默认的GOPATH为$HOME/go，在Windows下，GOPATH默认路径为：%USERPROFILE%/go。你可以通过下面命令查看到这一结果：</p>
+<pre><code>$ go env
+GOARCH="amd64"
+GOBIN="/home/tonybai/.bin/go18rc3/bin"
+GOEXE=""
+GOHOSTARCH="amd64"
+GOHOSTOS="linux"
+GOOS="linux"
+GOPATH="/home/tonybai/go"
+GORACE=""
+GOROOT="/home/tonybai/.bin/go18rc3"
+GOTOOLDIR="/home/tonybai/.bin/go18rc3/pkg/tool/linux_amd64"
+GCCGO="gccgo"
+CC="gcc"
+GOGCCFLAGS="-fPIC -m64 -pthread -fmessage-length=0 -fdebug-prefix-map=/tmp/go-build313929093=/tmp/go-build -gno-record-gcc-switches"
+CXX="g++"
+CGO_ENABLED="1"
+PKG_CONFIG="pkg-config"
+CGO_CFLAGS="-g -O2"
+CGO_CPPFLAGS=""
+CGO_CXXFLAGS="-g -O2"
+CGO_FFLAGS="-g -O2"
+CGO_LDFLAGS="-g -O2"
+
+</code></pre>
+<p>BTW，在Linux/Mac下，默认的GOROOT为/usr/local/go，如果你的Go环境没有安装到这个路径下，在没有设置$GOROOT环境变量的情况下，当你执行go subcommand相关命令时，你会看到如下错误：</p>
+<pre><code>$go env
+go: cannot find GOROOT directory: /usr/local/go
+</code></pre>
+<h4>3、其他变化</h4>
+<p>Go 1.8删除了<a href="http://tonybai.com/2016/06/21/some-changes-in-go-1-7/">Go 1.7</a>中增加的用于关闭ssa新后端的”-ssa=0” compiler flag，并且将ssa backend扩展到所有architecture中，对ssa后端也进一步做了优化。与此同时，为了将来进一步的性能优化打基础，Go 1.8还引入了一个新编译器前端，当然这对于普通Gopher的Go使用并没有什么影响。</p>
+<p>Go 1.8还新增go bug子命令，该命令会自动使用默认浏览器打开new issue页面，并将采集到的issue提交者的系统信息填入issue模板，以帮助gopher提交符合要求的go issue，下面是go bug打开的issue page的图示：</p>
+<p><img src="./note_files/go18-go-bug-page.png" alt="img{512x368}"></p>
+<h3>四、性能变化（Performance Improvement）</h3>
+<p>无论是Gotoolchain、还是runtime（包括GC）的性能，一直都是Go team重点关注的领域。本次Go 1.8依旧给广大Gophers们带来了性能提升方面的惊喜。</p>
+<p>首先，Go <a href="https://en.wikipedia.org/wiki/Static_single_assignment_form" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://en.wikipedia.org&#39;]);">SSA</a>后端扩展到所有architecture和新编译器前端的引入，将会给除X86-64之外架构上运行的Go代码带来约20-30%的运行性能提升。对于x86-64，虽然Go 1.7就已经开启了SSA，但Go 1.8对SSA做了进一步优化，x86-64上的Go代码依旧可能会得到10%以内的性能提升。</p>
+<p>其次，Go 1.8持续对Go compiler和linker做性能优化，和1.7相比，平均编译链接的性能提升幅度在15%左右。虽然依旧没有达到<a href="http://tonybai.com/2014/11/04/some-changes-in-go-1-4/">Go 1.4</a>的性能水准。不过，优化依旧在持续进行中，目标的达成是可期的。</p>
+<p>再次，GC在低延迟方面的优化给了我们最大的惊喜。在Go 1.8中，由于消除了GC的“<a href="https://github.com/golang/proposal/blob/master/design/17503-eliminate-rescan.md" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">stop-the-world stack re-scanning</a>”，使得GC STW(stop-the-world)的时间通常低于100微秒，甚至经常低于10微秒。当然这或多或少是以牺牲“吞吐”作为代价的。因此在Go 1.9中，GC的改进将持续进行，会在吞吐和低延迟上做一个很好的平衡。</p>
+<p>最后，defer的性能消耗在Go 1.8中下降了一半，与此下降幅度相同的还有通过cgo在go中调用C代码的性能消耗。</p>
+<h3>五、小结兼参考资料</h3>
+<p>Go 1.8的变化不仅仅是以上这些，更多变化以及详细的描述请参考下面参考资料中的“Go 1.8 Release Notes”：</p>
+<ul>
+<li><a href="https://blog.gopheracademy.com/advent-2016/go-1.8/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://blog.gopheracademy.com&#39;]);">Go 1.8</a></li>
+<li><a href="https://golang.org/doc/go1.8" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://golang.org&#39;]);">Go 1.8 Release Notes</a></li>
+<li><a href="https://beta.golang.org/doc/go1.8" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://beta.golang.org&#39;]);">Go 1.8 Release Notes(before release)</a></li>
+<li><a href="https://blog.cloudflare.com/announcing-support-for-http-2-server-push-2/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://blog.cloudflare.com&#39;]);">Announcing Support for HTTP/2 Server Push</a></li>
+<li><a href="https://tylerchr.blog/golang-18-whats-coming/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://tylerchr.blog&#39;]);">What’s coming in Go 1.8</a></li>
+</ul>
+<p>以上demo中的代码在<a href="https://github.com/bigwhite/experiments/tree/master/go18-examples" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">这里</a>可以找到。</p>
+<p style="text-align:left">© 2017, <a href="http://tonybai.com/">bigwhite</a>. 版权所有. </p>
+<div style="clear:both; margin-top:5px; margin-bottom:5px;"></div><div style="float:left"><!-- JiaThis Button BEGIN -->
+<div id="jiathis_style_32x32">
+	<a class="jiathis_button_qzone" title="分享到QQ空间"><span class="jiathis_txt jtico jtico_qzone"></span></a>
+	<a class="jiathis_button_tsina" title="分享到微博"><span class="jiathis_txt jtico jtico_tsina"></span></a>
+	<a class="jiathis_button_tqq" title="分享到腾讯微博"><span class="jiathis_txt jtico jtico_tqq"></span></a>
+	<a class="jiathis_button_renren" title="分享到人人网"><span class="jiathis_txt jtico jtico_renren"></span></a>
+	<a class="jiathis_button_kaixin001" title="分享到开心网"><span class="jiathis_txt jtico jtico_kaixin001"></span></a>
+	<a href="http://www.jiathis.com/share/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://www.jiathis.com&#39;]);" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"><span class="jiathis_button_expanded jiathis_counter jiathis_bubble_style" id="jiathis_counter_55" title="累计分享2次">2</span></a>
+</div>
+<script type="text/javascript" src="./note_files/jia.js" charset="utf-8"></script><script type="text/javascript" src="./note_files/plugin.client.js" charset="utf-8"></script>
+<!-- JiaThis Button END --></div><div style="clear:both; margin-top:5px; margin-bottom:5px;"></div><p>Related posts:</p><ol>
+<li><a href="http://tonybai.com/2016/06/21/some-changes-in-go-1-7/" rel="bookmark" title="Go 1.7中值得关注的几个变化">Go 1.7中值得关注的几个变化</a></li>
+<li><a href="http://tonybai.com/2016/02/21/some-changes-in-go-1-6/" rel="bookmark" title="Go 1.6中值得关注的几个变化">Go 1.6中值得关注的几个变化</a></li>
+<li><a href="http://tonybai.com/2014/12/30/send-custom-service-text-msg-for-wechat-public-platform-dev-in-golang/" rel="bookmark" title="使用Golang开发微信公众平台-发送客服消息">使用Golang开发微信公众平台-发送客服消息</a></li>
+<li><a href="http://tonybai.com/2015/10/30/error-handling-in-go/" rel="bookmark" title="Go语言错误处理">Go语言错误处理</a></li>
+<li><a href="http://tonybai.com/2012/08/28/the-go-programming-language-tutorial-part3/" rel="bookmark" title="Go程序设计语言(三)">Go程序设计语言(三)</a></li>
+</ol>				</div>
+			</article>
+				<div id="comments">
+    
+            <h3 class="widget-title"><a href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#comments" title="《Go 1.8中值得关注的几个变化》上的评论">已有 3 条评论</a></h3>
+        <ol class="comment-list">
+            	   <li class="comment even thread-even depth-1" id="li-comment-1825">
+			<div id="comment-1825" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./note_files/8b8ad8071f00da064769e9e8a7dbf8b8" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn">zhout</cite>
+    			</div>
+    			<div class="comment-meta">
+					2017/02/04            	</div>
+    			<div class="comment-content">
+    				<p></p><p>多谢一贯的详细分享。</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/?replytocom=1825#respond" onclick="return addComment.moveForm(&quot;comment-1825&quot;, &quot;1825&quot;, &quot;respond&quot;, &quot;2143&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+	   <li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1844">
+			<div id="comment-1844" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./note_files/63c1b815a416923765354725cdf73ce7" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn">xdeng</cite>
+    			</div>
+    			<div class="comment-meta">
+					2017/02/28            	</div>
+    			<div class="comment-content">
+    				<p></p><p>多谢一贯的详细分享、翻译。</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/?replytocom=1844#respond" onclick="return addComment.moveForm(&quot;comment-1844&quot;, &quot;1844&quot;, &quot;respond&quot;, &quot;2143&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+	   <li class="comment even thread-even depth-1" id="li-comment-1863">
+			<div id="comment-1863" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./note_files/s=32" class="avatar avatar-32 photo avatar-default" height="32" width="32">					<cite class="fn"><a href="http://t.qq.com/MiracleCjt" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-commentauthor&#39;,&#39;http://t.qq.com&#39;]);" rel="external nofollow" class="url">Higx</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2017/03/10            	</div>
+    			<div class="comment-content">
+    				<p></p><p>多谢一贯的详细分享.</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/?replytocom=1863#respond" onclick="return addComment.moveForm(&quot;comment-1863&quot;, &quot;1863&quot;, &quot;respond&quot;, &quot;2143&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+        </ol>
+            
+        <div id="respond" class="respond">
+        <div class="cancel-comment-reply">
+        <a rel="nofollow" id="cancel-comment-reply-link" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#respond" style="display:none;">点击这里取消回复。</a>        </div>
+    	<h3 id="response">添加新评论</h3>
+    	<form method="post" action="http://tonybai.com/wp-comments-post.php" id="comment_form">
+			<div class="col1">
+			<div class="QapTcha"><div class="bgSlider"><div class="Slider ui-draggable" style="position: relative;"></div></div><div class="Icons"></div><div class=" TxtStatus dropError">发表评论前，请滑动滚动条解锁</div><div class="clr"></div><a class="dis" href="http://blog.30c.org/">三十岁</a><input name="4krbnDMTqF5GABVTuYnBG@3#fFhX67DU" value="CdPPV2F" type="hidden"></div><p>
+                <textarea rows="8" cols="50" name="comment" class="textarea"></textarea>
+            </p>
+			</div>
+			<div class="col2">
+                		<p>
+                <label for="author" class="required">称呼</label>
+    			<input type="text" name="author" id="author" class="text" value="">
+    		</p>
+    		<p>
+                <label for="mail" class="required">邮箱</label>
+    			<input type="email" name="email" id="mail" class="text" value="">
+    		</p>
+    		<p>
+                <label for="url">网站</label>
+    			<input type="url" name="url" id="url" class="text" placeholder="http://example.com" value="">
+    		</p>
+                		<p>
+                <button type="submit" name="submit" class="submit">提交评论</button>
+            </p>
+			</div>
+			<div class="clear"></div>
+            <input type="hidden" name="comment_post_ID" value="2143" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+ 
+                        
+    	</form>
+    </div>
+    </div>	</div>
+</div>
+<div id="secondary">
+	<section class="widget">
+        <form id="search" method="get" action="http://tonybai.com/">
+			<input type="text" name="s" class="text" placeholder="输入关键字搜索">
+			<button type="submit" class="submit">搜索</button>
+        </form>
+    </section>
+	<section id="text-3" class="widget widget_text">			<div class="textwidget"><p><!--<br />
+<img src="/wp-content/uploads/daughter-photo-300x225.jpg" align="center" /></p>
+<p><img src="/wp-content/uploads/daughter-3-years-old-225x300.jpg" align="center" /><br />
+--></p>
+<p><a href="http://feed.tonybai.com/"><br>
+<img src="./note_files/alipay_qr_small.png" align="center"><br>
+</a><br>
+这里是<a href="http://weibo.com/bigwhite20xx" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-widget&#39;,&#39;http://weibo.com&#39;]);">Tony Bai</a>的个人Blog，欢迎访问、订阅和留言！<font size="+1" color="red">订阅Feed请点击上面图片</font>。</p>
+<p>如果您觉得这里的文章对您有帮助，请扫描上方二维码进行捐赠，加油后的Tony Bai将会为您呈现更多精彩的文章，谢谢！</p>
+<p>如果您希望通过比特币或以太币捐赠，可以扫描下方二维码：</p>
+<p>比特币：<br>
+<a href="http://feed.tonybai.com/"><br>
+<img src="./note_files/bitcoin-qr.png" align="center"><br>
+</a></p>
+<p>以太币：<br>
+<a href="http://feed.tonybai.com/"><br>
+<img src="./note_files/ethereum-qr.png" align="center"><br>
+</a></p>
+<p>如果您喜欢通过微信App浏览本站内容，可以扫描下方二维码，订阅本站官方微信订阅号“iamtonybai”；点击二维码，可直达本人官方微博主页^_^：</p>
+<p><a href="http://weibo.com/bigwhite20xx"><br>
+<img src="./note_files/qrcode_for_gh_39d38f08f440_258.jpg" align="center"><br>
+</a></p>
+<p>本站Powered by Digital Ocean VPS。<br>
+<a href="https://www.digitalocean.com/?refcode=bff6eed92687"><br>
+选择Digital Ocean VPS主机，即可获得10美元现金充值，可免费使用两个月哟！</a></p>
+<p>著名主机提供商Linode 10$优惠码：linode10，在<a href="https://www.linode.com/?r=ec42f83592f2ddfc8f487c0428a9b74fa1b2984b" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-widget&#39;,&#39;http://www.linode.com&#39;]);">这里注册</a>即可免费获得。</p>
+<p>阿里云推荐码：<font size="+1" color="red">1WFZ0V</font>，<font size="+1" color="red">立享9折！</font></p>
+<p><img src="./note_files/tonybai-gmail-image.png" align="center"></p>
+<p><a href="http://cn.linkedin.com/in/bigwhite"></a></p><a href="http://cn.linkedin.com/in/bigwhite">
+<p>          <img src="./note_files/btn_myprofile_160x33.png" width="160" height="33" border="0" alt="View Tony Bai&#39;s profile on LinkedIn"></p>
+</a><p><a href="http://cn.linkedin.com/in/bigwhite"></a>        </p>
+<p><!--<br />
+<script charset="gbk" src="http://p.tanx.com/ex?i=mm_72934676_11332019_40046076"></script><br />
+--><br>
+<!--<br />
+2014世界杯必玩手游《手指足球世界杯2014》(Flick World Cup)发布了，欢迎点击下面图片或扫描二维码下载！关于游戏的详细介绍请参见<a href="http://iwobi.net" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://iwobi.net']);">官方网站说明</a>。<br />
+<a href="http://iwobi.net/download/FlickWorldCup.apk" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://iwobi.net']);"><img src="http://iwobi.net/images/flickworldcup-qr.png" alt="二维码" width="180" height="180" align="center"/></a></p>
+<p>我的第一款手机游戏习作《绕桩王》(Slalom King)，欢迎点击下面图片或扫描二维码下载！<br />
+<a href="http://iwobi.net/download/SlalomKing.apk" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://iwobi.net']);"><img src="http://iwobi.net/images/slalomking-qr.png" alt="二维码" width="180" height="180" align="center"/></a><br />
+--></p>
+</div>
+		</section>		<section id="recent-posts-3" class="widget widget_recent_entries">		<h3 class="widget-title">文章</h3>		<ul>
+				<li><a href="http://tonybai.com/2017/11/06/explain-docker-single-host-network-using-iptables-trace-and-ebtables-log/" title="再谈Docker容器单机网络：利用iptables trace和ebtables log">再谈Docker容器单机网络：利用iptables trace和ebtables log</a></li>
+				<li><a href="http://tonybai.com/2017/10/24/go-evolution-for-ten-years-an-interview-by-osc/" title="源创会开源访谈：十年成长，Go语言的演化之路">源创会开源访谈：十年成长，Go语言的演化之路</a></li>
+				<li><a href="http://tonybai.com/2017/10/23/the-speech-script-practice-on-deploying-a-ha-harbor-cluster-for-osc-shenyang-2017/" title="源创会2017沈阳站讲稿：基于Harbor的高可用企业级私有容器镜像仓库部署实践">源创会2017沈阳站讲稿：基于Harbor的高可用企业级私有容器镜像仓库部署实践</a></li>
+				<li><a href="http://tonybai.com/2017/10/16/out-of-node-resource-handling-in-kubernetes-cluster/" title="Kubernetes节点资源耗尽状态的处理">Kubernetes节点资源耗尽状态的处理</a></li>
+				<li><a href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/" title="Kubernetes Dashboard 1.7.0部署二三事">Kubernetes Dashboard 1.7.0部署二三事</a></li>
+				<li><a href="http://tonybai.com/2017/09/24/go-ten-years-and-climbing/" title="Go语言：成长的十年">Go语言：成长的十年</a></li>
+				<li><a href="http://tonybai.com/2017/08/15/hello-apollo/" title="Hello, Apollo">Hello, Apollo</a></li>
+				<li><a href="http://tonybai.com/2017/08/09/fix-kube-apiserver-restart-exceptionally-in-k8s-1-7-3/" title="解决Kubernetes 1.7.3 kube-apiserver频繁异常重启的问题">解决Kubernetes 1.7.3 kube-apiserver频繁异常重启的问题</a></li>
+				<li><a href="http://tonybai.com/2017/08/01/hello-ros/" title="Hello, ROS">Hello, ROS</a></li>
+				<li><a href="http://tonybai.com/2017/07/24/ride-a-shared-bike/" title="体验共享单车">体验共享单车</a></li>
+				</ul>
+		</section><section id="recentcomments" class="widget widget_recentcomments"><h3 class="widget-title">评论</h3><ul style="cursor: auto;"><li id="rc-comment-6958" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/10/24/go-evolution-for-ten-years-an-interview-by-osc/#comment-6958">源创会开源访谈：十年成长，Go语言的演化之路</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">Dmitry Vyukovy好像一直都是“外援”，是google员工，但不是go team 常务me<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6957" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/2312f11c16662bab003d21c5d3fb9548"><div class="rc-info"><span class="rc-reviewer">waterloopwm</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/10/24/go-evolution-for-ten-years-an-interview-by-osc/#comment-6957">源创会开源访谈：十年成长，Go语言的演化之路</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">有人在golang-dev论坛问了golang核心开发者Ian Lance Taylor， Dmit<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6956" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6956">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">需要修改apiserver的启动参数，添加basic auth启动参数，比如：--basic-aut<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6955" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/05465db689bfa42d93628bfc10d4b8bc"><div class="rc-info"><span class="rc-reviewer">一生</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6955">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">你好！  我按照你这篇文章部署成功了，但在使用 basic auth login方式登录的时候遇到了<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6954" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6954">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">问题我没遇到过，不过翻了一下dashboard的issue list，似乎这个issue的问题和你遇<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6953" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/a9db45d3045ad5ef3303c303b000ab16"><div class="rc-info"><span class="rc-reviewer">zorro</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6953">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">请教一个问题  K8s 是1.7.3  dashboard是v1.7.1   连接apiserver<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6951" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6951">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">抱歉，我都是直接使用国外默认的镜像。在国内没找到可用的且持续维护的k8s相关的公共镜像仓库。</div></li><li id="rc-comment-6950" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/636fcb5339f3a35b4fd679123225955c"><div class="rc-info"><a class="rc-reviewer" rel="nofollow external" href="http://www.icsoc.net/">jude</a> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6950">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">大神能提供下国内1.7.1的镜像地址吗？</div></li><li id="rc-comment-6949" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2016/11/07/integrate-kubernetes-with-ceph-rbd/#comment-6949">使用Ceph RBD为Kubernetes集群提供存储卷</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">目前没有以ceph object storage为backend的plugin实现。</div></li><li id="rc-comment-6948" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./note_files/60420f422358e46ada6ed767eff4a52f"><div class="rc-info"><span class="rc-reviewer">study</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2016/11/07/integrate-kubernetes-with-ceph-rbd/#comment-6948">使用Ceph RBD为Kubernetes集群提供存储卷</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">k8s可以使用ceph的对象存储吗？我看官网之类的，都是rbd和cephfs，没有看到ceph的对象<span class="rc-ellipsis">...</span></div></li><li class="rc-navi rc-clearfix"><a "rel="nofollow&quot;" class="rc-older">下一页 »</a></li></ul></section><section id="categories-3" class="widget widget_categories"><h3 class="widget-title">分类</h3>		<ul>
+	<li class="cat-item cat-item-3"><a href="http://tonybai.com/category/images-collection/" title="查看 光影汇 下的所有文章">光影汇</a> (7)
+</li>
+	<li class="cat-item cat-item-4"><a href="http://tonybai.com/category/media-square/" title="查看 影音坊 下的所有文章">影音坊</a> (36)
+</li>
+	<li class="cat-item cat-item-5"><a href="http://tonybai.com/category/thoughts-center/" title="查看 思考控 下的所有文章">思考控</a> (66)
+</li>
+	<li class="cat-item cat-item-6"><a href="http://tonybai.com/category/technical-notes/" title="查看 技术志 下的所有文章">技术志</a> (532)
+</li>
+	<li class="cat-item cat-item-2223"><a href="http://tonybai.com/category/edu-notes/" title="查看 教育记 下的所有文章">教育记</a> (1)
+</li>
+	<li class="cat-item cat-item-7"><a href="http://tonybai.com/category/groceries-store/" title="查看 杂货铺 下的所有文章">杂货铺</a> (75)
+</li>
+	<li class="cat-item cat-item-8"><a href="http://tonybai.com/category/living-notes/" title="查看 生活簿 下的所有文章">生活簿</a> (154)
+</li>
+	<li class="cat-item cat-item-9"><a href="http://tonybai.com/category/career-notes/" title="查看 职场录 下的所有文章">职场录</a> (14)
+</li>
+	<li class="cat-item cat-item-10"><a href="http://tonybai.com/category/reading-bar/" title="查看 读书吧 下的所有文章">读书吧</a> (14)
+</li>
+	<li class="cat-item cat-item-11"><a href="http://tonybai.com/category/sports-fan/" title="查看 运动迷 下的所有文章">运动迷</a> (107)
+</li>
+	<li class="cat-item cat-item-12"><a href="http://tonybai.com/category/tourist-show/" title="查看 驴友秀 下的所有文章">驴友秀</a> (40)
+</li>
+		</ul>
+</section><section id="tag_cloud-3" class="widget widget_tag_cloud"><h3 class="widget-title">标签</h3><div class="tagcloud"><a href="http://tonybai.com/tag/blog/" class="tag-link-56" title="886 个话题" style="font-size: 22pt;">Blog</a>
+<a href="http://tonybai.com/tag/blogger/" class="tag-link-58" title="370 个话题" style="font-size: 18.27972027972pt;">Blogger</a>
+<a href="http://tonybai.com/tag/c/" class="tag-link-67" title="331 个话题" style="font-size: 17.79020979021pt;">C</a>
+<a href="http://tonybai.com/tag/cpp/" class="tag-link-92" title="48 个话题" style="font-size: 9.6643356643357pt;">Cpp</a>
+<a href="http://tonybai.com/tag/docker/" class="tag-link-1526" title="58 个话题" style="font-size: 10.447552447552pt;">docker</a>
+<a href="http://tonybai.com/tag/english/" class="tag-link-126" title="32 个话题" style="font-size: 8pt;">English</a>
+<a href="http://tonybai.com/tag/gcc/" class="tag-link-145" title="89 个话题" style="font-size: 12.20979020979pt;">GCC</a>
+<a href="http://tonybai.com/tag/github/" class="tag-link-1078" title="52 个话题" style="font-size: 9.958041958042pt;">github</a>
+<a href="http://tonybai.com/tag/gnu/" class="tag-link-152" title="57 个话题" style="font-size: 10.34965034965pt;">GNU</a>
+<a href="http://tonybai.com/tag/go/" class="tag-link-1114" title="93 个话题" style="font-size: 12.405594405594pt;">Go</a>
+<a href="http://tonybai.com/tag/golang/" class="tag-link-1137" title="94 个话题" style="font-size: 12.503496503497pt;">Golang</a>
+<a href="http://tonybai.com/tag/google/" class="tag-link-154" title="78 个话题" style="font-size: 11.72027972028pt;">Google</a>
+<a href="http://tonybai.com/tag/java/" class="tag-link-178" title="50 个话题" style="font-size: 9.8601398601399pt;">Java</a>
+<a href="http://tonybai.com/tag/kernel/" class="tag-link-191" title="36 个话题" style="font-size: 8.4895104895105pt;">Kernel</a>
+<a href="http://tonybai.com/tag/kubernetes/" class="tag-link-1794" title="44 个话题" style="font-size: 9.2727272727273pt;">Kubernetes</a>
+<a href="http://tonybai.com/tag/linux/" class="tag-link-205" title="121 个话题" style="font-size: 13.58041958042pt;">Linux</a>
+<a href="http://tonybai.com/tag/m10/" class="tag-link-207" title="40 个话题" style="font-size: 8.8811188811189pt;">M10</a>
+<a href="http://tonybai.com/tag/opensource/" class="tag-link-252" title="198 个话题" style="font-size: 15.636363636364pt;">Opensource</a>
+<a href="http://tonybai.com/tag/programmer/" class="tag-link-268" title="456 个话题" style="font-size: 19.160839160839pt;">Programmer</a>
+<a href="http://tonybai.com/tag/python/" class="tag-link-275" title="42 个话题" style="font-size: 9.0769230769231pt;">Python</a>
+<a href="http://tonybai.com/tag/solaris/" class="tag-link-309" title="42 个话题" style="font-size: 9.0769230769231pt;">Solaris</a>
+<a href="http://tonybai.com/tag/subversion/" class="tag-link-318" title="37 个话题" style="font-size: 8.5874125874126pt;">Subversion</a>
+<a href="http://tonybai.com/tag/ubuntu/" class="tag-link-350" title="114 个话题" style="font-size: 13.286713286713pt;">Ubuntu</a>
+<a href="http://tonybai.com/tag/unix/" class="tag-link-354" title="88 个话题" style="font-size: 12.20979020979pt;">Unix</a>
+<a href="http://tonybai.com/tag/windows/" class="tag-link-365" title="45 个话题" style="font-size: 9.3706293706294pt;">Windows</a>
+<a href="http://tonybai.com/tag/%e4%b8%96%e7%95%8c%e6%9d%af/" class="tag-link-389" title="36 个话题" style="font-size: 8.4895104895105pt;">世界杯</a>
+<a href="http://tonybai.com/tag/%e5%8d%9a%e5%ae%a2/" class="tag-link-489" title="815 个话题" style="font-size: 21.608391608392pt;">博客</a>
+<a href="http://tonybai.com/tag/%e5%ad%a6%e4%b9%a0/" class="tag-link-581" title="48 个话题" style="font-size: 9.6643356643357pt;">学习</a>
+<a href="http://tonybai.com/tag/%e5%ae%b9%e5%99%a8/" class="tag-link-1131" title="38 个话题" style="font-size: 8.6853146853147pt;">容器</a>
+<a href="http://tonybai.com/tag/%e5%b7%a5%e4%bd%9c/" class="tag-link-600" title="96 个话题" style="font-size: 12.601398601399pt;">工作</a>
+<a href="http://tonybai.com/tag/%e5%b7%b4%e8%90%a8/" class="tag-link-603" title="61 个话题" style="font-size: 10.643356643357pt;">巴萨</a>
+<a href="http://tonybai.com/tag/%e5%bc%80%e6%ba%90/" class="tag-link-618" title="196 个话题" style="font-size: 15.538461538462pt;">开源</a>
+<a href="http://tonybai.com/tag/%e6%80%9d%e8%80%83/" class="tag-link-632" title="145 个话题" style="font-size: 14.265734265734pt;">思考</a>
+<a href="http://tonybai.com/tag/%e6%84%9f%e6%82%9f/" class="tag-link-642" title="201 个话题" style="font-size: 15.734265734266pt;">感悟</a>
+<a href="http://tonybai.com/tag/%e6%91%84%e5%bd%b1/" class="tag-link-666" title="56 个话题" style="font-size: 10.34965034965pt;">摄影</a>
+<a href="http://tonybai.com/tag/%e6%97%85%e6%b8%b8/" class="tag-link-693" title="40 个话题" style="font-size: 8.8811188811189pt;">旅游</a>
+<a href="http://tonybai.com/tag/%e6%9e%9c%e6%9e%9c/" class="tag-link-726" title="32 个话题" style="font-size: 8pt;">果果</a>
+<a href="http://tonybai.com/tag/%e6%a2%85%e8%a5%bf/" class="tag-link-738" title="73 个话题" style="font-size: 11.426573426573pt;">梅西</a>
+<a href="http://tonybai.com/tag/%e7%90%83%e7%8e%8b/" class="tag-link-819" title="34 个话题" style="font-size: 8.1958041958042pt;">球王</a>
+<a href="http://tonybai.com/tag/%e7%94%9f%e6%b4%bb/" class="tag-link-825" title="247 个话题" style="font-size: 16.517482517483pt;">生活</a>
+<a href="http://tonybai.com/tag/%e7%a8%8b%e5%ba%8f%e5%91%98/" class="tag-link-853" title="476 个话题" style="font-size: 19.356643356643pt;">程序员</a>
+<a href="http://tonybai.com/tag/%e7%bc%96%e8%af%91%e5%99%a8/" class="tag-link-886" title="41 个话题" style="font-size: 8.979020979021pt;">编译器</a>
+<a href="http://tonybai.com/tag/%e8%a5%bf%e7%94%b2/" class="tag-link-927" title="49 个话题" style="font-size: 9.7622377622378pt;">西甲</a>
+<a href="http://tonybai.com/tag/%e8%b6%b3%e7%90%83/" class="tag-link-954" title="69 个话题" style="font-size: 11.230769230769pt;">足球</a>
+<a href="http://tonybai.com/tag/%e9%a9%b4%e5%8f%8b/" class="tag-link-1029" title="33 个话题" style="font-size: 8.0979020979021pt;">驴友</a></div>
+</section><section id="archives-3" class="widget widget_archive"><h3 class="widget-title">归档</h3>		<ul>
+			<li><a href="http://tonybai.com/2017/11/" title="2017 年十一月">2017 年十一月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2017/10/" title="2017 年十月">2017 年十月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2017/09/" title="2017 年九月">2017 年九月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2017/08/" title="2017 年八月">2017 年八月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2017/07/" title="2017 年七月">2017 年七月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2017/06/" title="2017 年六月">2017 年六月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2017/05/" title="2017 年五月">2017 年五月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2017/04/" title="2017 年四月">2017 年四月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2017/03/" title="2017 年三月">2017 年三月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2017/02/" title="2017 年二月">2017 年二月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2017/01/" title="2017 年一月">2017 年一月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2016/12/" title="2016 年十二月">2016 年十二月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2016/11/" title="2016 年十一月">2016 年十一月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2016/10/" title="2016 年十月">2016 年十月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2016/09/" title="2016 年九月">2016 年九月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/08/" title="2016 年八月">2016 年八月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2016/06/" title="2016 年六月">2016 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/05/" title="2016 年五月">2016 年五月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/04/" title="2016 年四月">2016 年四月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/03/" title="2016 年三月">2016 年三月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/02/" title="2016 年二月">2016 年二月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2016/01/" title="2016 年一月">2016 年一月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2015/12/" title="2015 年十二月">2015 年十二月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/11/" title="2015 年十一月">2015 年十一月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/10/" title="2015 年十月">2015 年十月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/09/" title="2015 年九月">2015 年九月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2015/08/" title="2015 年八月">2015 年八月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2015/07/" title="2015 年七月">2015 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2015/06/" title="2015 年六月">2015 年六月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2015/05/" title="2015 年五月">2015 年五月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/04/" title="2015 年四月">2015 年四月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2015/03/" title="2015 年三月">2015 年三月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2015/01/" title="2015 年一月">2015 年一月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2014/12/" title="2014 年十二月">2014 年十二月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2014/11/" title="2014 年十一月">2014 年十一月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2014/10/" title="2014 年十月">2014 年十月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2014/09/" title="2014 年九月">2014 年九月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2014/08/" title="2014 年八月">2014 年八月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2014/07/" title="2014 年七月">2014 年七月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2014/05/" title="2014 年五月">2014 年五月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2014/04/" title="2014 年四月">2014 年四月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2014/03/" title="2014 年三月">2014 年三月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2014/02/" title="2014 年二月">2014 年二月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2014/01/" title="2014 年一月">2014 年一月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2013/12/" title="2013 年十二月">2013 年十二月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2013/11/" title="2013 年十一月">2013 年十一月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2013/10/" title="2013 年十月">2013 年十月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2013/09/" title="2013 年九月">2013 年九月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2013/08/" title="2013 年八月">2013 年八月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2013/07/" title="2013 年七月">2013 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2013/06/" title="2013 年六月">2013 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2013/05/" title="2013 年五月">2013 年五月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2013/04/" title="2013 年四月">2013 年四月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2013/03/" title="2013 年三月">2013 年三月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2013/02/" title="2013 年二月">2013 年二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2013/01/" title="2013 年一月">2013 年一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2012/12/" title="2012 年十二月">2012 年十二月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2012/11/" title="2012 年十一月">2012 年十一月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2012/10/" title="2012 年十月">2012 年十月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2012/09/" title="2012 年九月">2012 年九月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2012/08/" title="2012 年八月">2012 年八月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2012/07/" title="2012 年七月">2012 年七月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2012/06/" title="2012 年六月">2012 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2012/05/" title="2012 年五月">2012 年五月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2012/04/" title="2012 年四月">2012 年四月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2012/03/" title="2012 年三月">2012 年三月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2012/02/" title="2012 年二月">2012 年二月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2012/01/" title="2012 年一月">2012 年一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2011/12/" title="2011 年十二月">2011 年十二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2011/11/" title="2011 年十一月">2011 年十一月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2011/10/" title="2011 年十月">2011 年十月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2011/09/" title="2011 年九月">2011 年九月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2011/08/" title="2011 年八月">2011 年八月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2011/07/" title="2011 年七月">2011 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2011/06/" title="2011 年六月">2011 年六月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2011/05/" title="2011 年五月">2011 年五月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2011/04/" title="2011 年四月">2011 年四月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2011/03/" title="2011 年三月">2011 年三月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2011/02/" title="2011 年二月">2011 年二月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2011/01/" title="2011 年一月">2011 年一月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2010/12/" title="2010 年十二月">2010 年十二月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2010/11/" title="2010 年十一月">2010 年十一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2010/10/" title="2010 年十月">2010 年十月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2010/09/" title="2010 年九月">2010 年九月</a>&nbsp;(12)</li>
+	<li><a href="http://tonybai.com/2010/08/" title="2010 年八月">2010 年八月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2010/07/" title="2010 年七月">2010 年七月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2010/06/" title="2010 年六月">2010 年六月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2010/05/" title="2010 年五月">2010 年五月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2010/04/" title="2010 年四月">2010 年四月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2010/03/" title="2010 年三月">2010 年三月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2010/02/" title="2010 年二月">2010 年二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2010/01/" title="2010 年一月">2010 年一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2009/12/" title="2009 年十二月">2009 年十二月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2009/11/" title="2009 年十一月">2009 年十一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2009/10/" title="2009 年十月">2009 年十月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2009/09/" title="2009 年九月">2009 年九月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2009/08/" title="2009 年八月">2009 年八月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2009/07/" title="2009 年七月">2009 年七月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2009/06/" title="2009 年六月">2009 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2009/05/" title="2009 年五月">2009 年五月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2009/04/" title="2009 年四月">2009 年四月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2009/03/" title="2009 年三月">2009 年三月</a>&nbsp;(12)</li>
+	<li><a href="http://tonybai.com/2009/02/" title="2009 年二月">2009 年二月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2009/01/" title="2009 年一月">2009 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2008/12/" title="2008 年十二月">2008 年十二月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2008/11/" title="2008 年十一月">2008 年十一月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2008/10/" title="2008 年十月">2008 年十月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2008/09/" title="2008 年九月">2008 年九月</a>&nbsp;(13)</li>
+	<li><a href="http://tonybai.com/2008/08/" title="2008 年八月">2008 年八月</a>&nbsp;(13)</li>
+	<li><a href="http://tonybai.com/2008/07/" title="2008 年七月">2008 年七月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2008/06/" title="2008 年六月">2008 年六月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2008/05/" title="2008 年五月">2008 年五月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2008/04/" title="2008 年四月">2008 年四月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2008/03/" title="2008 年三月">2008 年三月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2008/02/" title="2008 年二月">2008 年二月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2008/01/" title="2008 年一月">2008 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2007/12/" title="2007 年十二月">2007 年十二月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2007/11/" title="2007 年十一月">2007 年十一月</a>&nbsp;(14)</li>
+	<li><a href="http://tonybai.com/2007/10/" title="2007 年十月">2007 年十月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2007/09/" title="2007 年九月">2007 年九月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2007/08/" title="2007 年八月">2007 年八月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2007/07/" title="2007 年七月">2007 年七月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2007/06/" title="2007 年六月">2007 年六月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2007/05/" title="2007 年五月">2007 年五月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2007/04/" title="2007 年四月">2007 年四月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2007/03/" title="2007 年三月">2007 年三月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2007/02/" title="2007 年二月">2007 年二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2007/01/" title="2007 年一月">2007 年一月</a>&nbsp;(17)</li>
+	<li><a href="http://tonybai.com/2006/12/" title="2006 年十二月">2006 年十二月</a>&nbsp;(18)</li>
+	<li><a href="http://tonybai.com/2006/11/" title="2006 年十一月">2006 年十一月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2006/10/" title="2006 年十月">2006 年十月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2006/09/" title="2006 年九月">2006 年九月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2006/08/" title="2006 年八月">2006 年八月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2006/07/" title="2006 年七月">2006 年七月</a>&nbsp;(22)</li>
+	<li><a href="http://tonybai.com/2006/06/" title="2006 年六月">2006 年六月</a>&nbsp;(35)</li>
+	<li><a href="http://tonybai.com/2006/05/" title="2006 年五月">2006 年五月</a>&nbsp;(24)</li>
+	<li><a href="http://tonybai.com/2006/04/" title="2006 年四月">2006 年四月</a>&nbsp;(26)</li>
+	<li><a href="http://tonybai.com/2006/03/" title="2006 年三月">2006 年三月</a>&nbsp;(25)</li>
+	<li><a href="http://tonybai.com/2006/02/" title="2006 年二月">2006 年二月</a>&nbsp;(18)</li>
+	<li><a href="http://tonybai.com/2006/01/" title="2006 年一月">2006 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2005/12/" title="2005 年十二月">2005 年十二月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2005/11/" title="2005 年十一月">2005 年十一月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2005/09/" title="2005 年九月">2005 年九月</a>&nbsp;(13)</li>
+	<li><a href="http://tonybai.com/2005/08/" title="2005 年八月">2005 年八月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2005/07/" title="2005 年七月">2005 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2005/06/" title="2005 年六月">2005 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2005/05/" title="2005 年五月">2005 年五月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2005/04/" title="2005 年四月">2005 年四月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2005/03/" title="2005 年三月">2005 年三月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2005/01/" title="2005 年一月">2005 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2004/12/" title="2004 年十二月">2004 年十二月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2004/11/" title="2004 年十一月">2004 年十一月</a>&nbsp;(14)</li>
+	<li><a href="http://tonybai.com/2004/10/" title="2004 年十月">2004 年十月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2004/09/" title="2004 年九月">2004 年九月</a>&nbsp;(2)</li>
+		</ul>
+</section><section id="linkcat-2214" class="widget widget_links"><h3 class="widget-title">私人</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://daughter.tonybai.com/" rel="child" title="我的女儿的博客" target="_blank" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://daughter.tonybai.com/&#39;]);">我的女儿</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-1042" class="widget widget_links"><h3 class="widget-title">链接</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://douban.com/people/tony_bai" rel="me" title="我的豆瓣" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://douban.com/people/tony_bai&#39;]);">@douban</a></li>
+<li><a href="http://www.flickr.com/photos/bigwhite/" title="我的Flickr" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://www.flickr.com/photos/bigwhite/&#39;]);">@flickr</a></li>
+<li><a href="https://github.com/bigwhite" rel="me" title="我的Github" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;https://github.com/bigwhite&#39;]);">@github</a></li>
+<li><a href="http://code.google.com/p/bigwhite-code/" rel="me" title="我的Google Code" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/bigwhite-code/&#39;]);">@googlecode</a></li>
+<li><a href="http://picasaweb.google.com/bigwhite.cn" rel="me" title="我的PicasaWeb" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://picasaweb.google.com/bigwhite.cn&#39;]);">@picasa</a></li>
+<li><a href="http://www.slideshare.net/bigwhite20xx" rel="me" title="我的SlideShare" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://www.slideshare.net/bigwhite20xx&#39;]);">@slideshare</a></li>
+<li><a href="http://twitter.com/tony_bai" rel="me" title="我的Twitter" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://twitter.com/tony_bai&#39;]);">@twitter</a></li>
+<li><a href="http://weibo.com/bigwhite20xx" rel="me" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://weibo.com/bigwhite20xx&#39;]);">@weibo</a></li>
+<li><a href="http://www.hoterran.info/" rel="friend" title="Hoterran" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://www.hoterran.info/&#39;]);">Hoterran</a></li>
+<li><a href="http://leomessi.com/" title="Lionel Messi" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://leomessi.com&#39;]);">Lionel Messi</a></li>
+<li><a href="http://puras.cn/" rel="friend co-worker" title="Puras He" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://puras.cn&#39;]);">Puras He</a></li>
+<li><a href="http://dreamhead.blogbus.com/" rel="friend" title="梦想风暴" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://dreamhead.blogbus.com&#39;]);">梦想风暴</a></li>
+<li><a href="http://84tt.com/blog" rel="friend" title="过眼云烟" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://84tt.com/blog&#39;]);">过眼云烟</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-1043" class="widget widget_links"><h3 class="widget-title">开源项目</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://code.google.com/p/buildc" rel="me" title="An assistant tool for c project building and packing management" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/buildc&#39;]);">buildc</a></li>
+<li><a href="http://code.google.com/p/cbehave" rel="me" title="A Behavior Driven Development Framework for C" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/cbehave&#39;]);">cbehave</a></li>
+<li><a href="http://code.google.com/p/lcut" rel="me" title="a Lightweight C Unit Testing framework" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/lcut&#39;]);">lcut</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-1057" class="widget widget_links"><h3 class="widget-title">翻译项目</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://code.google.com/p/recommended-c-style-and-coding-standards-cn/" title="C语言编码风格和标准" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/recommended-c-style-and-coding-standards-cn/&#39;]);">C语言编码风格和标准</a></li>
+<li><a href="http://code.google.com/p/programming-in-haskell-cn/" title="《Programming in Haskell》中文翻译项目" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/programming-in-haskell-cn/&#39;]);">《Programming in Haskell》中文翻译项目</a></li>
+
+	</ul>
+</section>
+<section id="text-4" class="widget widget_text">			<div class="textwidget"><!-- Google Reader Share-->
+<script type="text/javascript" src="./note_files/publisher-zh_CN.js"></script>
+<script type="text/javascript" src="./note_files/broadcast"></script>
+<br><br>
+
+<!-- sina weibo widget -->
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="./note_files/index.html"></iframe>
+<br><br>
+
+<!-- douban show -->
+<script type="text/javascript" src="./note_files/saved_resource"></script><div style=""><table cellspacing="0" cellpadding="4" style="&gt;&lt;tr align=" center"=""><tbody><tr><td style=""><a href="https://movie.douban.com/subject/25849480/" title="Cars 3
+
+赛车总动员3：极速挑战 / 反斗车王3(港)" target="_blank"><img src="./note_files/p2492869476.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/21624776/" title="分布式系统
+
+Distributed Systems: Concepts and Design， Fifth Edition" target="_blank"><img src="https://img7.doubanio.com/spic/s25802282.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/3863694/" title="一片叶子落下来
+
+The Fall of Freddie the Leaf" target="_blank"><img src="./note_files/s6049239.jpg" border="0"></a></td></tr><tr align="center"><td style=""><a href="https://movie.douban.com/subject/26304310/" title="American Made
+
+美国行动 / 美国制造" target="_blank"><img src="https://img7.doubanio.com/view/photo/s_ratio_poster/public/p2502316684.jpg" border="0"></a></td><td style=""><a href="https://movie.douban.com/subject/25808075/" title="War for the Planet of the Apes
+
+猩球崛起3：终极之战 / 猩球崛起：终极决战(台)" target="_blank"><img src="https://img7.doubanio.com/view/photo/s_ratio_poster/public/p2494093630.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/25873582/" title="演讲模式
+
+" target="_blank"><img src="https://img7.doubanio.com/spic/s28295615.jpg" border="0"></a></td></tr><tr align="center"><td style=""><a href="https://book.douban.com/subject/26598457/" title="复盘+:把经验转化为能力
+
+" target="_blank"><img src="./note_files/s28282307.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/26383472/" title="你我皆凡人
+
+" target="_blank"><img src="./note_files/s28065718.jpg" border="0"></a></td><td style=""><a href="https://movie.douban.com/subject/26182910/" title="功夫瑜伽
+
+Kung Fu Yoga" target="_blank"><img src="./note_files/p2412371389.jpg" border="0"></a></td></tr><tr><td align="center" colspan="3"><a href="https://www.douban.com/people/tony_bai/" target="_blank">我的豆瓣主页</a></td></tr></tbody></table></div>
+<br>
+<!-- douban show end-->
+
+<!-- my clustrmap -->
+<!--
+<div id="clustrmaps-widget"></div><script type="text/javascript">var _clustrmaps = {'url' : 'http://tonybai.com', 'user' : 1075598, 'server' : '4', 'id' : 'clustrmaps-widget', 'version' : 1, 'date' : '2013-01-30', 'lang' : 'zh', 'corners' : 'square' };(function (){ var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'http://www4.clustrmaps.com/counter/map.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);})();</script><noscript><a href="http://www4.clustrmaps.com/user/8d910698e" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://www4.clustrmaps.com']);"><img src="http://www4.clustrmaps.com/stats/maps-no_clusters/tonybai.com-thumb.jpg" alt="Locations of visitors to this page" /></a></noscript>
+-->
+<!-- my clustrmap end-->
+<br>
+
+
+<br>
+<iframe scrolling="no" frameborder="0" style="background:transparent !important" width="130" height="130" src="./note_files/a2.html"></iframe><script type="text/javascript" src="./note_files/2.js" async="async"></script>
+<br>
+
+<!-- Feedsky FEED 订阅统计发布代码开始 -->
+<!--
+<a href="http://feed.feedsky.com/bigwhite" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://feed.feedsky.com']);" title="Tony Bai" target="_blank"><img src="http://www.feedsky.com/feed/bigwhite/sc/orange.gif" style="border:0" alt="" /></a>
+-->
+<!-- Feedsky FEED 订阅统计发布代码结束 -->
+<br>
+
+<div id="statcounter_image" style="display:inline;"><a title="wordpress hit counter" href="http://statcounter.com/wordpress.org/" class="statcounter"><img src="./note_files/saved_resource(1)" alt="wordpress hit counter" style="border:none;"></a>
+<a href="http://statcounter.com/p7675050/?guest=1">View My
+Stats</a></div>
+<br>
+
+<!-- Baidu Button BEGIN -->
+<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
+<a class="bds_qzone" title="分享到QQ空间" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#"></a>
+<a class="bds_tsina" title="分享到新浪微博" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#"></a>
+<a class="bds_tqq" title="分享到腾讯微博" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#"></a>
+<a class="bds_renren" title="分享到人人网" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#"></a>
+<a class="bds_t163" title="分享到网易微博" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#"></a>
+<span class="bds_more">更多</span>
+<a class="shareCount" href="http://tonybai.com/2017/02/03/some-changes-in-go-1-8/#" title="累计分享0次">0</a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=456117" src="./note_files/bds_s_v2.js"></script>
+
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+<!-- page rank button -->
+<!--
+<a href="http://www.prchecker.info/" title="Page Rank" target="_blank">
+<img src="http://pr.prchecker.info/getpr.php?codex=aHR0cDovL3RvbnliYWkuY29t&tag=3" alt="Page Rank" style="border:0;" /></a>
+-->
+<!-- -- end of page rank button ----></div>
+		</section>    
+</div>		</div>
+    </div>
+</div>
+<footer id="footer">
+	<div class="container">
+		© 2017 <a href="http://tonybai.com/">Tony Bai</a>.
+		由 <a href="http://wordpress.org/">Wordpress</a> 强力驱动. 模板由<a href="http://pagecho.com/">cho</a>制作.
+	</div>
+</footer>
+<script type="text/javascript" src="./note_files/wp-recentcomments.js"></script>
+<link rel="stylesheet" href="./note_files/myQaptcha.jquery.css" type="text/css">
+<script type="text/javascript">function loadJS(filename){var fileref=document.createElement("script");fileref.setAttribute("type","text/javascript");fileref.setAttribute("src", filename); document.getElementsByTagName("head")[0].appendChild(fileref);} if (typeof jQuery == "undefined") loadJS("http://libs.baidu.com/jquery/2.0.0/jquery.min.js"); </script><script type="text/javascript" src="./note_files/jquery-ui.js"></script>
+<script type="text/javascript" src="./note_files/jquery.ui.touch.js"></script>
+<script type="text/javascript">var myQaptchaJqueryPage="http://tonybai.com/wp-content/plugins/myqaptcha/jquery/myQaptcha.jquery.php";</script>
+<script type="text/javascript" src="./note_files/myqaptcha.jquery.js"></script>
+<script type="text/javascript">var newQapTcha = document.createElement("div");newQapTcha.className="QapTcha";var tagIDComment=document.getElementById("comment");if(tagIDComment){tagIDComment.parentNode.insertBefore(newQapTcha,tagIDComment);}else{var allTagP = document.getElementsByTagName("p");for(var p=0;p<allTagP.length;p++){var allTagTA = allTagP[p].getElementsByTagName("textarea");if(allTagTA.length>0){allTagP[p].parentNode.insertBefore(newQapTcha,allTagP[p]);}}}jQuery(document).ready(function(){jQuery('.QapTcha').QapTcha({disabledSubmit:true,autoRevert:true});});</script>
+<script>
+/* <![CDATA[ */
+var rcGlobal = {
+	serverUrl		:'http://tonybai.com',
+	infoTemp		:'%REVIEWER% 在 %POST%',
+	loadingText		:'正在加载',
+	noCommentsText	:'没有任何评论',
+	newestText		:'&laquo; 最新的',
+	newerText		:'&laquo; 上一页',
+	olderText		:'下一页 &raquo;',
+	showContent		:'1',
+	external		:'1',
+	avatarSize		:'32',
+	avatarPosition	:'left',
+	anonymous		:'匿名'
+};
+/* ]]> */
+</script>
+
+</body></html>

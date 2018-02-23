@@ -1,0 +1,944 @@
+ps -aux | grep mongod
+ifconfig eth0 |awk '/inet/ {split($2,x,":");print x[2]}'   	ubuntu下查看ip
+ps -eo pcpu,pid,user,args | sort -k 1 -r | head -16  		哪一条进程在吃CPU
+du -h --max-depth=1 /path | sort -n -r 				查看文件夹下各文件夹和文件大小，并从大到小排序
+mount -t cifs -o username="administrator",password="wxw123" //192.168.3.131/shareFolder /mnt/shareFolder centos和xp共享设置挂载(windows要在同一局域网下，并且开启共享权限)
+
+mount -t cifs -o username="laser-wang",password="letsgo" //192.168.0.121/shareFolder /mnt/shareFolder
+mount -t cifs -o username="laser-wang",password="letsgo" //192.168.0.121/goSrc /opt/goSrc
+
+sudo apt-get install openssh-server
+du -smh xxx   							看目录大小
+ lsb_release -a							看操作系统版本
+hostname							查看主机名
+lsmod | sort 							列出安装的内核模块并排序
+stat -c '%x %z' mstartd 					看文件的atime和ctime
+ls -l --time=atime --full-time         				列出文件的 atime
+mount -o remount /xxxx						重新挂载
+dpkg-reconfigure tzdata						ubuntu 修改时区
+sudo netstat -antup						ubuntu查看进程端口号及运行的程序
+find ./ -inum 12345 -print -exec rm {} -rf \;			删除乱码文件
+lsof -Pnl +M -i4 						看进程端口占用情况
+lsof -Pnl +M -i6 						看进程端口占用情况
+lsof -i:8080							看进程端口占用情况
+grep -R "10.168.104.77" ./					搜索
+sed -i 's/10.168.104.77/10.168.30.15/' jdbc.properties		替换
+find ./ -type d -name "del_dir" -exec rm -r {} \;		批量删除文件或目录
+
+iftop  -i eth1							看网络输入输出
+nload
+nload eth1							看网络输入输出
+tcpdump
+tcpdump -i eth1 -n udp						抓包
+
+lsof -i:2211 | wc -l						调试
+netstat -anp | grep java | wc -l
+netstat -anp | grep java | grep CLOSE_WAIT | wc -l
+netstat -anp | grep java | grep CLOSE_WAIT | grep 31068  | wc -l
+netstat -nat | grep :8080 | grep TIME_WAIT | wc -l		看time_wait数
+
+#windows kill 进程
+netstat -ano | findstr 8080					windows kill 进程
+taskkill /f /pid 3776
+
+/etc/init.d/crond restart					启动crontab
+tail -f /var/log/cron						看crontab日志
+
+# export HISTTIMEFORMAT='%F %T '				显示history时间
+# history | more
+find . -maxdepth 2 -name "*.php"				搜索
+
+ps auxw|head -1;ps auxw|sort -rn -k3|head -10			CPU占用最多的前10个进程：
+ps auxw|head -1;ps auxw|sort -rn -k4|head -10			内存消耗最多的前10个进程
+ps auxw|head -1;ps auxw|sort -rn -k5|head -10			虚拟内存使用最多的前10个进程
+
+cat filename | tail -n +3000 | head -n 1000			查看文件一部分内容,从第3000行开始，显示1000行。即显示3000~3999行
+
+sudo du -s * | sort -nr | head					当前目录下最大的10个目录或文件
+du -sh /*							看根目录下目录大小
+du -h . --max-depth=1						看当前目录下目录大小一层深度
+ls -lR|grep "^-"|wc -l						查看某文件夹下文件的个数，包括子文件夹里的。
+ls -lR|grep "^d"|wc -l						查看某文件夹下文件夹的个数，包括子文件夹里的。
+time dd if=/dev/zero of=/var/test bs=8k count=1000000		测试硬盘写速度
+hdparm -tT /dev/sda						测试硬盘写速度二
+
+--
+wget http://aspersa.googlecode.com/svn/trunk/iodump
+echo 1 > /proc/sys/vm/block_dump
+while true; do sleep 1; dmesg -c; done | perl iodump		查看每进程的io情况
+echo 0 > /proc/sys/vm/block_dump
+--
+at -f /wxw/project/daily.sh 03:00 8/28/2013			定时执行一次任务
+
+/etc/init.d/cups stop						关掉cups服务
+last -n usr							看最近登录用户
+
+/sbin/iptables -I INPUT -p tcp --dport 8080 -j ACCEPT		增加防火墙规则，开放8080端口
+/sbin/iptables -I INPUT  -s 192.168.40.0/24 -p tcp --dport 8080 -j ACCEPT
+/sbin/iptables -I OUTPUT -d 192.168.40.0/24 -p tcp --dport 21 -j ACCEPT
+/sbin/iptables -I INPUT -p tcp --dport 21 -j ACCEPT
+/sbin/iptables -D INPUT 1					删除防火墙规则
+/etc/init.d/iptables status
+/etc/init.d/iptables stop
+/etc/init.d/iptables restart
+/etc/init.d/iptables save
+
+route add -net 192.168.50.0/24 em2				增加路由
+route del -net 192.168.50.0/24 em2
+
+iptables -L -v							ubuntu iptables状态
+systemctl list-unit-files|grep enabled				查看已启动的服务列表：
+systemctl --version						看systemd版本
+systemctl disable postgresql-9.5.service
+
+lftp ftp://test:nucgocgu123@211.151.64.238:21			linux 连接ftp服务器
+/sbin/service vsftpd restart					开启ftp服务
+ftp 211.151.64.238						登陆ftp
+restart xxxxxx							断点续传
+sftp root@192.168.30.8						局域网连接ftp
+scp -r /your/local/dir user@remotehost:/your/remote/dir		服务器间拷贝目录(从本地复制到远程)
+scp -r user@remotehost:/your/remote/dir /your/local/dir		服务器间拷贝目录(从远程复制到本地)
+
+ls -l |grep "^-"|wc -l						统计某文件夹下文件的个数
+ls -l |grep "^d"|wc -l						统计某文件夹下目录的个数
+ls -lR|grep "^-"|wc -l						统计文件夹下文件的个数，包括子文件夹里的
+
+netstat -anp | grep ftp						查看ftp端口情况
+netstat -antp |grep :2571					搜端口2571
+netstat -an|grep 3306	
+netstat -nt | cut -c 40- | cut -d: -f1 | sort | uniq -c | sort -n
+netstat -nt | cut -d: -f2 | sort | uniq -c | sort -n		查看是否有同一ip的很多链接
+netstat -tuln							查看监听了什么端口
+
+#stty erase ^H 							使用stty命令把Backspace的行为变成删除前一个字符。
+
+								看目录大小
+du ems_data | sort -nr						从大到小排列：
+du ems_data | sort +1 -2					按目录名排列：
+du ems_data | sort -rn | head					选出排在前面的10个：
+du ems_data  | sort -rn | tail					选出排在后面的10个：
+du -s * | sort -nr | head					当前目录下最大的10个目录或文件
+du -sh								当前目录大小
+
+
+yum install lm_sensors						安装cpu温度等检测软件
+
+cp  /usr/share/zoneinfo/UTC /etc/localtime 		改时区centos6
+/usr/sbin/ntpdate asia.pool.ntp.org && /sbin/hwclock --systohc	设置服务器时间
+ntpdate us.pool.ntp.org
+
+#centos 7
+yum install ntp //安装ntp服务
+systemctl enable ntpd //开机启动服务
+systemctl start ntpd //启动服务
+timedatectl set-timezone Asia/Shanghai //更改时区
+timedatectl set-timezone UTC //更改时区
+timedatectl set-ntp yes //启用ntp同步
+ntpq -p //同步时间
+#如需更改时间服务器, 修改 /etc/ntp.conf 文件中的服务器地址 server 即可.
+ntpstat
+==============客户端配置==============
+--修改/etc/ntp.conf，在里边插入
+server 192.168.30.2 prefer
+--同时注释掉
+server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+
+#查看时区
+date -R
+
+
+
+setenforce 0							关闭 selinux 和防火墙
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+systemctl stop firewalld && systemctl disable firewalld
+
+vi编辑器
+:%s/vivian/sky/g（等同于 :g/vivian/s//sky/g） 替换每一行中所有 vivian 为 sky
+
+cat filename | tail -n +3000 | head -n 1000			查看文件一部分内容,从第3000行开始，显示1000行。即显示3000~3999行
+sudo passwd							修改ubuntu初始密码
+
+sysctl -a							查看内核参数
+
+vi /etc/sysctl.conf						修改内核参数
+sysctl -p							使修改生效
+
+netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S) print a, S[a]}'
+								查看tcp timewait establish个数
+
+ipconfig /flushdns						清本机dns缓存（命令行模式下）
+nslookup newmarket.kk874.com					查看是否有cdn加速
+
+yum install mlocate						安装locate
+updatedb
+
+ll -i								查看乱码文件节点号，然后根据节点号删除
+find ./ -inum 153878597 -print -exec rm {} -rf \;		
+
+who /var/log/wtmp						查看谁最近登录
+ssh-keygen -R 192.168.40.187					当出现It is also possible that the RSA host key has just been changed时执行一下
+								（这是Linux重装或则openssh-server重装引起的，执行以下命令即可）
+
+sar -n DEV 2 1000						查网络流量
+nload
+8 * * * * /usr/sbin/ntpdate asia.pool.ntp.org && /sbin/hwclock --systohc
+								同步服务器时间
+
+cat /etc/passwd|awk -F":" '{ print $1 }'|more			查看用户列表
+ netstat -ant |grep TIME_WAIT | wc -l 				查看time_wait个数
+iostat -d -k 1 1000						看磁盘繁忙程度
+iostat -d -k -x 1 10000						看磁盘繁忙程度
+	
+tail -n +3000 | head -n 1000					从第3000行开始，显示1000行。即显示3000~3999行 
+
+vmstat 5							
+
+hostnamectl set-hostname servername				centos7修改主机名
+hostnamectl status [--static|--transient|--pretty]
+
+ip addr add 192.168.20.130/16 dev eth1				增加虚拟ip
+ip addr del 192.168.0.100/20 dev eth1
+
+http://myexternalip.com/raw					获取外网ip
+
+wget https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py	测试上传下载速度
+chmod +x speedtest.py
+./speedtest.py
+
+
+
+#配置系统可以打开文件数以及shell打开文件数
+/etc/sysctl.conf
+fs.file-max = 65535000
+sysctl -p
+/proc/sys/fs/file-max						
+/etc/security/limits.conf
+
+
+系统信息 
+lsb_release -a  查看操作系统版本
+arch 显示机器的处理器架构(1) 
+uname -m 显示机器的处理器架构(2) 
+uname -r 显示正在使用的内核版本 
+dmidecode -q 显示硬件系统部件 - (SMBIOS / DMI) 
+hdparm -i /dev/hda 罗列一个磁盘的架构特性 
+hdparm -tT /dev/sda 在磁盘上执行测试性读取操作 
+cat /proc/cpuinfo 显示CPU info的信息 
+cat /proc/interrupts 显示中断 
+cat /proc/meminfo 校验内存使用 
+cat /proc/swaps 显示哪些swap被使用 
+cat /proc/version 显示内核的版本 
+cat /proc/net/dev 显示网络适配器及统计 
+cat /proc/mounts 显示已加载的文件系统 
+lspci -tv 罗列 PCI 设备 
+lsusb -tv 显示 USB 设备 
+date 显示系统日期 
+cal 2007 显示2007年的日历表 
+date 041217002007.00 设置日期和时间 - 月日时分年.秒 
+clock -w 将时间修改保存到 BIOS 
+
+
+
+
+关机 (系统的关机、重启以及登出 ) 
+shutdown -h now 关闭系统(1) 
+init 0 关闭系统(2) 
+telinit 0 关闭系统(3) 
+shutdown -h hours:minutes & 按预定时间关闭系统 
+shutdown -c 取消按预定时间关闭系统 
+shutdown -r now 重启(1) 
+reboot 重启(2) 
+logout 注销 
+
+
+
+文件和目录 
+sudo -i 获得root权限
+cd /home 进入 '/ home' 目录' 
+cd .. 返回上一级目录 
+cd ../.. 返回上两级目录 
+cd 进入个人的主目录 
+cd ~user1 进入个人的主目录 
+cd - 返回上次所在的目录 
+pwd 显示工作路径 
+ls 查看目录中的文件 
+ls -F 查看目录中的文件 
+ls -l 显示文件和目录的详细资料 
+1$ ls | head -10 前十条
+ls -a 显示隐藏文件 
+ls *[0-9]* 显示包含数字的文件名和目录名 
+tree 显示文件和目录由根目录开始的树形结构(1) 
+lstree 显示文件和目录由根目录开始的树形结构(2) 
+mkdir dir1 创建一个叫做 'dir1' 的目录' 
+mkdir dir1 dir2 同时创建两个目录 
+mkdir -p /tmp/dir1/dir2 创建一个目录树 
+rm -f file1 删除一个叫做 'file1' 的文件' 
+rmdir dir1 删除一个叫做 'dir1' 的目录' 
+rm -rf dir1 删除一个叫做 'dir1' 的目录并同时删除其内容 
+rm -rf dir1 dir2 同时删除两个目录及它们的内容 
+mv dir1 new_dir 重命名/移动 一个目录 
+cp file1 file2 复制一个文件 
+cp dir/* . 复制一个目录下的所有文件到当前工作目录 
+cp -a /tmp/dir1 . 复制一个目录到当前工作目录 
+cp -a dir1 dir2 复制一个目录 
+ln -s file1 lnk1 创建一个指向文件或目录的软链接 
+ln file1 lnk1 创建一个指向文件或目录的物理链接 
+touch -t 0712250000 file1 修改一个文件或目录的时间戳 - (YYMMDDhhmm) 
+file file1 outputs the mime type of the file as text 
+iconv -l 列出已知的编码 
+iconv -f fromEncoding -t toEncoding inputFile > outputFile creates a new from the given input file by assuming it is encoded in fromEncoding and converting it to toEncoding. 
+find . -maxdepth 1 -name *.jpg -print -exec convert "{}" -resize 80x60 "thumbs/{}" \; batch resize files in the current directory and send them to a thumbnails directory (requires convert from Imagemagick) 
+
+
+
+文件搜索 
+find / -name file1 从 '/' 开始进入根文件系统搜索文件和目录 
+find / -user user1 搜索属于用户 'user1' 的文件和目录 
+find /home/user1 -name \*.bin 在目录 '/ home/user1' 中搜索带有'.bin' 结尾的文件 
+find /usr/bin -type f -atime +100 搜索在过去100天内未被使用过的执行文件 
+find /usr/bin -type f -mtime -10 搜索在10天内被创建或者修改过的文件 
+find / -name \*.rpm -exec chmod 755 '{}' \; 搜索以 '.rpm' 结尾的文件并定义其权限 
+find / -xdev -name \*.rpm 搜索以 '.rpm' 结尾的文件，忽略光驱、捷盘等可移动设备 
+locate \*.ps 寻找以 '.ps' 结尾的文件 - 先运行 'updatedb' 命令 
+whereis halt 显示一个二进制文件、源码或man的位置 
+which halt 显示一个二进制文件或可执行文件的完整路径 
+
+
+
+挂载一个文件系统 
+mount /dev/hda2 /mnt/hda2 挂载一个叫做hda2的盘 - 确定目录 '/ mnt/hda2' 已经存在 
+umount /dev/hda2 卸载一个叫做hda2的盘 - 先从挂载点 '/ mnt/hda2' 退出 
+fuser -km /mnt/hda2 当设备繁忙时强制卸载 
+umount -n /mnt/hda2 运行卸载操作而不写入 /etc/mtab 文件- 当文件为只读或当磁盘写满时非常有用 
+mount /dev/fd0 /mnt/floppy 挂载一个软盘 
+mount /dev/cdrom /mnt/cdrom 挂载一个cdrom或dvdrom 
+mount /dev/hdc /mnt/cdrecorder 挂载一个cdrw或dvdrom 
+mount /dev/hdb /mnt/cdrecorder 挂载一个cdrw或dvdrom 
+mount -o loop file.iso /mnt/cdrom 挂载一个文件或ISO镜像文件 
+mount -t vfat /dev/hda5 /mnt/hda5 挂载一个Windows FAT32文件系统 
+mount /dev/sda1 /mnt/usbdisk 挂载一个usb 捷盘或闪存设备 
+mount -t smbfs -o username=user,password=pass //WinClient/share /mnt/share 挂载一个windows网络共享 
+
+
+
+磁盘空间 
+df -h 显示已经挂载的分区列表 
+ls -lSr |more 以尺寸大小排列文件和目录 
+du -sh dir1 估算目录 'dir1' 已经使用的磁盘空间' 
+du -sk * | sort -rn 以容量大小为依据依次显示文件和目录的大小 
+du --max-depth=1 -h 当前的文件夹下的磁盘使用情况
+rpm -q -a --qf '%10{SIZE}t%{NAME}n' | sort -k1,1n 以大小为依据依次显示已安装的rpm包所使用的空间 (fedora, redhat类系统) 
+dpkg-query -W -f='${Installed-Size;10}t${Package}n' | sort -k1,1n 以大小为依据显示已安装的deb包所使用的空间 (ubuntu, debian类系统) 
+
+返回顶部索引 ^
+
+用户和群组 
+groupadd group_name 创建一个新用户组 
+groupdel group_name 删除一个用户组 
+groupmod -n new_group_name old_group_name 重命名一个用户组 
+useradd -c "Name Surname " -g admin -d /home/user1 -s /bin/bash user1 创建一个属于 "admin" 用户组的用户 
+useradd user1 创建一个新用户 
+userdel -r user1 删除一个用户 ( '-r' 排除主目录) 
+usermod -c "User FTP" -g system -d /ftp/user1 -s /bin/nologin user1 修改用户属性 
+passwd 修改口令 
+passwd user1 修改一个用户的口令 (只允许root执行) 
+chage -E 2005-12-31 user1 设置用户口令的失效期限 
+pwck 检查 '/etc/passwd' 的文件格式和语法修正以及存在的用户 
+grpck 检查 '/etc/passwd' 的文件格式和语法修正以及存在的群组 
+newgrp group_name 登陆进一个新的群组以改变新创建文件的预设群组 
+vi /etc/sudoers		%mongo  ALL=(ALL)       ALL	设置sudo
+groups 用户名	查看用户所属组
+usermod -a -G testgroup loongson	添加用户到组
+
+# 生成密码
+# 第一种方法
+	yum install expect 
+	mkpasswd -l 12 -s 2
+	mkpasswd -l 6 -C 1 -s 1
+
+mkpasswd的用法：
+#mkpasswd 参数 用户名
+-l 定义生成密码的长度，默认9
+-d 定义密码里面包含数字个数，默认2
+-c 定义包含小写字母个数，默认2
+-C 定义包含大写字母个数，默认2
+-s 定义包含特殊字符个数，默认1
+-p 另外指定一个生成密码的程序，默认是/etc/yppasswd
+
+# 第二种方法
+cat /dev/urandom | tr -dc "a-zA-Z0-9_+\~\!\@\#\$\%\^\&\*\(\)"| fold -w 12 |head -n 10
+
+
+
+#######################################################
+# 建立 sftp免认证登陆用户 (免密码)
+useradd -c "sftp_user" -g ftp -d /home/sftp_user -s /bin/bash sftp_user
+passwd sftp_user
+
+1. 在主机A上执行如下命令来生成配对密钥：
+ssh-keygen -t rsa
+按照提示操作，注意，不要输入passphrase。提示信息如下
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):  
+Enter passphrase (empty for no passphrase):  
+Enter same passphrase again:  
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+ff:8e:85:68:85:94:7c:2c:46:b1:e5:2d:41:5c:e8:9b  root@localhost.domain
+
+2. 将 .ssh 目录中的 id_rsa.pub 文件复制到 主机B 的 ~/.ssh/ 目录中，并改名为  authorized_keys。
+scp .ssh/id_rsa.pub 192.168.10.2:/root/.ssh/authorized_keys
+
+以后从A主机scp到B主机就不需要密码了。
+
+3.使用此方法需要注意：复制的两台计算机需要用相同的账户名，这里都是用的root。为了安全起见，需要在两台机器中创建相同的账号，然后在A上用su命令切换至账号下，执行第1步，第二步中复制文件时可能.ssh目录并不存在，需要手动创建。
+
+在第2步中如果机器中已经存在authorized_keys文件，则需注意，这个文件可以包含多个SSH验证信息，这时可用 cat >>命令将验证文件内容附加上去。
+
+比如复制到scp .ssh/id_rsa.pub 192.168.10.2:/root/.ssh/a.pub
+
+然后执行cat ~/.ssh/a.pub >> ~/.ssh/authorized_keys
+
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys  
+
+#######################################################
+
+
+返回顶部索引 ^
+
+文件的权限 - 使用 "+" 设置权限，使用 "-" 用于取消 
+ls -lh 显示权限 
+ls /tmp | pr -T5 -W$COLUMNS 将终端划分成5栏显示 
+chmod ugo+rwx directory1 设置目录的所有人(u)、群组(g)以及其他人(o)以读（r ）、写(w)和执行(x)的权限 
+chmod go-rwx directory1 删除群组(g)与其他人(o)对目录的读写执行权限 
+chown user1 file1 改变一个文件的所有人属性 
+chown -R user1 directory1 改变一个目录的所有人属性并同时改变改目录下所有文件的属性 
+chgrp group1 file1 改变文件的群组 
+chown user1:group1 file1 改变一个文件的所有人和群组属性 
+find / -perm -u+s 罗列一个系统中所有使用了SUID控制的文件 
+chmod u+s /bin/file1 设置一个二进制文件的 SUID 位 - 运行该文件的用户也被赋予和所有者同样的权限 
+chmod u-s /bin/file1 禁用一个二进制文件的 SUID位 
+chmod g+s /home/public 设置一个目录的SGID 位 - 类似SUID ，不过这是针对目录的 
+chmod g-s /home/public 禁用一个目录的 SGID 位 
+chmod o+t /home/public 设置一个文件的 STIKY 位 - 只允许合法所有人删除文件 
+chmod o-t /home/public 禁用一个目录的 STIKY 位 
+
+返回顶部索引 ^
+
+文件的特殊属性 - 使用 "+" 设置权限，使用 "-" 用于取消 
+chattr +a file1 只允许以追加方式读写文件 
+chattr +c file1 允许这个文件能被内核自动压缩/解压 
+chattr +d file1 在进行文件系统备份时，dump程序将忽略这个文件 
+chattr +i file1 设置成不可变的文件，不能被删除、修改、重命名或者链接 
+chattr +s file1 允许一个文件被安全地删除 
+chattr +S file1 一旦应用程序对这个文件执行了写操作，使系统立刻把修改的结果写到磁盘 
+chattr +u file1 若文件被删除，系统会允许你在以后恢复这个被删除的文件 
+lsattr 显示特殊的属性 
+
+返回顶部索引 ^
+
+打包和压缩文件 
+bunzip2 file1.bz2 解压一个叫做 'file1.bz2'的文件 
+bzip2 file1 压缩一个叫做 'file1' 的文件 
+gunzip file1.gz 解压一个叫做 'file1.gz'的文件 
+gzip file1 压缩一个叫做 'file1'的文件 
+gzip -9 file1 最大程度压缩 
+rar a file1.rar test_file 创建一个叫做 'file1.rar' 的包 
+rar a file1.rar file1 file2 dir1 同时压缩 'file1', 'file2' 以及目录 'dir1' 
+rar x file1.rar 解压rar包 
+unrar x file1.rar 解压rar包 
+tar -cvf archive.tar file1 创建一个非压缩的 tarball 
+tar -cvf archive.tar file1 file2 dir1 创建一个包含了 'file1', 'file2' 以及 'dir1'的档案文件 
+tar -tf archive.tar 显示一个包中的内容 
+tar -xvf archive.tar 释放一个包 
+tar -xvf archive.tar -C /tmp 将压缩包释放到 /tmp目录下 
+tar -cvfj archive.tar.bz2 dir1 创建一个bzip2格式的压缩包 
+tar -xvfj archive.tar.bz2 解压一个bzip2格式的压缩包 
+tar -cvfz archive.tar.gz dir1 创建一个gzip格式的压缩包 
+tar -xvfz archive.tar.gz 解压一个gzip格式的压缩包 
+zip file1.zip file1 创建一个zip格式的压缩包 
+zip -r file1.zip file1 file2 dir1 将几个文件和目录同时压缩成一个zip格式的压缩包 
+unzip file1.zip 解压一个zip格式压缩包 
+
+返回顶部索引 ^
+
+RPM 包 - （Fedora, Redhat及类似系统） 
+rpm -ivh package.rpm 安装一个rpm包 
+rpm -ivh --nodeeps package.rpm 安装一个rpm包而忽略依赖关系警告 
+rpm -U package.rpm 更新一个rpm包但不改变其配置文件 
+rpm -F package.rpm 更新一个确定已经安装的rpm包 
+rpm -e package_name.rpm 删除一个rpm包 
+rpm -qa 显示系统中所有已经安装的rpm包 
+rpm -qa | grep httpd 显示所有名称中包含 "httpd" 字样的rpm包 
+rpm -qi package_name 获取一个已安装包的特殊信息 
+rpm -qg "System Environment/Daemons" 显示一个组件的rpm包 
+rpm -ql package_name 显示一个已经安装的rpm包提供的文件列表 
+rpm -qc package_name 显示一个已经安装的rpm包提供的配置文件列表 
+rpm -q package_name --whatrequires 显示与一个rpm包存在依赖关系的列表 
+rpm -q package_name --whatprovides 显示一个rpm包所占的体积 
+rpm -q package_name --scripts 显示在安装/删除期间所执行的脚本l 
+rpm -q package_name --changelog 显示一个rpm包的修改历史 
+rpm -qf /etc/httpd/conf/httpd.conf 确认所给的文件由哪个rpm包所提供 
+rpm -qp package.rpm -l 显示由一个尚未安装的rpm包提供的文件列表 
+rpm --import /media/cdrom/RPM-GPG-KEY 导入公钥数字证书 
+rpm --checksig package.rpm 确认一个rpm包的完整性 
+rpm -qa gpg-pubkey 确认已安装的所有rpm包的完整性 
+rpm -V package_name 检查文件尺寸、 许可、类型、所有者、群组、MD5检查以及最后修改时间 
+rpm -Va 检查系统中所有已安装的rpm包- 小心使用 
+rpm -Vp package.rpm 确认一个rpm包还未安装 
+rpm2cpio package.rpm | cpio --extract --make-directories *bin* 从一个rpm包运行可执行文件 
+rpm -ivh /usr/src/redhat/RPMS/`arch`/package.rpm 从一个rpm源码安装一个构建好的包 
+rpmbuild --rebuild package_name.src.rpm 从一个rpm源码构建一个 rpm 包 
+
+返回顶部索引 ^
+
+YUM 软件包升级器 - （Fedora, RedHat及类似系统） 
+yum install package_name 下载并安装一个rpm包 
+yum localinstall package_name.rpm 将安装一个rpm包，使用你自己的软件仓库为你解决所有依赖关系 
+yum update package_name.rpm 更新当前系统中所有安装的rpm包 
+yum update package_name 更新一个rpm包 
+yum remove package_name 删除一个rpm包 
+yum list 列出当前系统中安装的所有包 
+yum search package_name 在rpm仓库中搜寻软件包 
+yum clean packages 清理rpm缓存删除下载的包 
+yum clean headers 删除所有头文件 
+yum clean all 删除所有缓存的包和头文件 
+
+返回顶部索引 ^
+
+DEB 包 (Debian, Ubuntu 以及类似系统) 
+dpkg -i package.deb 安装/更新一个 deb 包 
+dpkg -r package_name 从系统删除一个 deb 包 
+dpkg -l 显示系统中所有已经安装的 deb 包 
+dpkg -l | grep httpd 显示所有名称中包含 "httpd" 字样的deb包 
+dpkg -s package_name 获得已经安装在系统中一个特殊包的信息 
+dpkg -L package_name 显示系统中已经安装的一个deb包所提供的文件列表 
+dpkg --contents package.deb 显示尚未安装的一个包所提供的文件列表 
+dpkg -S /bin/ping 确认所给的文件由哪个deb包提供 
+
+返回顶部索引 ^
+
+APT 软件工具 (Debian, Ubuntu 以及类似系统) 
+apt-get install package_name 安装/更新一个 deb 包 
+apt-cdrom install package_name 从光盘安装/更新一个 deb 包 
+apt-get update 升级列表中的软件包 
+apt-get upgrade 升级所有已安装的软件 
+apt-get remove package_name 从系统删除一个deb包 
+apt-get check 确认依赖的软件仓库正确 
+apt-get clean 从下载的软件包中清理缓存 
+apt-cache search searched-package 返回包含所要搜索字符串的软件包名称 
+
+返回顶部索引 ^
+
+查看文件内容 
+cat file1 从第一个字节开始正向查看文件的内容 
+tac file1 从最后一行开始反向查看一个文件的内容 
+more file1 查看一个长文件的内容 
+less file1 类似于 'more' 命令，但是它允许在文件中和正向操作一样的反向操作 
+head -2 file1 查看一个文件的前两行 
+tail -2 file1 查看一个文件的最后两行 
+tail -f /var/log/messages 实时查看被添加到一个文件中的内容 
+
+返回顶部索引 ^
+
+文本处理 
+cat file1 file2 ... | command <> file1_in.txt_or_file1_out.txt general syntax for text manipulation using PIPE, STDIN and STDOUT 
+cat file1 | command( sed, grep, awk, grep, etc...) > result.txt 合并一个文件的详细说明文本，并将简介写入一个新文件中 
+cat file1 | command( sed, grep, awk, grep, etc...) >> result.txt 合并一个文件的详细说明文本，并将简介写入一个已有的文件中 
+grep Aug /var/log/messages 在文件 '/var/log/messages'中查找关键词"Aug" 
+grep ^Aug /var/log/messages 在文件 '/var/log/messages'中查找以"Aug"开始的词汇 
+grep [0-9] /var/log/messages 选择 '/var/log/messages' 文件中所有包含数字的行 
+grep Aug -R /var/log/* 在目录 '/var/log' 及随后的目录中搜索字符串"Aug" 
+sed 's/stringa1/stringa2/g' example.txt 将example.txt文件中的 "string1" 替换成 "string2" 
+sed '/^$/d' example.txt 从example.txt文件中删除所有空白行 
+sed '/ *#/d; /^$/d' example.txt 从example.txt文件中删除所有注释和空白行 
+echo 'esempio' | tr '[:lower:]' '[:upper:]' 合并上下单元格内容 
+sed -e '1d' result.txt 从文件example.txt 中排除第一行 
+sed -n '/stringa1/p' 查看只包含词汇 "string1"的行 
+sed -e 's/ *$//' example.txt 删除每一行最后的空白字符 
+sed -e 's/stringa1//g' example.txt 从文档中只删除词汇 "string1" 并保留剩余全部 
+sed -n '1,5p;5q' example.txt 查看从第一行到第5行内容 
+sed -n '5p;5q' example.txt 查看第5行 
+sed -e 's/00*/0/g' example.txt 用单个零替换多个零 
+cat -n file1 标示文件的行数 
+cat example.txt | awk 'NR%2==1' 删除example.txt文件中的所有偶数行 
+echo a b c | awk '{print $1}' 查看一行第一栏 
+echo a b c | awk '{print $1,$3}' 查看一行的第一和第三栏 
+paste file1 file2 合并两个文件或两栏的内容 
+paste -d '+' file1 file2 合并两个文件或两栏的内容，中间用"+"区分 
+sort file1 file2 排序两个文件的内容 
+sort file1 file2 | uniq 取出两个文件的并集(重复的行只保留一份) 
+sort file1 file2 | uniq -u 删除交集，留下其他的行 
+sort file1 file2 | uniq -d 取出两个文件的交集(只留下同时存在于两个文件中的文件) 
+comm -1 file1 file2 比较两个文件的内容只删除 'file1' 所包含的内容 
+comm -2 file1 file2 比较两个文件的内容只删除 'file2' 所包含的内容 
+comm -3 file1 file2 比较两个文件的内容只删除两个文件共有的部分 
+
+返回顶部索引 ^
+
+
+字符设置和文件格式转换 
+dos2unix filedos.txt fileunix.txt 将一个文本文件的格式从MSDOS转换成UNIX 
+unix2dos fileunix.txt filedos.txt 将一个文本文件的格式从UNIX转换成MSDOS 
+recode ..HTML < page.txt > page.html 将一个文本文件转换成html 
+recode -l | more 显示所有允许的转换格式 
+
+返回顶部索引 ^
+
+文件系统分析 
+badblocks -v /dev/hda1 检查磁盘hda1上的坏磁块 
+fsck /dev/hda1 修复/检查hda1磁盘上linux文件系统的完整性 
+fsck.ext2 /dev/hda1 修复/检查hda1磁盘上ext2文件系统的完整性 
+e2fsck /dev/hda1 修复/检查hda1磁盘上ext2文件系统的完整性 
+e2fsck -j /dev/hda1 修复/检查hda1磁盘上ext3文件系统的完整性 
+fsck.ext3 /dev/hda1 修复/检查hda1磁盘上ext3文件系统的完整性 
+fsck.vfat /dev/hda1 修复/检查hda1磁盘上fat文件系统的完整性 
+fsck.msdos /dev/hda1 修复/检查hda1磁盘上dos文件系统的完整性 
+dosfsck /dev/hda1 修复/检查hda1磁盘上dos文件系统的完整性 
+
+返回顶部索引 ^
+
+初始化一个文件系统 
+mkfs /dev/hda1 在hda1分区创建一个文件系统 
+mke2fs /dev/hda1 在hda1分区创建一个linux ext2的文件系统 
+mke2fs -j /dev/hda1 在hda1分区创建一个linux ext3(日志型)的文件系统 
+mkfs -t vfat 32 -F /dev/hda1 创建一个 FAT32 文件系统 
+fdformat -n /dev/fd0 格式化一个软盘 
+mkswap /dev/hda3 创建一个swap文件系统 
+
+返回顶部索引 ^
+
+SWAP文件系统 
+mkswap /dev/hda3 创建一个swap文件系统 
+swapon /dev/hda3 启用一个新的swap文件系统 
+swapon /dev/hda2 /dev/hdb3 启用两个swap分区 
+
+返回顶部索引 ^
+
+备份 
+dump -0aj -f /tmp/home0.bak /home 制作一个 '/home' 目录的完整备份 
+dump -1aj -f /tmp/home0.bak /home 制作一个 '/home' 目录的交互式备份 
+restore -if /tmp/home0.bak 还原一个交互式备份 
+rsync -rogpav --delete /home /tmp 同步两边的目录 
+rsync -rogpav -e ssh --delete /home ip_address:/tmp 通过SSH通道rsync 
+rsync -az -e ssh --delete ip_addr:/home/public /home/local 通过ssh和压缩将一个远程目录同步到本地目录 
+rsync -az -e ssh --delete /home/local ip_addr:/home/public 通过ssh和压缩将本地目录同步到远程目录 
+dd bs=1M if=/dev/hda | gzip | ssh user@ip_addr 'dd of=hda.gz' 通过ssh在远程主机上执行一次备份本地磁盘的操作 
+dd if=/dev/sda of=/tmp/file1 备份磁盘内容到一个文件 
+tar -Puf backup.tar /home/user 执行一次对 '/home/user' 目录的交互式备份操作 
+( cd /tmp/local/ && tar c . ) | ssh -C user@ip_addr 'cd /home/share/ && tar x -p' 通过ssh在远程目录中复制一个目录内容 
+( tar c /home ) | ssh -C user@ip_addr 'cd /home/backup-home && tar x -p' 通过ssh在远程目录中复制一个本地目录 
+tar cf - . | (cd /tmp/backup ; tar xf - ) 本地将一个目录复制到另一个地方，保留原有权限及链接 
+find /home/user1 -name '*.txt' | xargs cp -av --target-directory=/home/backup/ --parents 从一个目录查找并复制所有以 '.txt' 结尾的文件到另一个目录 
+find /var/log -name '*.log' | tar cv --files-from=- | bzip2 > log.tar.bz2 查找所有以 '.log' 结尾的文件并做成一个bzip包 
+dd if=/dev/hda of=/dev/fd0 bs=512 count=1 做一个将 MBR (Master Boot Record)内容复制到软盘的动作 
+dd if=/dev/fd0 of=/dev/hda bs=512 count=1 从已经保存到软盘的备份中恢复MBR内容 
+
+返回顶部索引 ^
+
+光盘 
+cdrecord -v gracetime=2 dev=/dev/cdrom -eject blank=fast -force 清空一个可复写的光盘内容 
+mkisofs /dev/cdrom > cd.iso 在磁盘上创建一个光盘的iso镜像文件 
+mkisofs /dev/cdrom | gzip > cd_iso.gz 在磁盘上创建一个压缩了的光盘iso镜像文件 
+mkisofs -J -allow-leading-dots -R -V "Label CD" -iso-level 4 -o ./cd.iso data_cd 创建一个目录的iso镜像文件 
+cdrecord -v dev=/dev/cdrom cd.iso 刻录一个ISO镜像文件 
+gzip -dc cd_iso.gz | cdrecord dev=/dev/cdrom - 刻录一个压缩了的ISO镜像文件 
+mount -o loop cd.iso /mnt/iso 挂载一个ISO镜像文件 
+cd-paranoia -B 从一个CD光盘转录音轨到 wav 文件中 
+cd-paranoia -- "-3" 从一个CD光盘转录音轨到 wav 文件中（参数-3） 
+cdrecord --scanbus 扫描总线以识别scsi通道 
+dd if=/dev/hdc | md5sum 校验一个设备的md5sum编码，例如一张 CD 
+
+返回顶部索引 ^
+
+网络 - （以太网和WIFI无线） 
+
+
+ifconfig eth0 显示一个以太网卡的配置 
+ifup eth0 启用一个 'eth0' 网络设备 
+ifdown eth0 禁用一个 'eth0' 网络设备 
+ifconfig eth0 192.168.1.1 netmask 255.255.255.0 控制IP地址 
+ifconfig eth0 promisc 设置 'eth0' 成混杂模式以嗅探数据包 (sniffing) 
+dhclient eth0 以dhcp模式启用 'eth0' 
+route -n show routing table 
+route add -net 0/0 gw IP_Gateway configura default gateway 
+route add -net 192.168.0.0 netmask 255.255.0.0 gw 192.168.1.1 configure static route to reach network '192.168.0.0/16' 
+route del 0/0 gw IP_gateway remove static route 
+echo "1" > /proc/sys/net/ipv4/ip_forward activate ip routing 
+hostname show hostname of system 
+host www.example.com lookup hostname to resolve name to ip address and viceversa(1) 
+nslookup www.example.com lookup hostname to resolve name to ip address and viceversa(2) 
+ip link show show link status of all interfaces 
+mii-tool eth0 show link status of 'eth0' 
+ethtool eth0 show statistics of network card 'eth0' 
+netstat -tup show all active network connections and their PID 
+netstat -tupl show all network services listening on the system and their PID 
+tcpdump tcp port 80 show all HTTP traffic 
+iwlist scan show wireless networks 
+iwconfig eth1 show configuration of a wireless network card 
+hostname show hostname 
+host www.example.com lookup hostname to resolve name to ip address and viceversa 
+nslookup www.example.com lookup hostname to resolve name to ip address and viceversa 
+whois www.example.com lookup on Whois database 
+
+GO TOP INDEX ^ 
+Microsoft Windows networks (SAMBA) 
+nbtscan ip_addr netbios name resolution 
+nmblookup -A ip_addr netbios name resolution 
+smbclient -L ip_addr/hostname show remote shares of a windows host 
+smbget -Rr smb://ip_addr/share like wget can download files from a host windows via smb 
+mount -t smbfs -o username=user,password=pass //WinClient/share /mnt/share mount a windows network share
+
+##########################################
+免认证登录
+ssh-keygen -t rsa
+ssh-copy-id -i ~/.ssh/id_rsa.pub vagrant@vmware13
+
+
+#############################################################
+vi 乱码问题
+首先检查SecureCRT，
+设置
+Options->Global options->General->Default session->Edit Default Settings->Terminal->
+Appearance->Character encoding，
+选择UTF-8。
+然后设置
+Options->Global options->General->Default session->Edit Default Settings->Terminal->
+Appearance->Font，
+选择不会出现汉字乱码的字体，如fixedsys，新宋体，宋体等。
+然后退出SecureCRT并重新登录。
+由于Linux默认的编码就是UTF-8，此时，汉字已经可以正常显示。
+ 
+如果还是乱码，继续检查Linux的设置
+打开/etc/sysconfig/i18n
+把LANG改成支持UTF-8的字符集
+如：LANG=”zh_CN.UTF-8″
+或者是 LANG=”en_US.UTF-8″
+ 
+Vim的设置在vimrc文件中，在系统的/etc目录下面。另外每个用户的~目录下，如果也存在一个vimrc文件，那么系统就按照此文件进行设置。
+编辑 .vimrc(_vimrc),在开头加上：
+let $LANG="zh_CN.UTF-8"     或 let $LANG="en_US.UTF-8"
+set fileencodings=utf-8,chinese,latin-1
+set termencoding=utf-8
+set encoding=utf-8
+然后就OK了。
+如果配置文件中已经存在类似的设置，那么根据实际情况修改。
+ 
+此时可以正确显示，但Linux本身的错误提示是乱码，并且无法正确地用vim编辑中文。
+#############################################################
+ubuntu 
+	vi /etc/profile
+#############################################################
+
+#!/bin/sh
+
+pre_day=`date +%Y-%m-%d -d "-1 days"`
+file="/home/sftp_user/llsj_data/llsj_"$pre_day".csv"
+
+# 如果文件存在并且size大于0，则上传至232
+if [ -s "$file" ]; then
+        scp $file sftp_user@211.151.64.232:/home/sftp_user/llsj_data/
+fi
+#############################################################
+
+#vi替换命令
+:s/10.117.49.245:2181/192.168.0.248/g
+
+#修改dns
+/etc/resolv.conf
+nameserver 114.114.114.114
+
+#修改网络配置
+/etc/sysconfig/network-scripts/xxxx
+service network restart
+
+#优化
+vi /etc/sysctl.conf
+sysctl -p
+
+netstat -an | grep 80 | awk '{print $6}' | sort | uniq -c | sort -rn
+
+net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
+net.ipv4.tcp_tw_reuse = 1 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+net.ipv4.tcp_fin_timeout 修改系默认的 TIMEOUT 时间
+其它参数说明：
+net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
+net.ipv4.tcp_tw_reuse = 1 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+net.ipv4.tcp_fin_timeout = 30 表示如果套接字由本端要求关闭，这个参数决定了它保持在FIN-WAIT-2状态的时间。
+net.ipv4.tcp_keepalive_time = 1200 表示当keepalive起用的时候，TCP发送keepalive消息的频度。缺省是2小时，改为20分钟。
+net.ipv4.ip_local_port_range = 1024 65000 表示用于向外连接的端口范围。缺省情况下很小：32768到61000，改为1024到65000。
+net.ipv4.tcp_max_syn_backlog = 8192 表示SYN队列的长度，默认为1024，加大队列长度为8192，可以容纳更多等待连接的网络连接数。
+net.ipv4.tcp_max_tw_buckets = 5000 表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。
+默 认为180000，改为5000。对于Apache、Nginx等服务器，上几行的参数可以很好地减少TIME_WAIT套接字数量，但是对于Squid，效果却不大。此项参数可以控制TIME_WAIT套接字的最大数量，避免Squid服务器被大量的TIME_WAIT套接字拖死。
+
+net.netfilter.nf_conntrack_max = 655350
+#半连接队列长度
+net.ipv4.tcp_max_syn_backlog = 200000
+#系统允许的文件句柄的最大数目，因为连接需要占用文件句柄
+fs.file-max = 819200
+#用来应对突发的大并发connect 请求
+net.core.somaxconn = 65536
+#最大的TCP 数据接收缓冲（字节）
+net.core.rmem_max = 1024123000
+#最大的TCP 数据发送缓冲（字节）
+net.core.wmem_max = 16777216
+#网络设备接收数据包的速率比内核处理这些包的速率快时，允许送到队列的数据包的最大数目
+net.core.netdev_max_backlog = 165536
+#本机主动连接其他机器时的端口分配范围
+net.ipv4.ip_local_port_range = 10000 65535
+net.ipv4.tcp_max_tw_buckets = 365000
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_syncookies = 1
+net.core.somaxconn = 262144
+net.core.netdev_max_backlog = 262144
+net.ipv4.tcp_max_orphans = 262144
+net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_timestamps = 0
+net.ipv4.tcp_synack_retries = 1
+net.ipv4.tcp_syn_retries = 1
+net.ipv4.tcp_fin_timeout = 30
+#扩大
+net.ipv4.tcp_keepalive_time = 1200
+
+
+
+#加速ssh登陆
+vi /etc/ssh/sshd_config
+UseDNS no
+GSSAPIAuthentication no
+systemctl restart sshd
+
+
+
+
+
+
+
+#install 
+#=========================================================================================
+yum install mlocate -y						安装locate
+yum -y install epel-release
+updatedb
+yum install net-tools -y					安装后可以使用ifconfig
+yum install redhat-lsb -y					lsb_release
+
+yum install openssl openssl-devel
+yum install epel-release redhat-lsb mlocate net-tools openssh-clients lrzsz zip unzip wget ntp lsof sysstat -y
+rpm -ivh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm 
+rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+yum install lrzsz -y
+yum install openssh-clients -y					scp
+yum -y install sysstat						iostat
+yum -y install iotop						iotop
+#=========================================================================================
+
+
+
+#centos7
+
+systemctl list-unit-files
+hostnamectl status
+hostnamectl  set-hostname vmware11				centos7 修改主机名
+
+systemctl --failed
+systemctl status network
+
+#装nfs
+yum -y install nfs-utils rpcbind
+
+#ntp
+vi /etc/ntp.conf
+driftfile /var/lib/ntp/drift
+restrict 127.0.0.1
+restrict -6 ::1
+restrict default nomodify notrap 
+server 202.120.2.101 prefer
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+#客户端
+driftfile /var/lib/ntp/drift
+restrict 127.0.0.1
+restrict -6 ::1
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+#这里是主节点的主机名或者ip
+server n1
+includefile /etc/ntp/crypto/pw
+keys /etc/ntp/keys
+
+systemctl restart ntpd
+ntpstat
+ntpq -p
+
+#network
+TYPE=Ethernet
+BOOTPROTO=static
+DEFROUTE=yes
+PEERDNS=yes
+PEERROUTES=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_PEERDNS=yes
+IPV6_PEERROUTES=yes
+IPV6_FAILURE_FATAL=no
+NAME=eth0
+DEVICE=eth0
+ONBOOT=yes
+IPADDR=192.168.20.161
+NETMASK=255.255.0.0
+
+
+#Mac ip
+创建别名ip
+sudo ifconfig en0 alias 192.168.20.111 255.255.0.0
+sudo ifconfig en0 -alias 192.168.20.111 255.255.0.0
+
+#mac 安装 brew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+搜索软件：brew search 软件名，如brew search wget
+安装软件：brew install 软件名，如brew install wget
+卸载软件：brew remove 软件名，如brew remove wget
+
+#mac virtual box 转vdi
+VBoxManage clonehd --format vdi /Users/yingyue/Documents/tools/win7_vmdk/win7.vmdk ./win7.vdi
+
+#mac ssh pen key 登陆
+ssh -i key.pem root@192.168.1.1 
+sudo chmod 600 key.pem
+ssh-add -k key.pem 
+ssh root@192.168.1.1
+
+#mac 开机启动脚本
+终端里执行
+sudo defaults write com.apple.loginwindow LoginHook /Users/yingyue/Documents/startup.sh
+//startup.sh就是需要执行的脚本
+
+#手动挂载nfs
+sudo mount -t nfs -o resvport 192.168.20.130:/root/test/src /Users/yingyue/go/src
+sudo chown -R yingyue:staff  /Users/yingyue/go/src
+
+#支持ll
+vi .bash_profile
+alias l='ls -alhF'
+alias la='ls -AFh'
+alias ll='ls -lhAF'
+source .bash_profile
+
+#aws 上传下载文件
+scp -i /Users/yingyue/caton/local_doc/cydex_saas_zone.pem  centos@ec2-54-223-99-140.cn-north-1.compute.amazonaws.com.cn:/opt/caton/cydex_saas/zone/log/log_bak/log2.tar.gz .
+scp -i /Users/yingyue/caton/local_doc/cydex_saas_zone.pem  centos@ec2-52-80-59-56.cn-north-1.compute.amazonaws.com.cn:/opt/caton/cydex_saas/zone/log/log_bak/log.tar.gz .
+
+#find . -name ".git" | xargs rm -Rf
+
+
+
+

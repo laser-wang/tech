@@ -1,0 +1,230 @@
+
+#有些命令需要到 /home/virtualbox/virtualbox01下执行
+vagrant box list
+vagrant box add vmware13 /home/virtualbox/vmware13_0.0.1.box 
+vagrant init centos7
+vagrant up vmware11
+vagrant box remove centos7
+vagrant destroy vmware11
+vagrant package
+vagrant reload centos7
+vagrant resume
+vagrant ssh-config
+vagrant status vmware11
+vagrant global-status
+vagrant suspend
+vagrant halt
+vagrant ssh vmware11
+vagrant package --base vmware11 --output /home/virtualbox/vmware11.box
+
+#关闭dhcp
+VBoxManage list dhcpservers
+VBoxManage dhcpserver remove --netname "HostInterfaceNetworking-vboxnet0"
+
+
+
+yum install redhat-lsb -y
+lsb_release -a	
+cd /etc/yum.repos.d/
+
+yum provides */libXmu.so.6
+wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo
+yum update
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-6.noarch.rpm
+#yum install binutils gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms SDL libXmu
+#centos6下安装
+yum install binutils qt gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms
+yum install VirtualBox-5.1
+yum -y install rsync
+/etc/init.d/vboxdrv setup
+
+
+
+
+
+public_network,:bridge=>'en1: Wi-Fi (AirPort)'
+#同时启动多个服务器
+#vi Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.define :vmware11 do |vmware11|
+    vmware11.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware11", "--memory", "2048"]
+    end
+    vmware11.vm.box = "centos7"
+    vmware11.vm.hostname = "vmware11"
+    vmware11.vm.network "public_network", auto_config: false
+        vmware11.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.0.211 netmask 255.255.240.0 up"
+  end
+
+  config.vm.define :vmware13 do |vmware13|
+    vmware13.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware13", "--memory", "2048"]
+    end
+    vmware13.vm.box = "centos7"
+    vmware13.vm.hostname = "vmware13"
+    vmware13.vm.network "public_network", auto_config: false
+        vmware13.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.0.213 netmask 255.255.240.0 up"
+  end
+  config.vm.define :vmware14 do |vmware14|
+    vmware14.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware14", "--memory", "2048"]
+    end
+    vmware14.vm.box = "centos7"
+    vmware14.vm.hostname = "vmware14"
+    vmware14.vm.network "public_network", auto_config: false
+        vmware14.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.0.214 netmask 255.255.240.0 up"
+  end
+  
+  
+
+  config.vm.define :vmware20 do |vmware20|
+    vmware20.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware20", "--memory", "2048"]
+    end
+    vmware20.vm.box = "centos7"
+    vmware20.vm.hostname = "vmware20"
+    vmware20.vm.network "public_network", auto_config: false
+        vmware20.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.220 netmask 255.255.0.0 up"
+  end
+  config.vm.define :vmware21 do |vmware21|
+    vmware21.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware21", "--memory", "2048"]
+    end
+    vmware21.vm.box = "centos7"
+    vmware21.vm.hostname = "vmware21"
+    vmware21.vm.network "public_network", auto_config: false
+        vmware21.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.221 netmask 255.255.0.0 up"
+  end  
+  config.vm.define :vmware22 do |vmware22|
+    vmware22.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware22", "--memory", "2048"]
+    end
+    vmware22.vm.box = "centos7"
+    vmware22.vm.hostname = "vmware22"
+    vmware22.vm.network "public_network", auto_config: false
+        vmware22.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.222 netmask 255.255.0.0 up"
+  end   
+
+
+  
+end
+
+#修改 VirtualBox VMs 路径
+cat /root/.config/VirtualBox/VirtualBox.xml
+方法一：
+move ~/Virtualbox\ VMS  /storage1/
+ln -s /sotrage1/Virtualbox\ VMS ~/Virtualbox\ VMS
+方法二：
+VBoxManage setproperty machinefolder  /home/VirtualBox\ VMs/
+vi ~/.config/VirtualBox/VirtualBox.xml
+修改src
+#修改box存放路径
+VAGRANT_HOME
+
+#解决：A Vagrant environment or target machine is required
+#需要cd到Vagrantfile目录下执行命令
+
+#解决 Vagrant was unable to mount VirtualBox shared folders.
+# 再执行 vagrant up vmware11 就好了
+
+#解决libc.so.6(GLIBC_2.14)(64bit) is needed by VirtualBox-5.0-5.0.24_108355_el7-1.x86_64
+strings /lib64/libc.so.6 |grep GLIBC_
+rpm -qa |grep glibc
+因为virtualbox是centos7版的，换成centos6版本就可以了
+
+#解决/tmp/vagrant-shell: line 1: ifconfig: command not found
+#进入虚拟机装下ifconfig就好了
+
+#解决 Vagrant error: Your VM has become inaccessible.
+除安装目录中的.vagrant 文件夹，然后在到命令行窗口下执行vagrant up
+
+#解决  Warning: Authentication failure. Retrying..
+在Vagrantfile配置文件中添加了两行代码，使用明文用户名密码
+config.ssh.username = "vagrant"
+config.ssh.password = "vagrant"
+或者
+通过 vagrant ssh-config 查看 IdentityFile ，确定使用的是哪个私钥
+验证该私钥是否对应虚拟机上公钥
+若不是对应key对
+重新指定相应key对,配置文件Vagrantfile中操作
+config.ssh.private_key_path = "/Users/xxxx/.ssh/id_rsa"
+config.ssh.forward_agent = true
+config.ssh.username="xxxx"//配置默认登录用户
+再将公钥放到虚拟机中 ~/.ssh/authorized_keys 文件
+接着reload看看~
+
+#
+An error occurred in the underlying SSH library that Vagrant uses.
+The error message is shown below. In many cases, errors from this
+library are caused by ssh-agent issues. Try disabling your SSH
+agent or removing some keys and try again.
+删除虚拟机重新做虚拟机就好了
+
+
+
+nohup wget -c https://az412801.vo.msecnd.net/vhd/VMBuild_20141027/VirtualBox/IE8/Windows/IE8.Win7.For.Windows.VirtualBox.zip &
+
+#mac virtual box 转vdi
+VBoxManage clonehd --format vdi /Users/yingyue/Documents/tools/win7_vmdk/win7.vmdk ./win7.vdi
+
+./VBoxManage clonehd "C:Users%USERNAME%VirtualBox VMsboxNamedisk1.vmdk" "C:Users%USERNAME%VirtualBox VMsboxNamecloned.vdi" --format vdi
+./VBoxManage modifyhd "C:Users%USERNAME%VirtualBox VMsboxNamecloned.vdi" --resize 51200
+./VBoxManage clonehd "C:Users%USERNAME%VirtualBox VMsboxNamecloned.vdi" "C:Users%USERNAME%VirtualBox VMsboxNamedisk2.vmdk" --format vmdk
+
+#虚拟机增加硬盘
+VBoxManage createhd --filename "/home/VirtualBox VMs/vmware11/disk500g" --size 500000 --format VMDK
+VBoxManage list vms 
+VBoxManage showvminfo vmware11 | grep "Storage"
+VBoxManage storagectl vmware11 --name "SATA Controller" --add sata --portcount 5 --controller IntelAhci --bootable on
+VBoxManage storageattach vmware11 --storagectl "SATA Controller" --type hdd --medium "/home/VirtualBox VMs/vmware11/disk500g.vmdk" --port 1 --device 0
+fdisk /dev/sda
+mkfs.ext4 /dev/sda1
+vi /etc/fstab
+	/dev/sda1    /disk2    ext4    defaults 1 2
+mount -a
+	
+
+
+#mac vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.define :box11 do |box11|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    box11.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "box11", "--memory", "1536"]
+    end
+    box11.vm.box = "box11"
+    box11.vm.hostname = "box11"
+    box11.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
+    box11.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.121 netmask 255.255.0.0 up"
+  end
+  config.vm.define :box12 do |box12|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    box12.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "box12", "--memory", "1024"]
+    end
+    box12.vm.box = "box12"
+    box12.vm.hostname = "box12"
+    box12.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
+    box12.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.122 netmask 255.255.0.0 up"
+  end
+  config.vm.define :box13 do |box13|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    box13.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "box13", "--memory", "1024"]
+    end
+    box13.vm.box = "box13"
+    box13.vm.hostname = "box13"
+    box13.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)"
+    box13.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.123 netmask 255.255.0.0 up"
+  end
+end
+
+
+
+
+
+
+

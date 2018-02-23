@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<!-- saved from url=(0066)http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/ -->
+<html class="no-js"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script src="./Go程序调试、分析与优化 _ Tony Bai_files/shares.php" charset="utf-8"></script>
+    						<title>Go程序调试、分析与优化 | Tony Bai</title>			
+														<meta name="keywords" content="atomic,BradFitzpatrick,Channel,Concurrency,Darwin,debugging,Go,Golang,goroutine,gotools,Linux,Mutex,optimization,parallelism,Perl,pprof,Ubuntu,YAPC,优化,原子操作,并发,并行,调试,锁">
+		<meta name="description" content="Brad Fitzpatrick在YAPC Asia 2015（Yet Another Perl Conference）上做了一次技术分享，题为：&quot;Go Debugging, Profiling, and Optimization&quot;。个人感觉这篇分享中价值最大的是BradFitz现场演示的一个有关">
+		<meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+		<link rel="shortcut icon" href="http://tonybai.com/favicon.ico" type="image/x-icon">
+		<link rel="alternate" type="application/rss+xml" title="Tony Bai » Feed" href="http://tonybai.com/feed/">
+<link rel="alternate" type="application/rss+xml" title="Tony Bai » 评论 Feed" href="http://tonybai.com/comments/feed/">
+
+			<script type="text/javascript" async="" src="./Go程序调试、分析与优化 _ Tony Bai_files/ga.js"></script><script type="text/javascript" async="" src="./Go程序调试、分析与优化 _ Tony Bai_files/ga.js"></script><script type="text/javascript">//<![CDATA[
+			// Google Analytics for WordPress by Yoast v4.2.8 | http://yoast.com/wordpress/google-analytics/
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-1218078-9']);
+							_gaq.push(['_trackPageview']);
+			(function () {
+				var ga = document.createElement('script');
+				ga.type = 'text/javascript';
+				ga.async = true;
+				ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+				var s = document.getElementsByTagName('script')[0];
+				s.parentNode.insertBefore(ga, s);
+			})();
+			//]]></script>
+			<link rel="alternate" type="application/rss+xml" title="Tony Bai » Go程序调试、分析与优化 评论 Feed" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/feed/">
+<link rel="stylesheet" id="wp-recentcomments-css" href="./Go程序调试、分析与优化 _ Tony Bai_files/wp-recentcomments.css" type="text/css" media="screen">
+<link rel="stylesheet" id="normalize-css" href="./Go程序调试、分析与优化 _ Tony Bai_files/normalize.css" type="text/css" media="screen">
+<link rel="stylesheet" id="style-css" href="./Go程序调试、分析与优化 _ Tony Bai_files/style.css" type="text/css" media="screen">
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/l10n.js"></script>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/html5shiv.js"></script>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/jquery.js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://tonybai.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://tonybai.com/wp-includes/wlwmanifest.xml"> 
+<link rel="index" title="Tony Bai" href="http://tonybai.com/">
+<link rel="start" title="本不是第一篇的第一篇" href="http://tonybai.com/2004/09/15/the-first-blog/">
+<link rel="prev" title="Golang技术幻灯片的查看方法" href="http://tonybai.com/2015/08/22/how-to-view-golang-tech-slide/">
+<link rel="next" title="理解Golang语句中的求值顺序" href="http://tonybai.com/2015/08/27/understanding-go-statements-evaluating-order/">
+<meta name="generator" content="WordPress 3.2.1">
+<link rel="shortlink" href="http://tonybai.com/?p=1804">
+
+<!-- All in One SEO Pack 2.0.2 by Michael Torbert of Semper Fi Web Design[313,363] -->
+<meta name="description" content="Brad Fitzpatrick在YAPC Asia 2015（Yet Another Perl Conference）上做了一次技术分享，题为：&quot;Go Debugging, Profiling, and">
+
+<meta name="keywords" content="atomic, bradfitzpatrick, channel, concurrency, darwin, debugging, go, golang, goroutine, gotools, linux, mutex, optimization, parallelism, perl, pprof, ubuntu, yapc, 优化, 原子操作, 并发, 并行, 调试, 锁,bradfitzpatrick,channel,concurrency,darwin,debugging,go,golang,goroutine,gotools,linux,mutex,optimization,parallelism,perl,pprof,ubuntu,yapc,优化,原子操作,并发,并行,调试,锁,技术志">
+
+<link rel="canonical" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/">
+		<script type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-1218078-9']);
+		  _gaq.push(['_trackPageview']);
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</script>
+<!-- /all in one seo pack -->
+	<script src="./Go程序调试、分析与优化 _ Tony Bai_files/logger.js"></script><link href="./Go程序调试、分析与优化 _ Tony Bai_files/bdsstyle.css" rel="stylesheet" type="text/css"></head>
+<body><iframe frameborder="0" style="display: none;" src="./Go程序调试、分析与优化 _ Tony Bai_files/saved_resource.html"></iframe><div id="bdshare_s" style="display: block;"><iframe id="bdsIfr" style="position:absolute;display:none;z-index:9999;" frameborder="0" src="./Go程序调试、分析与优化 _ Tony Bai_files/saved_resource(2).html"></iframe><div id="bdshare_l" style="display: none;"><div id="bdshare_l_c"><h6>分享到</h6><ul><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_mshare mshare">一键分享</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_qzone qqkj">QQ空间</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_tsina xlwb">新浪微博</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_bdysc bdysc">百度云收藏</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_renren rrw">人人网</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_tqq txwb">腾讯微博</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_bdxc bdxc">百度相册</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_kaixin001 kxw">开心网</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_tqf txpy">腾讯朋友</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_tieba bdtb">百度贴吧</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_douban db">豆瓣网</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_tsohu shwb">搜狐微博</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_bdhome bdhome">百度新首页</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_sqq sqq">QQ好友</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_thx thx">和讯微博</a></li><li><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="bds_more">更多...</a></li></ul><p><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" class="goWebsite">百度分享</a></p></div></div></div><link href="./Go程序调试、分析与优化 _ Tony Bai_files/jiathis_counter.css" rel="stylesheet" type="text/css"><link href="./Go程序调试、分析与优化 _ Tony Bai_files/jiathis_share.css" rel="stylesheet" type="text/css"><iframe frameborder="0" style="position: absolute; display: none; opacity: 0;" src="./Go程序调试、分析与优化 _ Tony Bai_files/saved_resource(3).html"></iframe><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; top: 50%; left: 50%; overflow: auto;"></div><div class="jiathis_style" style="position: absolute; z-index: 1000000000; display: none; overflow: auto;"></div><iframe frameborder="0" src="./Go程序调试、分析与优化 _ Tony Bai_files/jiathis_utility.html" style="display: none;"></iframe>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                <a id="logo" href="http://tonybai.com/">
+                   Tony Bai                </a>
+        	    <p class="description">一个程序员的心路历程</p>
+            </div>
+            <div>
+                <div class="menu"><ul><li class="page_item page-item-13"><a href="http://tonybai.com/about/" title="关于我">关于我</a></li><li class="page_item page-item-1917"><a href="http://tonybai.com/articles/" title="文章列表">文章列表</a></li></ul></div>
+            </div>
+        </div>
+    </div>
+</header>
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+<div class="col-8" id="main">
+	<div class="res-cons">
+					<article class="post">
+				<h1 class="post-title">Go程序调试、分析与优化</h1>
+				<ul class="post-meta">
+					<li>八月 25, 2015</li>
+					<li class="comment-count"><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#comments" title="《Go程序调试、分析与优化》上的评论">12 条评论</a></li>
+				</ul>
+				<div class="post-content">
+					<p><a href="https://github.com/bradfitz" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">Brad Fitzpatrick</a>在<a href="http://yapcasia.org/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://yapcasia.org&#39;]);">YAPC Asia 2015</a>（Yet Another Perl Conference）上做了一次技术分享，题为："<a href="http://pan.baidu.com/s/1nt8D5oP," onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://pan.baidu.com&#39;]);">Go Debugging, Profiling, and Optimization</a>"。个人感觉这篇分享中价值最大的是BradFitz现场演示的一个有关如何对<a href="http://tonybai.com/tag/go">Go</a>程序进行调试、分析和优化的 Demo，Brad将demo上传到了他个人在github.com的<a href="https://github.com/bradfitz/talk-%20yapc-asia-2015" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">repo</a>中，但不知为何，repo中的代码似乎与repo里talk.md中的说明不甚一致(btw，我并没有看video)。于 是打算在这里按照Brad的思路重新走一遍demo的演示流程(所有演示代码在<a href="https://github.com/bigwhite/experiments/tree/master/go-debug-profile-optimization" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://github.com&#39;]);">这里</a>可以下载到)。</p>
+<p><b>一、实验环境</b></p>
+<p><font face="Courier New">$uname -a<br>
+	Linux pc-tony 3.13.0-61-generic #100~precise1-Ubuntu SMP Wed Jul 29 12:06:40 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux</font></p>
+<p><font face="Courier New"><strong>注意:</strong>在Darwin或Windows下，profile的结果可能与这里有很大不同(甚至完全不一样的输出和瓶颈热点)。</font></p>
+<p><font face="Courier New">$go version<br>
+	go version go1.5 linux/amd64</font></p>
+<p><font face="Courier New">$ go env<br>
+	GOARCH="amd64"<br>
+	GOBIN="/home1/tonybai/.bin/go15/bin"<br>
+	GOEXE=""<br>
+	GOHOSTARCH="amd64"<br>
+	GOHOSTOS="linux"<br>
+	GOOS="linux"<br>
+	GOPATH="/home1/tonybai/proj/GoProjects"<br>
+	GORACE=""<br>
+	GOROOT="/home1/tonybai/.bin/go15"<br>
+	GOTOOLDIR="/home1/tonybai/.bin/go15/pkg/tool/linux_amd64"<br>
+	GO15VENDOREXPERIMENT="1"<br>
+	CC="gcc"<br>
+	GOGCCFLAGS="-fPIC -m64 -pthread -fmessage-length=0"<br>
+	CXX="g++"<br>
+	CGO_ENABLED="1"</font></p>
+<p>代码基于Brad的<font face="Courier New">github.com/bradfitz/talk-yapc-asia-2015</font>。</p>
+<p><b>二、待优化程序(step0)</b></p>
+<p>待优化程序，也就是原始程序，我们放在step0中：</p>
+<p><font face="Courier New">//go-debug-profile-optimization/step0/demo.go</font></p>
+<p><font face="Courier New">package main</font></p>
+<p><font face="Courier New">import (<br>
+	&nbsp;&nbsp;&nbsp; "fmt"<br>
+	&nbsp;&nbsp;&nbsp; "log"<br>
+	&nbsp;&nbsp;&nbsp; "net/http"<br>
+	&nbsp;&nbsp;&nbsp; "regexp"<br>
+	)</font></p>
+<p><font face="Courier New">var visitors int</font></p>
+<p><font face="Courier New">func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp; if match, _ := regexp.MatchString(`^\w*$`, r.FormValue("color")); !match {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; visitors++<br>
+	&nbsp;&nbsp;&nbsp; w.Header().Set("Content-Type", "text/html; charset=utf-8")<br>
+	&nbsp;&nbsp;&nbsp; w.Write([]byte("&lt;h1 style='color: " + r.FormValue("color") +<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "'&gt;Welcome!&lt;/h1&gt;You are visitor number " + fmt.Sprint(visitors) + "!"))<br>
+	}</font></p>
+<p><font face="Courier New">func main() {<br>
+	&nbsp;&nbsp;&nbsp; log.Printf("Starting on port 8080")<br>
+	&nbsp;&nbsp;&nbsp; http.HandleFunc("/hi", handleHi)<br>
+	&nbsp;&nbsp;&nbsp; log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))<br>
+	}</font></p>
+<p><font face="Courier New">$go run demo.go<br>
+	2015/08/25 09:42:35 Starting on port 8080</font></p>
+<p>在浏览器输入：<font face="Courier New">http://localhost:8080/hi</font></p>
+<p>一切顺利的话，页面会显示：</p>
+<p><font face="Courier New">Welcome!</font></p>
+<p><font face="Courier New">You are visitor number 1!</font></p>
+<p><b>三、添加测试代码</b></p>
+<p>按照talk.md中的说明，brad repo中demo中根本没有测试代码(<font face="Courier New">commit 2427d0faa12ed1fb05f1e6a1e69307c11259c2b2</font>)。</p>
+<p>于是我根据作者的意图，新增了demo_test.go，采用TestHandleHi_Recorder和TestHandleHi_TestServer对HandleHi进行测试：</p>
+<p>//<font face="Courier New">go-debug-profile-optimization/step0/demo_test.go</font><br>
+	<font face="Courier New">package main</font></p>
+<p><font face="Courier New">import (<br>
+	&nbsp;&nbsp;&nbsp; "bufio"<br>
+	&nbsp;&nbsp;&nbsp; "net/http"<br>
+	&nbsp;&nbsp;&nbsp; "net/http/httptest"<br>
+	&nbsp;&nbsp;&nbsp; "strings"<br>
+	&nbsp;&nbsp;&nbsp; "testing"<br>
+	)</font></p>
+<p><font face="Courier New">func TestHandleHi_Recorder(t *testing.T) {<br>
+	&nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp; handleHi(rw, req(t, "GET / HTTP/1.0\r\n\r\n"))<br>
+	&nbsp;&nbsp;&nbsp; if !strings.Contains(rw.Body.String(), "visitor number") {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Errorf("Unexpected output: %s", rw.Body)<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	}</font></p>
+<p><font face="Courier New">func req(t *testing.T, v string) *http.Request {<br>
+	&nbsp;&nbsp;&nbsp; req, err := http.ReadRequest(bufio.NewReader(strings.NewReader(v)))<br>
+	&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Fatal(err)<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; return req<br>
+	}</font></p>
+<p><font face="Courier New">func TestHandleHi_TestServer(t *testing.T) {<br>
+	&nbsp;&nbsp;&nbsp; ts := httptest.NewServer(http.HandlerFunc(handleHi))<br>
+	&nbsp;&nbsp;&nbsp; defer ts.Close()<br>
+	&nbsp;&nbsp;&nbsp; res, err := http.Get(ts.URL)<br>
+	&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Error(err)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; if g, w := res.Header.Get("Content-Type"), "text/html; charset=utf-8"; g != w {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Errorf("Content-Type = %q; want %q", g, w)<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; slurp, err := ioutil.ReadAll(res.Body)<br>
+	&nbsp;&nbsp;&nbsp; defer res.Body.Close()<br>
+	&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Error(err)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; t.Logf("Got: %s", slurp)<br>
+	}</font></p>
+<p><font face="Courier New">$ go test -v<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_Recorder<br>
+	— PASS: TestHandleHi_Recorder (0.00s)<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_TestServer<br>
+	— PASS: TestHandleHi_TestServer (0.00s)<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:45: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 2!<br>
+	PASS<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step0&nbsp;&nbsp;&nbsp; 0.007s</font></p>
+<p>测试通过！</p>
+<p>至此，step0使命结束。</p>
+<p><b>四、Race Detector</b><b>(竞态分析）</b></p>
+<p>并发设计使得程序可以更好更有效的利用现代处理器的多核心。但并发设计很容易引入竞态，导致严重bug。Go程序中竞态就是当多个goroutine并发 访问某共享数据且未使用同步机制时，且至少一个goroutine进行了写操作。不过go工具自带race分析功能。在分析优化step0中demo代码 前，我们先要保证demo代码中不存在竞态。</p>
+<p>工具的使用方法就是在go test后加上-race标志，在step0目录下：</p>
+<p><font face="Courier New">$ go test -v -race<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_Recorder<br>
+	— PASS: TestHandleHi_Recorder (0.00s)<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_TestServer<br>
+	— PASS: TestHandleHi_TestServer (0.00s)<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:45: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 2!<br>
+	PASS<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step0&nbsp;&nbsp;&nbsp; 1.012s</font></p>
+<p>-race通过做运行时分析做竞态分析，虽然不存在误报，但却存在实际有竞态，但工具没发现的情况。接下来我们改造一下测试代码，让test并发起来：</p>
+<p>向step1(copy自step0)中demo_test.go中添加一个test method:</p>
+<p>//<font face="Courier New">go-debug-profile-optimization/step1/demo_test.go<br>
+	… …</font><br>
+	<font face="Courier New">func TestHandleHi_TestServer_Parallel(t *testing.T) {<br>
+	&nbsp;&nbsp;&nbsp; ts := httptest.NewServer(http.HandlerFunc(handleHi))<br>
+	&nbsp;&nbsp;&nbsp; defer ts.Close()<br>
+	&nbsp;&nbsp;&nbsp; var wg sync.WaitGroup<br>
+	&nbsp;&nbsp;&nbsp; for i := 0; i &lt; 2; i++ {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wg.Add(1)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; go func() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; defer wg.Done()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; res, err := http.Get(ts.URL)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Error(err)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if g, w := res.Header.Get("Content-Type"), "text/html; charset=utf-8"; g != w {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Errorf("Content-Type = %q; want %q", g, w)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; slurp, err := ioutil.ReadAll(res.Body)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; defer res.Body.Close()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Error(err)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; t.Logf("Got: %s", slurp)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }()<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; wg.Wait()<br>
+	}<br>
+	… …</font></p>
+<p>执行竞态test：</p>
+<p><font face="Courier New">$ go test -v -race<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_Recorder<br>
+	— PASS: TestHandleHi_Recorder (0.00s)<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_TestServer<br>
+	— PASS: TestHandleHi_TestServer (0.00s)<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:46: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 2!<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_TestServer_Parallel<br>
+	==================<br>
+	WARNING: DATA RACE<br>
+	Read by goroutine 22:<br>
+	&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step1.handleHi()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step1/demo.go:17 +0xf5<br>
+	&nbsp; net/http.HandlerFunc.ServeHTTP()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1422 +0×47<br>
+	&nbsp; net/http/httptest.(*waitGroupHandler).ServeHTTP()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/httptest/server.go:200 +0xfe<br>
+	&nbsp; net/http.serverHandler.ServeHTTP()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1862 +0×206<br>
+	&nbsp; net/http.(*conn).serve()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1361 +0x117c</font></p>
+<p><font face="Courier New">Previous write by goroutine 25:<br>
+	&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step1.handleHi()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step1/demo.go:17 +0×111<br>
+	&nbsp; net/http.HandlerFunc.ServeHTTP()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1422 +0×47<br>
+	&nbsp; net/http/httptest.(*waitGroupHandler).ServeHTTP()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/httptest/server.go:200 +0xfe<br>
+	&nbsp; net/http.serverHandler.ServeHTTP()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1862 +0×206<br>
+	&nbsp; net/http.(*conn).serve()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1361 +0x117c</font></p>
+<p><font face="Courier New">Goroutine 22 (running) created at:<br>
+	&nbsp; net/http.(*Server).Serve()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1910 +0×464</font></p>
+<p><font face="Courier New">Goroutine 25 (running) created at:<br>
+	&nbsp; net/http.(*Server).Serve()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /tmp/workdir/go/src/net/http/server.go:1910 +0×464<br>
+	==================<br>
+	— PASS: TestHandleHi_TestServer_Parallel (0.00s)<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:71: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 3!<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:71: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 4!<br>
+	PASS<br>
+	Found 1 data race(s)<br>
+	exit status 66<br>
+	FAIL&nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step1&nbsp;&nbsp;&nbsp; 1.023s</font></p>
+<p>工具发现demo.go第17行：<br>
+	&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <font face="Courier New">visitors++</font><br>
+	是一处潜在的竞态条件。</p>
+<p>visitors被多个goroutine访问但未采用同步机制。</p>
+<p>既然发现了竞态条件，我们就需要fix it。有多种fix方法可选：</p>
+<p><font face="Courier New">1、使用channel<br>
+	2、使用Mutex<br>
+	3、使用atomic</font></p>
+<p>Brad使用了atomic：</p>
+<p><font face="Courier New">//go-debug-profile-optimization/step1/demo.go<br>
+	… …<br>
+	var visitors int64 // must be accessed atomically</font></p>
+<p><font face="Courier New">func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp; if match, _ := regexp.MatchString(`^\w*$`, r.FormValue("color")); !match {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp; w.Header().Set("Content-Type", "text/html; charset=utf-8")<br>
+	&nbsp;&nbsp;&nbsp; w.Write([]byte("&lt;h1 style='color: " + r.FormValue("color") +<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "'&gt;Welcome!&lt;/h1&gt;You are visitor number " + fmt.Sprint(visitNum) + "!"))<br>
+	}<br>
+	… …</font></p>
+<p>再做一次测试：</p>
+<p><font face="Courier New">$ go test -v -race<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_Recorder<br>
+	— PASS: TestHandleHi_Recorder (0.00s)<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_TestServer<br>
+	— PASS: TestHandleHi_TestServer (0.00s)<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:46: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 2!<br>
+	=== RUN&nbsp;&nbsp; TestHandleHi_TestServer_Parallel<br>
+	— PASS: TestHandleHi_TestServer_Parallel (0.00s)<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:71: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 3!<br>
+	&nbsp;&nbsp;&nbsp; demo_test.go:71: Got: &lt;h1 style='color: '&gt;Welcome!&lt;/h1&gt;You are visitor number 4!<br>
+	PASS<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step1&nbsp;&nbsp;&nbsp; 1.020s</font></p>
+<p>竞态条件被消除了！</p>
+<p>至此，step1结束了使命！</p>
+<p><b>五、</b><b>CPU Profiling</b></p>
+<p>要做CPU Profilling，我们需要benchmark数据，Go test提供benchmark test功能，我们只要写对应的Benchmark测试方法即可：</p>
+<p><font face="Courier New">//go-debug-profile-optimization/step2/demo_test.go<br>
+	… …<br>
+	func BenchmarkHi(b *testing.B) {<br>
+	&nbsp;&nbsp;&nbsp; b.ReportAllocs()</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; req, err := http.ReadRequest(bufio.NewReader(strings.NewReader("GET / HTTP/1.0\r\n\r\n")))<br>
+	&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b.Fatal(err)<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; for i := 0; i &lt; b.N; i++ {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; handleHi(rw, req)<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	}<br>
+	… …</font></p>
+<p><font face="Courier New">$ go test -v -run=^$ -bench=.<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp; 100000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 14808 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 4961 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step2&nbsp;&nbsp;&nbsp; 1.648s</font></p>
+<p>开始CPU Profiling：</p>
+<p><font face="Courier New">$ go test -v -run=^$ -bench=^BenchmarkHi$ -benchtime=2s -cpuprofile=prof.cpu<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp; 200000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 14679 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 4961 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step2&nbsp;&nbsp;&nbsp; 3.096s</font></p>
+<p><font face="Courier New">执行完benchmark test后，step2目录下出现两个新文件prof.cpu和step2.test，这两个文件将作为后续go tool pprof的输入：<br>
+	$ls<br>
+	demo.go&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; demo_test.go&nbsp;&nbsp;&nbsp; prof.cpu&nbsp;&nbsp;&nbsp; step2.test*</font></p>
+<p>使用go profile viewer工具：</p>
+<p><font face="Courier New">$ go tool pprof step2.test prof.cpu<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top<br>
+	1830ms of 3560ms total (51.40%)<br>
+	Dropped 53 nodes (cum &lt;= 17.80ms)<br>
+	Showing top 10 nodes out of 133 (cum &gt;= 1290ms)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 480ms 13.48% 13.48%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 980ms 27.53%&nbsp; runtime.growslice<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 360ms 10.11% 23.60%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 700ms 19.66%&nbsp; runtime.mallocgc<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 170ms&nbsp; 4.78% 28.37%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 170ms&nbsp; 4.78%&nbsp; runtime.heapBitsSetType<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 170ms&nbsp; 4.78% 33.15%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 200ms&nbsp; 5.62%&nbsp; runtime.scanblock<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 120ms&nbsp; 3.37% 36.52%&nbsp;&nbsp;&nbsp;&nbsp; 1100ms 30.90%&nbsp; regexp.makeOnePass.func2<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 120ms&nbsp; 3.37% 39.89%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 550ms 15.45%&nbsp; runtime.newarray<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 110ms&nbsp; 3.09% 42.98%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 300ms&nbsp; 8.43%&nbsp; runtime.makeslice<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 110ms&nbsp; 3.09% 46.07%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 220ms&nbsp; 6.18%&nbsp; runtime.mapassign1<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 100ms&nbsp; 2.81% 48.88%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 100ms&nbsp; 2.81%&nbsp; runtime.futex<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 90ms&nbsp; 2.53% 51.40%&nbsp;&nbsp;&nbsp;&nbsp; 1290ms 36.24%&nbsp; regexp.makeOnePass</font></p>
+<p><font face="Courier New">(pprof) top –cum<br>
+	0.18s of 3.56s total ( 5.06%)<br>
+	Dropped 53 nodes (cum &lt;= 0.02s)<br>
+	Showing top 10 nodes out of 133 (cum &gt;= 1.29s)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.26s 91.57%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.02s&nbsp; 0.56%&nbsp; 0.56%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.87s 80.62%&nbsp; BenchmarkHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp; 0.56%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.87s 80.62%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp; 0.56%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.87s 80.62%&nbsp; testing.(*B).runN<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.03s&nbsp; 0.84%&nbsp; 1.40%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>2.80s 78.65%</b>&nbsp; <b>step2.handleHi</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.01s&nbsp; 0.28%&nbsp; 1.69%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.46s 69.10%&nbsp; regexp.MatchString<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp; 1.69%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.24s 62.92%&nbsp; regexp.Compile<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp; 1.69%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.24s 62.92%&nbsp; regexp.compile<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.03s&nbsp; 0.84%&nbsp; 2.53%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.56s 43.82%&nbsp; regexp.compileOnePass<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.09s&nbsp; 2.53%&nbsp; 5.06%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.29s 36.24%&nbsp; regexp.makeOnePass</font></p>
+<p><font face="Courier New">(pprof) list handleHi<br>
+	Total: 3.56s<br>
+	ROUTINE ======================== handleHi in go-debug-profile-optimization/step2/demo.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 30ms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.80s (flat, cum) 78.65% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9:)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 10:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 11:var visitors int64 // must be accessed atomically<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 12:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 13:func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>2.47s</b>&nbsp;&nbsp;&nbsp;&nbsp; 14:&nbsp;&nbsp;&nbsp; if match, _ := regexp.<b>MatchString</b>(`^\w*$`, r.FormValue("color")); !match {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 15:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 16:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 17:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10ms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 20ms&nbsp;&nbsp;&nbsp;&nbsp; 18:&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10ms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 90ms&nbsp;&nbsp;&nbsp;&nbsp; 19:&nbsp;&nbsp;&nbsp; w.Header().Set("Content-Type", "text/html; charset=utf-8")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10ms&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 20ms&nbsp;&nbsp;&nbsp;&nbsp; 20:&nbsp;&nbsp;&nbsp; w.Write([]byte("&lt;h1 style='color: " + r.FormValue("color") +<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 200ms&nbsp;&nbsp;&nbsp;&nbsp; 21:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; "'&gt;Welcome!&lt;/h1&gt;You are visitor number " + fmt.Sprint(visitNum) + "!"))<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 22:}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 23:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 24:func main() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 25:&nbsp;&nbsp;&nbsp; log.Printf("Starting on port 8080")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 26:&nbsp;&nbsp;&nbsp; http.HandleFunc("/hi", handleHi)<br>
+	(pprof)</font></p>
+<p><font face="Courier New">从top –cum来看，handleHi消耗cpu较大，而handleHi中，又是MatchString耗时最长。</font></p>
+<p><font face="Courier New"><b>六、第一次优化</b></font></p>
+<p><font face="Courier New">前面已经发现MatchString较为耗时，优化手段：让正则式仅编译一次(step3)：</font></p>
+<p><font face="Courier New">// </font><font face="Courier New"><font face="Courier New">go-debug-profile-optimization/step3/demo.go</font></font></p>
+<p><font face="Courier New"><font face="Courier New">… …</font><br>
+	var visitors int64 // must be accessed atomically</font></p>
+<p><font face="Courier New"><b>var rxOptionalID = regexp.MustCompile(`^\d*$`)</b></font></p>
+<p><font face="Courier New">func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp; if !rxOptionalID.MatchString(r.FormValue("color")) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp; w.Header().Set("Content-Type", "text/html; charset=utf-8")<br>
+	&nbsp;&nbsp;&nbsp; w.Write([]byte("&lt;h1 style='color: " + r.FormValue("color") +<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "'&gt;Welcome!&lt;/h1&gt;You are visitor number " + fmt.Sprint(visitNum) + "!"))<br>
+	}<br>
+	… …</font></p>
+<p><font face="Courier New">运行一下bench：</font></p>
+<p><font face="Courier New">$ go test -bench=.<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;1000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1678 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 720 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step3&nbsp;&nbsp;&nbsp; 1.710s</font></p>
+<p><font face="Courier New">对比之前在step2中运行的bench结果：</font></p>
+<p><font face="Courier New">$ go test -v -run=^$ -bench=.<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp; 100000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 14808 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 4961 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step2&nbsp;&nbsp;&nbsp; 1.648s</font></p>
+<p>耗时相同，但优化后的bench运行了100w次，而之前的Bench运行10w次，相当于性能提高10倍。</p>
+<p>再看看cpu prof结果：</p>
+<p><font face="Courier New">$ go test -v -run=^$ -bench=^BenchmarkHi$ -benchtime=3s -cpuprofile=prof.cpu<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;3000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1640 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 720 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step3&nbsp;&nbsp;&nbsp; 6.540s</font></p>
+<p><font face="Courier New">$ go tool pprof step3.test prof.cpu<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top –cum 30<br>
+	2.74s of 8.07s total (33.95%)<br>
+	Dropped 72 nodes (cum &lt;= 0.04s)<br>
+	Showing top 30 nodes out of 103 (cum &gt;= 0.56s)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7.17s 88.85%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.05s&nbsp; 0.62%&nbsp; 0.62%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6.21s 76.95%&nbsp; step3.BenchmarkHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp; 0.62%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6.21s 76.95%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp; 0.62%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6.21s 76.95%&nbsp; testing.(*B).runN<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.06s&nbsp; 0.74%&nbsp; 1.36%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4.96s <b>61.46%&nbsp; step3.handleHi</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 1.15s 14.25% 15.61%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.35s 29.12%&nbsp; runtime.mallocgc<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.02s&nbsp; 0.25% 15.86%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.63s 20.20%&nbsp; runtime.systemstack<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 15.86%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.53s 18.96%&nbsp; net/http.Header.Set<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.06s&nbsp; 0.74% 16.60%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.53s 18.96%&nbsp; net/textproto.MIMEHeader.Set<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.09s&nbsp; 1.12% 17.72%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.22s 15.12%&nbsp; runtime.newobject<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.05s&nbsp; 0.62% 18.34%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.09s 13.51%&nbsp; fmt.Sprint<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.20s&nbsp; 2.48% 20.82%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1s 12.39%&nbsp; runtime.mapassign1<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 20.82%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.81s 10.04%&nbsp; runtime.mcall<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.01s&nbsp; 0.12% 20.94%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.79s&nbsp; 9.79%&nbsp; runtime.schedule<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.05s&nbsp; 0.62% 21.56%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.76s&nbsp; 9.42%&nbsp; regexp.(*Regexp).MatchString<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.09s&nbsp; 1.12% 22.68%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.71s&nbsp; 8.80%&nbsp; regexp.(*Regexp).doExecute<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.01s&nbsp; 0.12% 22.80%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.71s&nbsp; 8.80%&nbsp; runtime.concatstring5<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.20s&nbsp; 2.48% 25.28%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.70s&nbsp; 8.67%&nbsp; runtime.concatstrings<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 25.28%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.69s&nbsp; 8.55%&nbsp; runtime.gosweepone<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.05s&nbsp; 0.62% 25.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.69s&nbsp; 8.55%&nbsp; runtime.mSpan_Sweep<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 25.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.68s&nbsp; 8.43%&nbsp; runtime.bgsweep<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.04s&nbsp;&nbsp; 0.5% 26.39%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.68s&nbsp; 8.43%&nbsp; runtime.newarray<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.01s&nbsp; 0.12% 26.52%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.67s&nbsp; 8.30%&nbsp; runtime.goschedImpl<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.01s&nbsp; 0.12% 26.64%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.65s&nbsp; 8.05%&nbsp; runtime.gosched_m<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 26.64%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.65s&nbsp; 8.05%&nbsp; runtime.gosweepone.func1<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.01s&nbsp; 0.12% 26.77%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.65s&nbsp; 8.05%&nbsp; runtime.sweepone<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.28s&nbsp; 3.47% 30.24%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.62s&nbsp; 7.68%&nbsp; runtime.makemap<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.17s&nbsp; 2.11% 32.34%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.59s&nbsp; 7.31%&nbsp; runtime.heapBitsSweepSpan<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.02s&nbsp; 0.25% 32.59%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.58s&nbsp; 7.19%&nbsp; fmt.(*pp).doPrint<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 0.11s&nbsp; 1.36% 33.95%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.56s&nbsp; 6.94%&nbsp; fmt.(*pp).printArg</font></p>
+<p>handleHi耗时有一定下降。</p>
+<p><b>七、Mem Profiling</b></p>
+<p>在step3目录下执行bench，获取mem分配数据：</p>
+<p><font face="Courier New">$ go test -v -run=^$ -bench=^BenchmarkHi$ -benchtime=2s -memprofile=prof.mem<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;2000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1657 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 720 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step3&nbsp;&nbsp;&nbsp; 5.002s</font></p>
+<p>使用pprof工具分析mem：</p>
+<p><font face="Courier New">$ go tool pprof –alloc_space step3.test prof.mem<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top<br>
+	2065.91MB of 2067.41MB total (99.93%)<br>
+	Dropped 14 nodes (cum &lt;= 10.34MB)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;1076.35MB 52.06% 52.06%&nbsp; 1076.35MB 52.06%&nbsp; net/textproto.MIMEHeader.Set<br>
+	&nbsp; 535.54MB 25.90% 77.97%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; step3.BenchmarkHi<br>
+	&nbsp; 406.52MB 19.66% 97.63%&nbsp; <b>1531.37MB 74.07%&nbsp; step3.handleHi</b><br>
+	&nbsp;&nbsp; 47.50MB&nbsp; 2.30% 99.93%&nbsp;&nbsp;&nbsp; 48.50MB&nbsp; 2.35%&nbsp; fmt.Sprint<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.93%&nbsp; 1076.35MB 52.06%&nbsp; net/http.Header.Set<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.93%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.93%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.93%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; testing.(*B).runN</font></p>
+<p><font face="Courier New">(pprof) top -cum<br>
+	2065.91MB of 2067.41MB total (99.93%)<br>
+	Dropped 14 nodes (cum &lt;= 10.34MB)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp; 535.54MB 25.90% 25.90%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; step3.BenchmarkHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 25.90%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 25.90%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 25.90%&nbsp; 2066.91MB&nbsp;&nbsp; 100%&nbsp; testing.(*B).runN<br>
+	&nbsp; 406.52MB 19.66% 45.57%&nbsp; <b>1531.37MB 74.07%&nbsp; step3.handleHi</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 45.57%&nbsp; 1076.35MB 52.06%&nbsp; net/http.Header.Set<br>
+	&nbsp;1076.35MB 52.06% 97.63%&nbsp; 1076.35MB 52.06%&nbsp; net/textproto.MIMEHeader.Set<br>
+	&nbsp;&nbsp; 47.50MB&nbsp; 2.30% 99.93%&nbsp;&nbsp;&nbsp; 48.50MB&nbsp; 2.35%&nbsp; fmt.Sprint</font></p>
+<p><font face="Courier New">(pprof) list handleHi<br>
+	Total: 2.02GB<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; ROUTINE =========step3.handleHi in step3/demo.go<br>
+	&nbsp; 406.52MB&nbsp;&nbsp;&nbsp;&nbsp; 1.50GB (flat, cum) 74.07% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 17:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 18:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 19:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 20:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 21:&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 1.05GB&nbsp;&nbsp;&nbsp;&nbsp; 22:&nbsp;&nbsp;&nbsp; w.Header().Set("Content-Type", "text/html; charset=utf-8")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 23:&nbsp;&nbsp;&nbsp; w.Write([]byte("&lt;h1 style='color: " + r.FormValue("color") +<br>
+	&nbsp; 406.52MB&nbsp;&nbsp; 455.02MB&nbsp;&nbsp;&nbsp;&nbsp; 24:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; "'&gt;Welcome!&lt;/h1&gt;You are visitor number " + fmt.Sprint(visitNum) + "!"))<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 25:}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 26:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 27:func main() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 28:&nbsp;&nbsp;&nbsp; log.Printf("Starting on port 8080")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 29:&nbsp;&nbsp;&nbsp; http.HandleFunc("/hi", handleHi)<br>
+	(pprof)</font></p>
+<p>可以看到handleHi22、23两行占用了较多内存。</p>
+<p><b>八、第二次优化</b></p>
+<p>第二次优化的方法：<br>
+	1、删除<font face="Courier New">w.Header().Set这行<br>
+	2、用fmt.Fprintf替代w.Write</font></p>
+<p><font face="Courier New">第二次优化的代码在step4目录中：</font></p>
+<p><font face="Courier New">// go-debug-profile-optimization/step4/demo.go<br>
+	… …<br>
+	func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp; if !rxOptionalID.MatchString(r.FormValue("color")) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp; <b>fmt.Fprintf(w, "&lt;html&gt;&lt;h1 stype='color: \"%s\"'&gt;Welcome!&lt;/h1&gt;You are visitor number %d!", r.FormValue("color"), visitNum)</b><br>
+	}<br>
+	… …</font></p>
+<p><font face="Courier New">执行一遍pprof:</font></p>
+<p><font face="Courier New">$ go test -v -run=^$ -bench=^BenchmarkHi$ -benchtime=2s -memprofile=prof.mem<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;2000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1428 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 304 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step4&nbsp;&nbsp;&nbsp; 4.343s</font></p>
+<p><font face="Courier New">$ go tool pprof –alloc_space step4.test prof.mem<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top<br>
+	868.06MB of 868.56MB total (99.94%)<br>
+	Dropped 5 nodes (cum &lt;= 4.34MB)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp; 559.54MB 64.42% 64.42%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; step4.BenchmarkHi<br>
+	&nbsp; 219.52MB 25.27% 89.70%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; bytes.makeSlice<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 89MB 10.25% 99.94%&nbsp;&nbsp; 308.52MB 35.52%&nbsp; step4.handleHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; bytes.(*Buffer).Write<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; bytes.(*Buffer).grow<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; fmt.Fprintf<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; net/http/httptest.(*ResponseRecorder).Write<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; testing.(*B).runN<br>
+	(pprof) top –cum<br>
+	868.06MB of 868.56MB total (99.94%)<br>
+	Dropped 5 nodes (cum &lt;= 4.34MB)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp; 559.54MB 64.42% 64.42%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; step4.BenchmarkHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 64.42%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 64.42%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 64.42%&nbsp;&nbsp; 868.06MB 99.94%&nbsp; testing.(*B).runN<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 89MB 10.25% 74.67%&nbsp;&nbsp; <b>308.52MB </b>35.52%&nbsp; step4.handleHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 74.67%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; bytes.(*Buffer).Write<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 74.67%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; bytes.(*Buffer).grow<br>
+	&nbsp; 219.52MB 25.27% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; bytes.makeSlice<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; fmt.Fprintf<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.94%&nbsp;&nbsp; 219.52MB 25.27%&nbsp; net/http/httptest.(*ResponseRecorder).Write<br>
+	(pprof) list handleHi<br>
+	Total: 868.56MB<br>
+	ROUTINE ============ step4.handleHi in step4/demo.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 89MB&nbsp;&nbsp; 308.52MB (flat, cum) 35.52% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 17:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 18:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 19:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 20:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 21:&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 89MB&nbsp;&nbsp; <b>308.52MB</b>&nbsp;&nbsp;&nbsp;&nbsp; 22:&nbsp;&nbsp;&nbsp; fmt.Fprintf(w, "&lt;html&gt;&lt;h1 stype='color: \"%s\"'&gt;Welcome!&lt;/h1&gt;You are visitor number %d!", r.FormValue("color"), visitNum)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 23:}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 24:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 25:func main() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 26:&nbsp;&nbsp;&nbsp; log.Printf("Starting on port 8080")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 27:&nbsp;&nbsp;&nbsp; http.HandleFunc("/hi", handleHi)<br>
+	(pprof)</font></p>
+<p>可以看出内存占用大幅减少。</p>
+<p><b>九、Benchcmp</b></p>
+<p>golang.org/x/tools中有一个工具：benchcmp，可以给出两次bench的结果对比。</p>
+<p>github.com/golang/tools是golang.org/x/tools的一个镜像。安装benchcmp步骤：</p>
+<p><font face="Courier New">1、go get -u github.com/golang/tools<br>
+	2、mkdir -p $GOPATH/src/golang.org/x<br>
+	3、mv $GOPATH/src/github.com/golang/tools $GOPATH/src/golang.org/x<br>
+	4、go install golang.org/x/tools/cmd/benchcmp</font></p>
+<p>我们分别在step2、step3和step4下执行如下命令：</p>
+<p><font face="Courier New">$ go-debug-profile-optimization/step2$ go test -bench=. -memprofile=prof.mem | tee mem.2<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp; 100000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 14786 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; 4961 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step2&nbsp;&nbsp;&nbsp; 1.644s</font></p>
+<p><font face="Courier New">go-debug-profile-optimization/step3$ go test -bench=. -memprofile=prof.mem | tee mem.3<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;1000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1662 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 720 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step3&nbsp;&nbsp;&nbsp; 1.694s</font></p>
+<p><font face="Courier New">go-debug-profile-optimization/step4$ go test -bench=. -memprofile=prof.mem | tee mem.4<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;1000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1428 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 304 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step4&nbsp;&nbsp;&nbsp; 1.456s</font></p>
+<p>利用benchcmp工具对比结果（benchcmp old new）：</p>
+<p><font face="Courier New">$ benchcmp step3/mem.3 step4/mem.4<br>
+	benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old ns/op&nbsp;&nbsp;&nbsp;&nbsp; new ns/op&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 1662&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1428&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -14.08%</font></p>
+<p><font face="Courier New">benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old allocs&nbsp;&nbsp;&nbsp;&nbsp; new allocs&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -33.33%</font></p>
+<p><font face="Courier New">benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old bytes&nbsp;&nbsp;&nbsp;&nbsp; new bytes&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 720&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 304&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -57.78%</font></p>
+<p><font face="Courier New">$ benchcmp step2/mem.2 step4/mem.4<br>
+	benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old ns/op&nbsp;&nbsp;&nbsp;&nbsp; new ns/op&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 14786&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1428&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -90.34%</font></p>
+<p><font face="Courier New">benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old allocs&nbsp;&nbsp;&nbsp;&nbsp; new allocs&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 81&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -92.59%</font></p>
+<p><font face="Courier New">benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old bytes&nbsp;&nbsp;&nbsp;&nbsp; new bytes&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 4961&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 304&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -93.87%</font></p>
+<p>可以看出优化后，内存分配大幅减少，gc的时间也随之减少。</p>
+<p><b>十、内存来自哪</b></p>
+<p>我们在BenchmarkHi中清理每次handleHi执行后的内存：</p>
+<p><font face="Courier New">//step5/demo_test.go</font><br>
+	<font face="Courier New">… …<br>
+	func BenchmarkHi(b *testing.B) {<br>
+	&nbsp;&nbsp;&nbsp; b.ReportAllocs()</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; req, err := http.ReadRequest(bufio.NewReader(strings.NewReader("GET / HTTP/1.0\r\n\r\n")))<br>
+	&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b.Fatal(err)<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; for i := 0; i &lt; b.N; i++ {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; handleHi(rw, req)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reset(rw)<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	}</font></p>
+<p><font face="Courier New">func reset(rw *httptest.ResponseRecorder) {<br>
+	&nbsp;&nbsp;&nbsp; m := rw.HeaderMap<br>
+	&nbsp;&nbsp;&nbsp; for k := range m {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; delete(m, k)<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; body := rw.Body<br>
+	&nbsp;&nbsp;&nbsp; body.Reset()<br>
+	&nbsp;&nbsp;&nbsp; *rw = httptest.ResponseRecorder{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Body:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; body,<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HeaderMap: m,<br>
+	&nbsp;&nbsp;&nbsp; }<br>
+	}</font></p>
+<p><font face="Courier New">… …</font><br>
+	<font face="Courier New">$ go test -v -run=^$ -bench=^BenchmarkHi$ -benchtime=2s -memprofile=prof.mem<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;2000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1518 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 304 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step5&nbsp;&nbsp;&nbsp; 4.577s</font></p>
+<p><font face="Courier New">$ go tool pprof –alloc_space step5.test prof.mem<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top –cum 10<br>
+	290.52MB of 291.52MB total (99.66%)<br>
+	Dropped 14 nodes (cum &lt;= 1.46MB)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp; 291.02MB 99.83%&nbsp; runtime.goexit<br>
+	&nbsp; 179.01MB 61.41% 61.41%&nbsp;&nbsp; 290.52MB 99.66%&nbsp; step5.BenchmarkHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 61.41%&nbsp;&nbsp; 290.52MB 99.66%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 61.41%&nbsp;&nbsp; 290.52MB 99.66%&nbsp; testing.(*B).runN<br>
+	&nbsp;&nbsp; 26.50MB&nbsp; 9.09% 70.50%&nbsp;&nbsp; <b>111.51MB 38.25%&nbsp; step5.handleHi</b><br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 70.50%&nbsp;&nbsp;&nbsp; 85.01MB 29.16%&nbsp; bytes.(*Buffer).Write<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 70.50%&nbsp;&nbsp;&nbsp; 85.01MB 29.16%&nbsp; bytes.(*Buffer).grow<br>
+	&nbsp;&nbsp; 85.01MB 29.16% 99.66%&nbsp;&nbsp;&nbsp; 85.01MB 29.16%&nbsp; bytes.makeSlice<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.66%&nbsp;&nbsp;&nbsp; 85.01MB 29.16%&nbsp; fmt.Fprintf<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.66%&nbsp;&nbsp;&nbsp; 85.01MB 29.16%&nbsp; net/http/httptest.(*ResponseRecorder).Write<br>
+	(pprof) list handleHi<br>
+	Total: 291.52MB<br>
+	ROUTINE ======================== _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step5.handleHi in /home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step5/demo.go<br>
+	&nbsp;&nbsp; 26.50MB&nbsp;&nbsp; 111.51MB (flat, cum) 38.25% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 17:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 18:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 19:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 20:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 21:&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp; 26.50MB&nbsp;&nbsp; <b>111.51MB</b>&nbsp;&nbsp;&nbsp;&nbsp; 22:&nbsp;&nbsp;&nbsp; <b>fmt.Fprintf(</b>w, "&lt;html&gt;&lt;h1 stype='color: \"%s\"'&gt;Welcome!&lt;/h1&gt;You are visitor number %d!", r.FormValue("color"), visitNum)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 23:}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 24:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 25:func main() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 26:&nbsp;&nbsp;&nbsp; log.Printf("Starting on port 8080")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 27:&nbsp;&nbsp;&nbsp; http.HandleFunc("/hi", handleHi)<br>
+	(pprof)</font></p>
+<p>内存从300MB降到111MB。内存来自哪？看到list handleHi，fmt.Fprintf分配了111.51MB。</p>
+<p>我们来看这一行代码：<br>
+	<font face="Courier New">fmt.Fprintf(w, "&lt;h1 style='color: %s'&gt;Welcome!&lt;/h1&gt;You are visitor number %d!",<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; r.FormValue("color"), num)</font></p>
+<p>fmt.Fprintf的manual：</p>
+<p><font face="Courier New">$ go doc fmt.Fprintf<br>
+	func Fprintf(w io.Writer, format string, a …interface{}) (n int, err error)</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; Fprintf formats according to a format specifier and writes to w. It returns<br>
+	&nbsp;&nbsp;&nbsp; the number of bytes written and any write error encountered.</font></p>
+<p>这里回顾一下Go type在runtime中的内存占用：</p>
+<p><font face="Courier New">A Go interface is 2 words of memory: (type, pointer).<br>
+	A Go string is 2 words of memory: (base pointer, length)<br>
+	A Go slice is 3 words of memory: (base pointer, length, capacity)</font></p>
+<p>每次调用fmt.Fprintf，参数以value值形式传入函数时，程序就要为每个变参分配一个占用16bytes的empty interface，然后用传入的类型初始化该interface value。这就是这块累计分配内存较多的原因。</p>
+<p><b>十一、</b><b>消除所有内存分配</b></p>
+<p>下面的优化代码可能在实际中并不需要，但一旦真的成为瓶颈，可以这么做：</p>
+<p><font face="Courier New">//go-debug-profile-optimization/step6/demo.go</font><br>
+	… …<br>
+	<font face="Courier New">var bufPool = sync.Pool{<br>
+	&nbsp;&nbsp;&nbsp; New: func() interface{} {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return new(bytes.Buffer)<br>
+	&nbsp;&nbsp;&nbsp; },<br>
+	}</font></p>
+<p><font face="Courier New">func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp; if !rxOptionalID.MatchString(r.FormValue("color")) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp; buf := bufPool.Get().(*bytes.Buffer)<br>
+	&nbsp;&nbsp;&nbsp; defer bufPool.Put(buf)<br>
+	&nbsp;&nbsp;&nbsp; buf.Reset()<br>
+	&nbsp;&nbsp;&nbsp; buf.WriteString("&lt;h1 style='color: ")<br>
+	&nbsp;&nbsp;&nbsp; buf.WriteString(r.FormValue("color"))<br>
+	&nbsp;&nbsp;&nbsp; buf.WriteString("'&gt;Welcome!&lt;/h1&gt;You are visitor number ")<br>
+	&nbsp;&nbsp;&nbsp; b := strconv.AppendInt(buf.Bytes(), int64(visitNum), 10)<br>
+	&nbsp;&nbsp;&nbsp; b = append(b, '!')<br>
+	&nbsp;&nbsp;&nbsp; w.Write(b)<br>
+	}</font><br>
+	… …</p>
+<p><font face="Courier New">$&nbsp; go test -v -run=^$ -bench=^BenchmarkHi$ -benchtime=2s -memprofile=prof.mem<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;5000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 780 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 192 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step6&nbsp;&nbsp;&nbsp; 4.709s</font></p>
+<p><font face="Courier New">&nbsp;go tool pprof –alloc_space step6.test prof.mem<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top –cum 10<br>
+	1.07GB of 1.07GB total (&nbsp; 100%)<br>
+	Dropped 5 nodes (cum &lt;= 0.01GB)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp; 1.07GB&nbsp;&nbsp; 100%&nbsp;&nbsp; 100%&nbsp;&nbsp;&nbsp;&nbsp; 1.07GB&nbsp;&nbsp; 100%&nbsp; step6.BenchmarkHi<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp; 100%&nbsp;&nbsp;&nbsp;&nbsp; 1.07GB&nbsp;&nbsp; 100%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp; 100%&nbsp;&nbsp;&nbsp;&nbsp; 1.07GB&nbsp;&nbsp; 100%&nbsp; testing.(*B).launch<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp; 100%&nbsp;&nbsp;&nbsp;&nbsp; 1.07GB&nbsp;&nbsp; 100%&nbsp; testing.(*B).runN</font></p>
+<p><font face="Courier New">$ go test -bench=. -memprofile=prof.mem | tee mem.6<br>
+	PASS<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp; &nbsp;2000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 790 ns/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 192 B/op&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3 allocs/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step6&nbsp;&nbsp;&nbsp; 2.401s</font></p>
+<p><font face="Courier New">$ benchcmp step5/mem.5 step6/mem.6<br>
+	benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old ns/op&nbsp;&nbsp;&nbsp;&nbsp; new ns/op&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 1513&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 790&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -47.79%</font></p>
+<p><font face="Courier New">benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old allocs&nbsp;&nbsp;&nbsp;&nbsp; new allocs&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -50.00%</font></p>
+<p><font face="Courier New">benchmark&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; old bytes&nbsp;&nbsp;&nbsp;&nbsp; new bytes&nbsp;&nbsp;&nbsp;&nbsp; delta<br>
+	BenchmarkHi-4&nbsp;&nbsp;&nbsp;&nbsp; 304&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 192&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -36.84%</font></p>
+<p>可以看到handleHi已经不在top列表中了。benchcmp结果也显示内存分配又有大幅下降！</p>
+<p><b>十二、竞争(Contention)优化</b></p>
+<p>为handleHi编写一个Parallel benchmark test:</p>
+<p><font face="Courier New">//go-debug-profile-optimization/step7/demo_test.go</font><br>
+	<font face="Courier New">… …<br>
+	func BenchmarkHiParallel(b *testing.B) {<br>
+	&nbsp;&nbsp;&nbsp; r, err := http.ReadRequest(bufio.NewReader(strings.NewReader("GET / HTTP/1.0\r\n\r\n")))<br>
+	&nbsp;&nbsp;&nbsp; if err != nil {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; b.Fatal(err)<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; b.RunParallel(func(pb *testing.PB) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for pb.Next() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; handleHi(rw, r)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; reset(rw)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp; })<br>
+	}<br>
+	… …</font></p>
+<p>执行测试，并分析结果:</p>
+<p><font face="Courier New">$ go test -bench=Parallel -blockprofile=prof.block<br>
+	PASS<br>
+	BenchmarkHiParallel-4&nbsp;&nbsp;&nbsp; &nbsp;5000000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 305 ns/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step7&nbsp;&nbsp;&nbsp; 1.947s</font></p>
+<p><font face="Courier New">$ go tool pprof step7.test&nbsp; prof.block<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top –cum 10<br>
+	3.68s of 3.72s total (98.82%)<br>
+	Dropped 29 nodes (cum &lt;= 0.02s)<br>
+	Showing top 10 nodes out of 20 (cum &gt;= 1.84s)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3.72s&nbsp;&nbsp; 100%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.46% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.46%&nbsp; runtime.chanrecv1<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.46%&nbsp; main.main<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.46%&nbsp; runtime.main<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.46%&nbsp; testing.(*M).Run<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.43%&nbsp; testing.(*B).run<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.43%&nbsp; testing.RunBenchmarks<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.46%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.36%&nbsp; step7.BenchmarkHiParallel<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.36% 98.82%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.36%&nbsp; sync.(*WaitGroup).Wait<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 98.82%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s 49.36%&nbsp; testing.(*B).RunParallel<br>
+	(pprof) list BenchmarkHiParallel<br>
+	Total: 3.72s<br>
+	ROUTINE ====== step7.BenchmarkHiParallel in step7/demo_test.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s (flat, cum) 49.36% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 113:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 114:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for pb.Next() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 115:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handleHi(rw, r)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 116:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; reset(rw)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 117:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84s&nbsp;&nbsp;&nbsp; 118:&nbsp;&nbsp;&nbsp; })<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 119:}<br>
+	ROUTINE ==== step7.BenchmarkHiParallel.func1 in step7/demo_test.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; 43.02ms (flat, cum)&nbsp; 1.16% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 110:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 111:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 112:&nbsp;&nbsp;&nbsp; b.RunParallel(func(pb *testing.PB) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 113:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 114:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for pb.Next() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 43.02ms&nbsp;&nbsp;&nbsp; 115:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handleHi(rw, r)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 116:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; reset(rw)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 117:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 118:&nbsp;&nbsp;&nbsp; })<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 119:}<br>
+	(pprof) list handleHi<br>
+	Total: 3.72s<br>
+	ROUTINE =====step7.handleHi in step7/demo.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; 43.02ms (flat, cum)&nbsp; 1.16% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 18:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return new(bytes.Buffer)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 19:&nbsp;&nbsp;&nbsp; },<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 20:}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 21:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 22:func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 43.01ms&nbsp;&nbsp;&nbsp;&nbsp; 23:&nbsp;&nbsp;&nbsp; if !rxOptionalID.MatchString(r.FormValue("color")) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 24:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 25:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 26:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 27:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 28:&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 2.50us&nbsp;&nbsp;&nbsp;&nbsp; 29:&nbsp;&nbsp;&nbsp; buf := bufPool.Get().(*bytes.Buffer)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 30:&nbsp;&nbsp;&nbsp; defer bufPool.Put(buf)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 31:&nbsp;&nbsp;&nbsp; buf.Reset()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 32:&nbsp;&nbsp;&nbsp; buf.WriteString("&lt;h1 style='color: ")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 33:&nbsp;&nbsp;&nbsp; buf.WriteString(r.FormValue("color"))<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 34:&nbsp;&nbsp;&nbsp; buf.WriteString("'&gt;Welcome!&lt;/h1&gt;You are visitor number ")<br>
+	(pprof)</font></p>
+<p>handleHi中MatchString这块是一个焦点，这里耗时较多。</p>
+<p>优化方法（<b>step8</b>）：</p>
+<p><font face="Courier New">//go-debug-profile-optimization/step8/demo.go<br>
+	… …<br>
+	var colorRxPool = sync.Pool{<br>
+	&nbsp;&nbsp;&nbsp; New: func() interface{} { return regexp.MustCompile(`\w*$`) },<br>
+	}</font></p>
+<p><font face="Courier New">func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp; if !<b>colorRxPool.Get().(*regexp.Regexp)</b>.MatchString(r.FormValue("color")) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp; }</font></p>
+<p><font face="Courier New">&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp; buf := bufPool.Get().(*bytes.Buffer)<br>
+	&nbsp;&nbsp;&nbsp; defer bufPool.Put(buf)<br>
+	&nbsp;&nbsp;&nbsp; buf.Reset()<br>
+	&nbsp;&nbsp;&nbsp; buf.WriteString("&lt;h1 style='color: ")<br>
+	&nbsp;&nbsp;&nbsp; buf.WriteString(r.FormValue("color"))<br>
+	&nbsp;&nbsp;&nbsp; buf.WriteString("'&gt;Welcome!&lt;/h1&gt;You are visitor number ")<br>
+	&nbsp;&nbsp;&nbsp; b := strconv.AppendInt(buf.Bytes(), int64(visitNum), 10)<br>
+	&nbsp;&nbsp;&nbsp; b = append(b, '!')<br>
+	&nbsp;&nbsp;&nbsp; w.Write(b)<br>
+	}<br>
+	… …</font></p>
+<p>测试执行与分析：</p>
+<p><font face="Courier New">$ go test -bench=Parallel -blockprofile=prof.block<br>
+	PASS<br>
+	BenchmarkHiParallel-4&nbsp;&nbsp;&nbsp; &nbsp; 100000&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; 19190 ns/op<br>
+	ok&nbsp; &nbsp;&nbsp;&nbsp; _/home1/tonybai/proj/opensource/github/experiments/go-debug-profile-optimization/step8&nbsp;&nbsp;&nbsp; 2.219s</font></p>
+<p><font face="Courier New">$ go tool pprof step8.test&nbsp; prof.block<br>
+	Entering interactive mode (type "help" for commands)<br>
+	(pprof) top –cum 10<br>
+	4.22s of 4.23s total (99.69%)<br>
+	Dropped 28 nodes (cum &lt;= 0.02s)<br>
+	Showing top 10 nodes out of 12 (cum &gt;= 2.11s)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; flat&nbsp; flat%&nbsp;&nbsp; sum%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cum&nbsp;&nbsp; cum%<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4.23s&nbsp;&nbsp; 100%&nbsp; runtime.goexit<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.90% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.90%&nbsp; runtime.chanrecv1<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.89%&nbsp; main.main<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.89%&nbsp; runtime.main<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.89%&nbsp; testing.(*M).Run<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.86%&nbsp; testing.(*B).run<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.86%&nbsp; testing.RunBenchmarks<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 49.90%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.79%&nbsp; step8.BenchmarkHiParallel<br>
+	&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.79% 99.69%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.79%&nbsp; sync.(*WaitGroup).Wait<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp; 0% 99.69%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s 49.79%&nbsp; testing.(*B).RunParallel<br>
+	(pprof) list BenchmarkHiParallel<br>
+	Total: 4.23s<br>
+	ROUTINE ======step8.BenchmarkHiParallel in step8/demo_test.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s (flat, cum) 49.79% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 113:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 114:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for pb.Next() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 115:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handleHi(rw, r)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 116:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; reset(rw)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 117:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2.11s&nbsp;&nbsp;&nbsp; 118:&nbsp;&nbsp;&nbsp; })<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 119:}<br>
+	ROUTINE ======step8.BenchmarkHiParallel.func1 in step8/demo_test.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; 11.68ms (flat, cum)&nbsp; 0.28% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 110:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 111:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 112:&nbsp;&nbsp;&nbsp; b.RunParallel(func(pb *testing.PB) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 113:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; rw := httptest.NewRecorder()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 114:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for pb.Next() {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 11.68ms&nbsp;&nbsp;&nbsp; 115:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; handleHi(rw, r)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 116:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; reset(rw)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 117:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 118:&nbsp;&nbsp;&nbsp; })<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp; 119:}<br>
+	(pprof) list handleHi<br>
+	Total: 4.23s<br>
+	ROUTINE ======step8.handleHi in step8/demo.go<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; 11.68ms (flat, cum)&nbsp; 0.28% of Total<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 21:var colorRxPool = sync.Pool{<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 22:&nbsp;&nbsp;&nbsp; New: func() interface{} { return regexp.MustCompile(`\w*$`) },<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 23:}<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 24:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 25:func handleHi(w http.ResponseWriter, r *http.Request) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 5.66ms&nbsp;&nbsp;&nbsp;&nbsp; 26:&nbsp;&nbsp;&nbsp; if !colorRxPool.Get().(*regexp.Regexp).MatchString(r.FormValue("color")) {<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 27:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; http.Error(w, "Optional color is invalid", http.StatusBadRequest)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 28:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 29:&nbsp;&nbsp;&nbsp; }<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 30:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 31:&nbsp;&nbsp;&nbsp; visitNum := atomic.AddInt64(&amp;visitors, 1)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 6.02ms&nbsp;&nbsp;&nbsp;&nbsp; 32:&nbsp;&nbsp;&nbsp; buf := bufPool.Get().(*bytes.Buffer)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 33:&nbsp;&nbsp;&nbsp; defer bufPool.Put(buf)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 34:&nbsp;&nbsp;&nbsp; buf.Reset()<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 35:&nbsp;&nbsp;&nbsp; buf.WriteString("&lt;h1 style='color: ")<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 36:&nbsp;&nbsp;&nbsp; buf.WriteString(r.FormValue("color"))<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .&nbsp;&nbsp;&nbsp;&nbsp; 37:&nbsp;&nbsp;&nbsp; buf.WriteString("'&gt;Welcome!&lt;/h1&gt;You are visitor number ")<br>
+	(pprof)</font></p>
+<p>优化后，MatchString从43ms降到5.66ms。</p>
+<p style="text-align:left">© 2015, <a href="http://tonybai.com/">bigwhite</a>. 版权所有. </p>
+<div style="clear:both; margin-top:5px; margin-bottom:5px;"></div><div style="float:left"><!-- JiaThis Button BEGIN -->
+<div id="jiathis_style_32x32">
+	<a class="jiathis_button_qzone" title="分享到QQ空间"><span class="jiathis_txt jtico jtico_qzone"></span></a>
+	<a class="jiathis_button_tsina" title="分享到微博"><span class="jiathis_txt jtico jtico_tsina"></span></a>
+	<a class="jiathis_button_tqq" title="分享到腾讯微博"><span class="jiathis_txt jtico jtico_tqq"></span></a>
+	<a class="jiathis_button_renren" title="分享到人人网"><span class="jiathis_txt jtico jtico_renren"></span></a>
+	<a class="jiathis_button_kaixin001" title="分享到开心网"><span class="jiathis_txt jtico jtico_kaixin001"></span></a>
+	<a href="http://www.jiathis.com/share/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;http://www.jiathis.com&#39;]);" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"><span class="jiathis_button_expanded jiathis_counter jiathis_bubble_style" id="jiathis_counter_18" title="累计分享2次">2</span></a>
+</div>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/jia.js" charset="utf-8"></script><script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/plugin.client.js" charset="utf-8"></script>
+<!-- JiaThis Button END --></div><div style="clear:both; margin-top:5px; margin-bottom:5px;"></div><p>Related posts:</p><ol>
+<li><a href="http://tonybai.com/2014/11/15/how-goroutines-work/" rel="bookmark" title="Goroutine是如何工作的">Goroutine是如何工作的</a></li>
+<li><a href="http://tonybai.com/2015/06/23/concurrency-and-parallelism/" rel="bookmark" title="也谈并发与并行">也谈并发与并行</a></li>
+<li><a href="http://tonybai.com/2014/10/22/golang-testing-techniques/" rel="bookmark" title="Golang测试技术">Golang测试技术</a></li>
+<li><a href="http://tonybai.com/2015/01/23/three-issues-about-go-code/" rel="bookmark" title="近期遇到的3个Golang代码问题">近期遇到的3个Golang代码问题</a></li>
+<li><a href="http://tonybai.com/2015/01/13/a-hole-about-variable-scope-in-golang/" rel="bookmark" title="一个有关Golang变量作用域的坑">一个有关Golang变量作用域的坑</a></li>
+</ol>				</div>
+			</article>
+				<div id="comments">
+    
+            <h3 class="widget-title"><a href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#comments" title="《Go程序调试、分析与优化》上的评论">已有 12 条评论</a></h3>
+        <ol class="comment-list">
+            	   <li class="comment even thread-even depth-1" id="li-comment-1122">
+			<div id="comment-1122" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/s=32" class="avatar avatar-32 photo avatar-default" height="32" width="32">					<cite class="fn">那抹湛蓝</cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/08/27            	</div>
+    			<div class="comment-content">
+    				<p></p><p>在 CPU profiling 中，下面这个命令出错</p>
+<p>go test -v -run=^$ -bench=.</p>
+<p>提示 no matches found: -run=^$</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1122#respond" onclick="return addComment.moveForm(&quot;comment-1122&quot;, &quot;1122&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+	   <li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1121">
+			<div id="comment-1121" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/s=32" class="avatar avatar-32 photo avatar-default" height="32" width="32">					<cite class="fn">bigwhite</cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/08/27            	</div>
+    			<div class="comment-content">
+    				<p></p><p>-run regexp Run only those tests and examples matching the regular expression.<br>
+^$是正则式，我在go 1.5 ubuntu amd64下执行没有问题啊。你的go版本和环境是？</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1121#respond" onclick="return addComment.moveForm(&quot;comment-1121&quot;, &quot;1121&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	<ul class="children">
+	   <li class="comment even depth-2" id="li-comment-1123">
+			<div id="comment-1123" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/s=32" class="avatar avatar-32 photo avatar-default" height="32" width="32">					<cite class="fn">那抹湛蓝</cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/08/27            	</div>
+    			<div class="comment-content">
+    				<p></p><p>$ uname -a<br>
+Linux shhl2 3.16.0-30-generic #40~14.04.1-Ubuntu SMP Thu Jan 15 17:43:14 UTC 2015 x86_64 x86_64 x86_64 GNU/Linux<br>
+$ go version<br>
+go version go1.5 linux/amd64</p>
+<p>我用的是 zsh</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1123#respond" onclick="return addComment.moveForm(&quot;comment-1123&quot;, &quot;1123&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+</ul>
+</li>
+	   <li class="comment byuser comment-author-admin bypostauthor odd alt thread-even depth-1" id="li-comment-1127">
+			<div id="comment-1127" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn"><a href="http://tonybai.com/" rel="external nofollow" class="url">bigwhite</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/08/31            	</div>
+    			<div class="comment-content">
+    				<p></p><p>可以将-run去掉试试。</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1127#respond" onclick="return addComment.moveForm(&quot;comment-1127&quot;, &quot;1127&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+	   <li class="comment even thread-odd thread-alt depth-1" id="li-comment-1128">
+			<div id="comment-1128" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/s=32" class="avatar avatar-32 photo avatar-default" height="32" width="32">					<cite class="fn"><a href="http://weibo.com/wclssdn" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-commentauthor&#39;,&#39;http://weibo.com&#39;]);" rel="external nofollow" class="url">原来微博的昵称真的可以好长好长</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/09/02            	</div>
+    			<div class="comment-content">
+    				<p></p><p>博客的模板比较差啊。。。 代码段看起来非常不舒服。。。 影响文章质量了都~ 不过，内容很精彩实用~ 赞~</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1128#respond" onclick="return addComment.moveForm(&quot;comment-1128&quot;, &quot;1128&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	<ul class="children">
+	   <li class="comment byuser comment-author-admin bypostauthor odd alt depth-2" id="li-comment-1129">
+			<div id="comment-1129" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn"><a href="http://tonybai.com/" rel="external nofollow" class="url">bigwhite</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/09/05            	</div>
+    			<div class="comment-content">
+    				<p></p><p>有好模板，不妨推荐一个？</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1129#respond" onclick="return addComment.moveForm(&quot;comment-1129&quot;, &quot;1129&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	<ul class="children">
+	   <li class="comment even depth-3" id="li-comment-1149">
+			<div id="comment-1149" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/s=32" class="avatar avatar-32 photo avatar-default" height="32" width="32">					<cite class="fn"><a href="http://weibo.com/wclssdn" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-commentauthor&#39;,&#39;http://weibo.com&#39;]);" rel="external nofollow" class="url">原来微博的昵称真的可以好长好长</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/09/23            	</div>
+    			<div class="comment-content">
+    				<p></p><p>我也没啥好模板，只是你这个代码较多，格式化展示效果会好很多~</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1149#respond" onclick="return addComment.moveForm(&quot;comment-1149&quot;, &quot;1149&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	<ul class="children">
+	   <li class="comment byuser comment-author-admin bypostauthor odd alt depth-4" id="li-comment-1150">
+			<div id="comment-1150" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn"><a href="http://tonybai.com/" rel="external nofollow" class="url">bigwhite</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/09/23            	</div>
+    			<div class="comment-content">
+    				<p></p><p>嗯，我也在逐渐切换到markdown，希望后续格式会好些。</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1150#respond" onclick="return addComment.moveForm(&quot;comment-1150&quot;, &quot;1150&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+	   <li class="comment even thread-even depth-1" id="li-comment-1172">
+			<div id="comment-1172" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/ac53de901013bc443a83868fb2f85d7a" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn"><a href="http://hessian.cn/" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-commentauthor&#39;,&#39;http://hessian.cn&#39;]);" rel="external nofollow" class="url">Hessian海生</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2015/10/10            	</div>
+    			<div class="comment-content">
+    				<p></p><p>找个代码高亮插件吧</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1172#respond" onclick="return addComment.moveForm(&quot;comment-1172&quot;, &quot;1172&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+	   <li class="comment odd alt thread-odd thread-alt depth-1" id="li-comment-1277">
+			<div id="comment-1277" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/d7b96fccc659c32c600a82a9a67c0fa0" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn"><a href="http://weibo.com/wxy19901105" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-commentauthor&#39;,&#39;http://weibo.com&#39;]);" rel="external nofollow" class="url">8094731</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2016/01/09            	</div>
+    			<div class="comment-content">
+    				<p></p><p>在windows 7中，为什么我执行后的没有*.test文件  其他的都好。</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1277#respond" onclick="return addComment.moveForm(&quot;comment-1277&quot;, &quot;1277&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	<ul class="children">
+	   <li class="comment byuser comment-author-admin bypostauthor even depth-2" id="li-comment-1278">
+			<div id="comment-1278" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn"><a href="http://tonybai.com/" rel="external nofollow" class="url">bigwhite</a></cite>
+    			</div>
+    			<div class="comment-meta">
+					2016/01/09            	</div>
+    			<div class="comment-content">
+    				<p></p><p>我手头没有windows go开发环境，工作中也不用windows，您自己不妨摸索一下，有结论后，别忘了在这里的评论中补上一句。呵呵。</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1278#respond" onclick="return addComment.moveForm(&quot;comment-1278&quot;, &quot;1278&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+</ul>
+</li>
+	   <li class="comment odd alt thread-even depth-1" id="li-comment-1717">
+			<div id="comment-1717" class="comment-body">
+				<div class="comment-author">
+					<img alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/534f0e88f4281cd93967ac6cdfee8869" class="avatar avatar-32 photo" height="32" width="32">					<cite class="fn">Fred</cite>
+    			</div>
+    			<div class="comment-meta">
+					2016/12/06            	</div>
+    			<div class="comment-content">
+    				<p></p><p>写的很不错，其中有个问题指出，以免后看者在测试验证时浪费不必要的时间使用pprof工具分析mem：$ go tool pprof –alloc_space step3.test prof.memEntering interactive mode (type “help” for commands)—中划线大写了–alloc_space（错误）-alloc_space</p>
+<p></p>
+    			</div>
+    			<div class="comment-reply">
+    				<a class="comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/?replytocom=1717#respond" onclick="return addComment.moveForm(&quot;comment-1717&quot;, &quot;1717&quot;, &quot;respond&quot;, &quot;1804&quot;)">回复</a>    			</div>
+			</div>
+	</li>
+        </ol>
+            
+        <div id="respond" class="respond">
+        <div class="cancel-comment-reply">
+        <a rel="nofollow" id="cancel-comment-reply-link" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#respond" style="display:none;">点击这里取消回复。</a>        </div>
+    	<h3 id="response">添加新评论</h3>
+    	<form method="post" action="http://tonybai.com/wp-comments-post.php" id="comment_form">
+			<div class="col1">
+			<div class="QapTcha"><div class="bgSlider"><div class="Slider ui-draggable" style="position: relative;"></div></div><div class="Icons"></div><div class=" TxtStatus dropError">发表评论前，请滑动滚动条解锁</div><div class="clr"></div><a class="dis" href="http://blog.30c.org/">三十岁</a><input name="TJqPaGAQkjEDHEynP4NtdCbBQWjjMjpq" value="BGn8-5a" type="hidden"></div><p>
+                <textarea rows="8" cols="50" name="comment" class="textarea"></textarea>
+            </p>
+			</div>
+			<div class="col2">
+                		<p>
+                <label for="author" class="required">称呼</label>
+    			<input type="text" name="author" id="author" class="text" value="">
+    		</p>
+    		<p>
+                <label for="mail" class="required">邮箱</label>
+    			<input type="email" name="email" id="mail" class="text" value="">
+    		</p>
+    		<p>
+                <label for="url">网站</label>
+    			<input type="url" name="url" id="url" class="text" placeholder="http://example.com" value="">
+    		</p>
+                		<p>
+                <button type="submit" name="submit" class="submit">提交评论</button>
+            </p>
+			</div>
+			<div class="clear"></div>
+            <input type="hidden" name="comment_post_ID" value="1804" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+ 
+                        
+    	</form>
+    </div>
+    </div>	</div>
+</div>
+<div id="secondary">
+	<section class="widget">
+        <form id="search" method="get" action="http://tonybai.com/">
+			<input type="text" name="s" class="text" placeholder="输入关键字搜索">
+			<button type="submit" class="submit">搜索</button>
+        </form>
+    </section>
+	<section id="text-3" class="widget widget_text">			<div class="textwidget"><p><!--<br />
+<img src="/wp-content/uploads/daughter-photo-300x225.jpg" align="center" /></p>
+<p><img src="/wp-content/uploads/daughter-3-years-old-225x300.jpg" align="center" /><br />
+--></p>
+<p><a href="http://feed.tonybai.com/"><br>
+<img src="./Go程序调试、分析与优化 _ Tony Bai_files/alipay_qr_small.png" align="center"><br>
+</a><br>
+这里是<a href="http://weibo.com/bigwhite20xx" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-widget&#39;,&#39;http://weibo.com&#39;]);">Tony Bai</a>的个人Blog，欢迎访问、订阅和留言！<font size="+1" color="red">订阅Feed请点击上面图片</font>。</p>
+<p>如果您觉得这里的文章对您有帮助，请扫描上方二维码进行捐赠，加油后的Tony Bai将会为您呈现更多精彩的文章，谢谢！</p>
+<p>如果您希望通过比特币或以太币捐赠，可以扫描下方二维码：</p>
+<p>比特币：<br>
+<a href="http://feed.tonybai.com/"><br>
+<img src="./Go程序调试、分析与优化 _ Tony Bai_files/bitcoin-qr.png" align="center"><br>
+</a></p>
+<p>以太币：<br>
+<a href="http://feed.tonybai.com/"><br>
+<img src="./Go程序调试、分析与优化 _ Tony Bai_files/ethereum-qr.png" align="center"><br>
+</a></p>
+<p>如果您喜欢通过微信App浏览本站内容，可以扫描下方二维码，订阅本站官方微信订阅号“iamtonybai”；点击二维码，可直达本人官方微博主页^_^：</p>
+<p><a href="http://weibo.com/bigwhite20xx"><br>
+<img src="./Go程序调试、分析与优化 _ Tony Bai_files/qrcode_for_gh_39d38f08f440_258.jpg" align="center"><br>
+</a></p>
+<p>本站Powered by Digital Ocean VPS。<br>
+<a href="https://www.digitalocean.com/?refcode=bff6eed92687"><br>
+选择Digital Ocean VPS主机，即可获得10美元现金充值，可免费使用两个月哟！</a></p>
+<p>著名主机提供商Linode 10$优惠码：linode10，在<a href="https://www.linode.com/?r=ec42f83592f2ddfc8f487c0428a9b74fa1b2984b" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-widget&#39;,&#39;http://www.linode.com&#39;]);">这里注册</a>即可免费获得。</p>
+<p>阿里云推荐码：<font size="+1" color="red">1WFZ0V</font>，<font size="+1" color="red">立享9折！</font></p>
+<p><img src="./Go程序调试、分析与优化 _ Tony Bai_files/tonybai-gmail-image.png" align="center"></p>
+<p><a href="http://cn.linkedin.com/in/bigwhite"></a></p><a href="http://cn.linkedin.com/in/bigwhite">
+<p>          <img src="./Go程序调试、分析与优化 _ Tony Bai_files/btn_myprofile_160x33.png" width="160" height="33" border="0" alt="View Tony Bai&#39;s profile on LinkedIn"></p>
+</a><p><a href="http://cn.linkedin.com/in/bigwhite"></a>        </p>
+<p><!--<br />
+<script charset="gbk" src="http://p.tanx.com/ex?i=mm_72934676_11332019_40046076"></script><br />
+--><br>
+<!--<br />
+2014世界杯必玩手游《手指足球世界杯2014》(Flick World Cup)发布了，欢迎点击下面图片或扫描二维码下载！关于游戏的详细介绍请参见<a href="http://iwobi.net" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://iwobi.net']);">官方网站说明</a>。<br />
+<a href="http://iwobi.net/download/FlickWorldCup.apk" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://iwobi.net']);"><img src="http://iwobi.net/images/flickworldcup-qr.png" alt="二维码" width="180" height="180" align="center"/></a></p>
+<p>我的第一款手机游戏习作《绕桩王》(Slalom King)，欢迎点击下面图片或扫描二维码下载！<br />
+<a href="http://iwobi.net/download/SlalomKing.apk" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://iwobi.net']);"><img src="http://iwobi.net/images/slalomking-qr.png" alt="二维码" width="180" height="180" align="center"/></a><br />
+--></p>
+</div>
+		</section>		<section id="recent-posts-3" class="widget widget_recent_entries">		<h3 class="widget-title">文章</h3>		<ul>
+				<li><a href="http://tonybai.com/2017/11/06/explain-docker-single-host-network-using-iptables-trace-and-ebtables-log/" title="再谈Docker容器单机网络：利用iptables trace和ebtables log">再谈Docker容器单机网络：利用iptables trace和ebtables log</a></li>
+				<li><a href="http://tonybai.com/2017/10/24/go-evolution-for-ten-years-an-interview-by-osc/" title="源创会开源访谈：十年成长，Go语言的演化之路">源创会开源访谈：十年成长，Go语言的演化之路</a></li>
+				<li><a href="http://tonybai.com/2017/10/23/the-speech-script-practice-on-deploying-a-ha-harbor-cluster-for-osc-shenyang-2017/" title="源创会2017沈阳站讲稿：基于Harbor的高可用企业级私有容器镜像仓库部署实践">源创会2017沈阳站讲稿：基于Harbor的高可用企业级私有容器镜像仓库部署实践</a></li>
+				<li><a href="http://tonybai.com/2017/10/16/out-of-node-resource-handling-in-kubernetes-cluster/" title="Kubernetes节点资源耗尽状态的处理">Kubernetes节点资源耗尽状态的处理</a></li>
+				<li><a href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/" title="Kubernetes Dashboard 1.7.0部署二三事">Kubernetes Dashboard 1.7.0部署二三事</a></li>
+				<li><a href="http://tonybai.com/2017/09/24/go-ten-years-and-climbing/" title="Go语言：成长的十年">Go语言：成长的十年</a></li>
+				<li><a href="http://tonybai.com/2017/08/15/hello-apollo/" title="Hello, Apollo">Hello, Apollo</a></li>
+				<li><a href="http://tonybai.com/2017/08/09/fix-kube-apiserver-restart-exceptionally-in-k8s-1-7-3/" title="解决Kubernetes 1.7.3 kube-apiserver频繁异常重启的问题">解决Kubernetes 1.7.3 kube-apiserver频繁异常重启的问题</a></li>
+				<li><a href="http://tonybai.com/2017/08/01/hello-ros/" title="Hello, ROS">Hello, ROS</a></li>
+				<li><a href="http://tonybai.com/2017/07/24/ride-a-shared-bike/" title="体验共享单车">体验共享单车</a></li>
+				</ul>
+		</section><section id="recentcomments" class="widget widget_recentcomments"><h3 class="widget-title">评论</h3><ul style="cursor: auto;"><li id="rc-comment-6958" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/10/24/go-evolution-for-ten-years-an-interview-by-osc/#comment-6958">源创会开源访谈：十年成长，Go语言的演化之路</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">Dmitry Vyukovy好像一直都是“外援”，是google员工，但不是go team 常务me<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6957" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/2312f11c16662bab003d21c5d3fb9548"><div class="rc-info"><span class="rc-reviewer">waterloopwm</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/10/24/go-evolution-for-ten-years-an-interview-by-osc/#comment-6957">源创会开源访谈：十年成长，Go语言的演化之路</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">有人在golang-dev论坛问了golang核心开发者Ian Lance Taylor， Dmit<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6956" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6956">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><a rel="nofollow" class="rc-toggle rc-collapse" style="display: none;"></a><div class="rc-excerpt">需要修改apiserver的启动参数，添加basic auth启动参数，比如：--basic-aut<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6955" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/05465db689bfa42d93628bfc10d4b8bc"><div class="rc-info"><span class="rc-reviewer">一生</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6955">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">你好！  我按照你这篇文章部署成功了，但在使用 basic auth login方式登录的时候遇到了<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6954" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6954">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">问题我没遇到过，不过翻了一下dashboard的issue list，似乎这个issue的问题和你遇<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6953" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/a9db45d3045ad5ef3303c303b000ab16"><div class="rc-info"><span class="rc-reviewer">zorro</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6953">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">请教一个问题  K8s 是1.7.3  dashboard是v1.7.1   连接apiserver<span class="rc-ellipsis">...</span></div></li><li id="rc-comment-6951" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6951">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">抱歉，我都是直接使用国外默认的镜像。在国内没找到可用的且持续维护的k8s相关的公共镜像仓库。</div></li><li id="rc-comment-6950" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/636fcb5339f3a35b4fd679123225955c"><div class="rc-info"><a class="rc-reviewer" rel="nofollow external" href="http://www.icsoc.net/">jude</a> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2017/09/26/some-notes-about-deploying-kubernetes-dashboard-1-7-0/#comment-6950">Kubernetes Dashboard 1.7.0部署二三事</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">大神能提供下国内1.7.1的镜像地址吗？</div></li><li id="rc-comment-6949" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/7d7eec3cf5803a4346d44b12e046ec5a"><div class="rc-info"><span class="rc-reviewer">bigwhite</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2016/11/07/integrate-kubernetes-with-ceph-rbd/#comment-6949">使用Ceph RBD为Kubernetes集群提供存储卷</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">目前没有以ceph object storage为backend的plugin实现。</div></li><li id="rc-comment-6948" class="rc-item rc-comment rc-clearfix"><img class="rc-avatar rc-left" width="32" height="32" alt="" src="./Go程序调试、分析与优化 _ Tony Bai_files/60420f422358e46ada6ed767eff4a52f"><div class="rc-info"><span class="rc-reviewer">study</span> 在 <a class="rc-post" rel="nofollow" href="http://tonybai.com/2016/11/07/integrate-kubernetes-with-ceph-rbd/#comment-6948">使用Ceph RBD为Kubernetes集群提供存储卷</a></div><div class="rc-timestamp"></div><div class="rc-excerpt">k8s可以使用ceph的对象存储吗？我看官网之类的，都是rbd和cephfs，没有看到ceph的对象<span class="rc-ellipsis">...</span></div></li><li class="rc-navi rc-clearfix"><a "rel="nofollow&quot;" class="rc-older">下一页 »</a></li></ul></section><section id="categories-3" class="widget widget_categories"><h3 class="widget-title">分类</h3>		<ul>
+	<li class="cat-item cat-item-3"><a href="http://tonybai.com/category/images-collection/" title="查看 光影汇 下的所有文章">光影汇</a> (7)
+</li>
+	<li class="cat-item cat-item-4"><a href="http://tonybai.com/category/media-square/" title="查看 影音坊 下的所有文章">影音坊</a> (36)
+</li>
+	<li class="cat-item cat-item-5"><a href="http://tonybai.com/category/thoughts-center/" title="查看 思考控 下的所有文章">思考控</a> (66)
+</li>
+	<li class="cat-item cat-item-6"><a href="http://tonybai.com/category/technical-notes/" title="查看 技术志 下的所有文章">技术志</a> (532)
+</li>
+	<li class="cat-item cat-item-2223"><a href="http://tonybai.com/category/edu-notes/" title="查看 教育记 下的所有文章">教育记</a> (1)
+</li>
+	<li class="cat-item cat-item-7"><a href="http://tonybai.com/category/groceries-store/" title="查看 杂货铺 下的所有文章">杂货铺</a> (75)
+</li>
+	<li class="cat-item cat-item-8"><a href="http://tonybai.com/category/living-notes/" title="查看 生活簿 下的所有文章">生活簿</a> (154)
+</li>
+	<li class="cat-item cat-item-9"><a href="http://tonybai.com/category/career-notes/" title="查看 职场录 下的所有文章">职场录</a> (14)
+</li>
+	<li class="cat-item cat-item-10"><a href="http://tonybai.com/category/reading-bar/" title="查看 读书吧 下的所有文章">读书吧</a> (14)
+</li>
+	<li class="cat-item cat-item-11"><a href="http://tonybai.com/category/sports-fan/" title="查看 运动迷 下的所有文章">运动迷</a> (107)
+</li>
+	<li class="cat-item cat-item-12"><a href="http://tonybai.com/category/tourist-show/" title="查看 驴友秀 下的所有文章">驴友秀</a> (40)
+</li>
+		</ul>
+</section><section id="tag_cloud-3" class="widget widget_tag_cloud"><h3 class="widget-title">标签</h3><div class="tagcloud"><a href="http://tonybai.com/tag/blog/" class="tag-link-56" title="886 个话题" style="font-size: 22pt;">Blog</a>
+<a href="http://tonybai.com/tag/blogger/" class="tag-link-58" title="370 个话题" style="font-size: 18.27972027972pt;">Blogger</a>
+<a href="http://tonybai.com/tag/c/" class="tag-link-67" title="331 个话题" style="font-size: 17.79020979021pt;">C</a>
+<a href="http://tonybai.com/tag/cpp/" class="tag-link-92" title="48 个话题" style="font-size: 9.6643356643357pt;">Cpp</a>
+<a href="http://tonybai.com/tag/docker/" class="tag-link-1526" title="58 个话题" style="font-size: 10.447552447552pt;">docker</a>
+<a href="http://tonybai.com/tag/english/" class="tag-link-126" title="32 个话题" style="font-size: 8pt;">English</a>
+<a href="http://tonybai.com/tag/gcc/" class="tag-link-145" title="89 个话题" style="font-size: 12.20979020979pt;">GCC</a>
+<a href="http://tonybai.com/tag/github/" class="tag-link-1078" title="52 个话题" style="font-size: 9.958041958042pt;">github</a>
+<a href="http://tonybai.com/tag/gnu/" class="tag-link-152" title="57 个话题" style="font-size: 10.34965034965pt;">GNU</a>
+<a href="http://tonybai.com/tag/go/" class="tag-link-1114" title="93 个话题" style="font-size: 12.405594405594pt;">Go</a>
+<a href="http://tonybai.com/tag/golang/" class="tag-link-1137" title="94 个话题" style="font-size: 12.503496503497pt;">Golang</a>
+<a href="http://tonybai.com/tag/google/" class="tag-link-154" title="78 个话题" style="font-size: 11.72027972028pt;">Google</a>
+<a href="http://tonybai.com/tag/java/" class="tag-link-178" title="50 个话题" style="font-size: 9.8601398601399pt;">Java</a>
+<a href="http://tonybai.com/tag/kernel/" class="tag-link-191" title="36 个话题" style="font-size: 8.4895104895105pt;">Kernel</a>
+<a href="http://tonybai.com/tag/kubernetes/" class="tag-link-1794" title="44 个话题" style="font-size: 9.2727272727273pt;">Kubernetes</a>
+<a href="http://tonybai.com/tag/linux/" class="tag-link-205" title="121 个话题" style="font-size: 13.58041958042pt;">Linux</a>
+<a href="http://tonybai.com/tag/m10/" class="tag-link-207" title="40 个话题" style="font-size: 8.8811188811189pt;">M10</a>
+<a href="http://tonybai.com/tag/opensource/" class="tag-link-252" title="198 个话题" style="font-size: 15.636363636364pt;">Opensource</a>
+<a href="http://tonybai.com/tag/programmer/" class="tag-link-268" title="456 个话题" style="font-size: 19.160839160839pt;">Programmer</a>
+<a href="http://tonybai.com/tag/python/" class="tag-link-275" title="42 个话题" style="font-size: 9.0769230769231pt;">Python</a>
+<a href="http://tonybai.com/tag/solaris/" class="tag-link-309" title="42 个话题" style="font-size: 9.0769230769231pt;">Solaris</a>
+<a href="http://tonybai.com/tag/subversion/" class="tag-link-318" title="37 个话题" style="font-size: 8.5874125874126pt;">Subversion</a>
+<a href="http://tonybai.com/tag/ubuntu/" class="tag-link-350" title="114 个话题" style="font-size: 13.286713286713pt;">Ubuntu</a>
+<a href="http://tonybai.com/tag/unix/" class="tag-link-354" title="88 个话题" style="font-size: 12.20979020979pt;">Unix</a>
+<a href="http://tonybai.com/tag/windows/" class="tag-link-365" title="45 个话题" style="font-size: 9.3706293706294pt;">Windows</a>
+<a href="http://tonybai.com/tag/%e4%b8%96%e7%95%8c%e6%9d%af/" class="tag-link-389" title="36 个话题" style="font-size: 8.4895104895105pt;">世界杯</a>
+<a href="http://tonybai.com/tag/%e5%8d%9a%e5%ae%a2/" class="tag-link-489" title="815 个话题" style="font-size: 21.608391608392pt;">博客</a>
+<a href="http://tonybai.com/tag/%e5%ad%a6%e4%b9%a0/" class="tag-link-581" title="48 个话题" style="font-size: 9.6643356643357pt;">学习</a>
+<a href="http://tonybai.com/tag/%e5%ae%b9%e5%99%a8/" class="tag-link-1131" title="38 个话题" style="font-size: 8.6853146853147pt;">容器</a>
+<a href="http://tonybai.com/tag/%e5%b7%a5%e4%bd%9c/" class="tag-link-600" title="96 个话题" style="font-size: 12.601398601399pt;">工作</a>
+<a href="http://tonybai.com/tag/%e5%b7%b4%e8%90%a8/" class="tag-link-603" title="61 个话题" style="font-size: 10.643356643357pt;">巴萨</a>
+<a href="http://tonybai.com/tag/%e5%bc%80%e6%ba%90/" class="tag-link-618" title="196 个话题" style="font-size: 15.538461538462pt;">开源</a>
+<a href="http://tonybai.com/tag/%e6%80%9d%e8%80%83/" class="tag-link-632" title="145 个话题" style="font-size: 14.265734265734pt;">思考</a>
+<a href="http://tonybai.com/tag/%e6%84%9f%e6%82%9f/" class="tag-link-642" title="201 个话题" style="font-size: 15.734265734266pt;">感悟</a>
+<a href="http://tonybai.com/tag/%e6%91%84%e5%bd%b1/" class="tag-link-666" title="56 个话题" style="font-size: 10.34965034965pt;">摄影</a>
+<a href="http://tonybai.com/tag/%e6%97%85%e6%b8%b8/" class="tag-link-693" title="40 个话题" style="font-size: 8.8811188811189pt;">旅游</a>
+<a href="http://tonybai.com/tag/%e6%9e%9c%e6%9e%9c/" class="tag-link-726" title="32 个话题" style="font-size: 8pt;">果果</a>
+<a href="http://tonybai.com/tag/%e6%a2%85%e8%a5%bf/" class="tag-link-738" title="73 个话题" style="font-size: 11.426573426573pt;">梅西</a>
+<a href="http://tonybai.com/tag/%e7%90%83%e7%8e%8b/" class="tag-link-819" title="34 个话题" style="font-size: 8.1958041958042pt;">球王</a>
+<a href="http://tonybai.com/tag/%e7%94%9f%e6%b4%bb/" class="tag-link-825" title="247 个话题" style="font-size: 16.517482517483pt;">生活</a>
+<a href="http://tonybai.com/tag/%e7%a8%8b%e5%ba%8f%e5%91%98/" class="tag-link-853" title="476 个话题" style="font-size: 19.356643356643pt;">程序员</a>
+<a href="http://tonybai.com/tag/%e7%bc%96%e8%af%91%e5%99%a8/" class="tag-link-886" title="41 个话题" style="font-size: 8.979020979021pt;">编译器</a>
+<a href="http://tonybai.com/tag/%e8%a5%bf%e7%94%b2/" class="tag-link-927" title="49 个话题" style="font-size: 9.7622377622378pt;">西甲</a>
+<a href="http://tonybai.com/tag/%e8%b6%b3%e7%90%83/" class="tag-link-954" title="69 个话题" style="font-size: 11.230769230769pt;">足球</a>
+<a href="http://tonybai.com/tag/%e9%a9%b4%e5%8f%8b/" class="tag-link-1029" title="33 个话题" style="font-size: 8.0979020979021pt;">驴友</a></div>
+</section><section id="archives-3" class="widget widget_archive"><h3 class="widget-title">归档</h3>		<ul>
+			<li><a href="http://tonybai.com/2017/11/" title="2017 年十一月">2017 年十一月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2017/10/" title="2017 年十月">2017 年十月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2017/09/" title="2017 年九月">2017 年九月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2017/08/" title="2017 年八月">2017 年八月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2017/07/" title="2017 年七月">2017 年七月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2017/06/" title="2017 年六月">2017 年六月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2017/05/" title="2017 年五月">2017 年五月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2017/04/" title="2017 年四月">2017 年四月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2017/03/" title="2017 年三月">2017 年三月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2017/02/" title="2017 年二月">2017 年二月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2017/01/" title="2017 年一月">2017 年一月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2016/12/" title="2016 年十二月">2016 年十二月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2016/11/" title="2016 年十一月">2016 年十一月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2016/10/" title="2016 年十月">2016 年十月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2016/09/" title="2016 年九月">2016 年九月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/08/" title="2016 年八月">2016 年八月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2016/06/" title="2016 年六月">2016 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/05/" title="2016 年五月">2016 年五月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/04/" title="2016 年四月">2016 年四月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/03/" title="2016 年三月">2016 年三月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2016/02/" title="2016 年二月">2016 年二月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2016/01/" title="2016 年一月">2016 年一月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2015/12/" title="2015 年十二月">2015 年十二月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/11/" title="2015 年十一月">2015 年十一月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/10/" title="2015 年十月">2015 年十月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/09/" title="2015 年九月">2015 年九月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2015/08/" title="2015 年八月">2015 年八月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2015/07/" title="2015 年七月">2015 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2015/06/" title="2015 年六月">2015 年六月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2015/05/" title="2015 年五月">2015 年五月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2015/04/" title="2015 年四月">2015 年四月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2015/03/" title="2015 年三月">2015 年三月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2015/01/" title="2015 年一月">2015 年一月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2014/12/" title="2014 年十二月">2014 年十二月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2014/11/" title="2014 年十一月">2014 年十一月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2014/10/" title="2014 年十月">2014 年十月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2014/09/" title="2014 年九月">2014 年九月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2014/08/" title="2014 年八月">2014 年八月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2014/07/" title="2014 年七月">2014 年七月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2014/05/" title="2014 年五月">2014 年五月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2014/04/" title="2014 年四月">2014 年四月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2014/03/" title="2014 年三月">2014 年三月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2014/02/" title="2014 年二月">2014 年二月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2014/01/" title="2014 年一月">2014 年一月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2013/12/" title="2013 年十二月">2013 年十二月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2013/11/" title="2013 年十一月">2013 年十一月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2013/10/" title="2013 年十月">2013 年十月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2013/09/" title="2013 年九月">2013 年九月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2013/08/" title="2013 年八月">2013 年八月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2013/07/" title="2013 年七月">2013 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2013/06/" title="2013 年六月">2013 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2013/05/" title="2013 年五月">2013 年五月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2013/04/" title="2013 年四月">2013 年四月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2013/03/" title="2013 年三月">2013 年三月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2013/02/" title="2013 年二月">2013 年二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2013/01/" title="2013 年一月">2013 年一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2012/12/" title="2012 年十二月">2012 年十二月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2012/11/" title="2012 年十一月">2012 年十一月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2012/10/" title="2012 年十月">2012 年十月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2012/09/" title="2012 年九月">2012 年九月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2012/08/" title="2012 年八月">2012 年八月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2012/07/" title="2012 年七月">2012 年七月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2012/06/" title="2012 年六月">2012 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2012/05/" title="2012 年五月">2012 年五月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2012/04/" title="2012 年四月">2012 年四月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2012/03/" title="2012 年三月">2012 年三月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2012/02/" title="2012 年二月">2012 年二月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2012/01/" title="2012 年一月">2012 年一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2011/12/" title="2011 年十二月">2011 年十二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2011/11/" title="2011 年十一月">2011 年十一月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2011/10/" title="2011 年十月">2011 年十月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2011/09/" title="2011 年九月">2011 年九月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2011/08/" title="2011 年八月">2011 年八月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2011/07/" title="2011 年七月">2011 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2011/06/" title="2011 年六月">2011 年六月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2011/05/" title="2011 年五月">2011 年五月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2011/04/" title="2011 年四月">2011 年四月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2011/03/" title="2011 年三月">2011 年三月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2011/02/" title="2011 年二月">2011 年二月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2011/01/" title="2011 年一月">2011 年一月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2010/12/" title="2010 年十二月">2010 年十二月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2010/11/" title="2010 年十一月">2010 年十一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2010/10/" title="2010 年十月">2010 年十月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2010/09/" title="2010 年九月">2010 年九月</a>&nbsp;(12)</li>
+	<li><a href="http://tonybai.com/2010/08/" title="2010 年八月">2010 年八月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2010/07/" title="2010 年七月">2010 年七月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2010/06/" title="2010 年六月">2010 年六月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2010/05/" title="2010 年五月">2010 年五月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2010/04/" title="2010 年四月">2010 年四月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2010/03/" title="2010 年三月">2010 年三月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2010/02/" title="2010 年二月">2010 年二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2010/01/" title="2010 年一月">2010 年一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2009/12/" title="2009 年十二月">2009 年十二月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2009/11/" title="2009 年十一月">2009 年十一月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2009/10/" title="2009 年十月">2009 年十月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2009/09/" title="2009 年九月">2009 年九月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2009/08/" title="2009 年八月">2009 年八月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2009/07/" title="2009 年七月">2009 年七月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2009/06/" title="2009 年六月">2009 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2009/05/" title="2009 年五月">2009 年五月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2009/04/" title="2009 年四月">2009 年四月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2009/03/" title="2009 年三月">2009 年三月</a>&nbsp;(12)</li>
+	<li><a href="http://tonybai.com/2009/02/" title="2009 年二月">2009 年二月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2009/01/" title="2009 年一月">2009 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2008/12/" title="2008 年十二月">2008 年十二月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2008/11/" title="2008 年十一月">2008 年十一月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2008/10/" title="2008 年十月">2008 年十月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2008/09/" title="2008 年九月">2008 年九月</a>&nbsp;(13)</li>
+	<li><a href="http://tonybai.com/2008/08/" title="2008 年八月">2008 年八月</a>&nbsp;(13)</li>
+	<li><a href="http://tonybai.com/2008/07/" title="2008 年七月">2008 年七月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2008/06/" title="2008 年六月">2008 年六月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2008/05/" title="2008 年五月">2008 年五月</a>&nbsp;(7)</li>
+	<li><a href="http://tonybai.com/2008/04/" title="2008 年四月">2008 年四月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2008/03/" title="2008 年三月">2008 年三月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2008/02/" title="2008 年二月">2008 年二月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2008/01/" title="2008 年一月">2008 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2007/12/" title="2007 年十二月">2007 年十二月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2007/11/" title="2007 年十一月">2007 年十一月</a>&nbsp;(14)</li>
+	<li><a href="http://tonybai.com/2007/10/" title="2007 年十月">2007 年十月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2007/09/" title="2007 年九月">2007 年九月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2007/08/" title="2007 年八月">2007 年八月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2007/07/" title="2007 年七月">2007 年七月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2007/06/" title="2007 年六月">2007 年六月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2007/05/" title="2007 年五月">2007 年五月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2007/04/" title="2007 年四月">2007 年四月</a>&nbsp;(8)</li>
+	<li><a href="http://tonybai.com/2007/03/" title="2007 年三月">2007 年三月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2007/02/" title="2007 年二月">2007 年二月</a>&nbsp;(4)</li>
+	<li><a href="http://tonybai.com/2007/01/" title="2007 年一月">2007 年一月</a>&nbsp;(17)</li>
+	<li><a href="http://tonybai.com/2006/12/" title="2006 年十二月">2006 年十二月</a>&nbsp;(18)</li>
+	<li><a href="http://tonybai.com/2006/11/" title="2006 年十一月">2006 年十一月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2006/10/" title="2006 年十月">2006 年十月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2006/09/" title="2006 年九月">2006 年九月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2006/08/" title="2006 年八月">2006 年八月</a>&nbsp;(5)</li>
+	<li><a href="http://tonybai.com/2006/07/" title="2006 年七月">2006 年七月</a>&nbsp;(22)</li>
+	<li><a href="http://tonybai.com/2006/06/" title="2006 年六月">2006 年六月</a>&nbsp;(35)</li>
+	<li><a href="http://tonybai.com/2006/05/" title="2006 年五月">2006 年五月</a>&nbsp;(24)</li>
+	<li><a href="http://tonybai.com/2006/04/" title="2006 年四月">2006 年四月</a>&nbsp;(26)</li>
+	<li><a href="http://tonybai.com/2006/03/" title="2006 年三月">2006 年三月</a>&nbsp;(25)</li>
+	<li><a href="http://tonybai.com/2006/02/" title="2006 年二月">2006 年二月</a>&nbsp;(18)</li>
+	<li><a href="http://tonybai.com/2006/01/" title="2006 年一月">2006 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2005/12/" title="2005 年十二月">2005 年十二月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2005/11/" title="2005 年十一月">2005 年十一月</a>&nbsp;(10)</li>
+	<li><a href="http://tonybai.com/2005/09/" title="2005 年九月">2005 年九月</a>&nbsp;(13)</li>
+	<li><a href="http://tonybai.com/2005/08/" title="2005 年八月">2005 年八月</a>&nbsp;(11)</li>
+	<li><a href="http://tonybai.com/2005/07/" title="2005 年七月">2005 年七月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2005/06/" title="2005 年六月">2005 年六月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2005/05/" title="2005 年五月">2005 年五月</a>&nbsp;(3)</li>
+	<li><a href="http://tonybai.com/2005/04/" title="2005 年四月">2005 年四月</a>&nbsp;(6)</li>
+	<li><a href="http://tonybai.com/2005/03/" title="2005 年三月">2005 年三月</a>&nbsp;(1)</li>
+	<li><a href="http://tonybai.com/2005/01/" title="2005 年一月">2005 年一月</a>&nbsp;(15)</li>
+	<li><a href="http://tonybai.com/2004/12/" title="2004 年十二月">2004 年十二月</a>&nbsp;(9)</li>
+	<li><a href="http://tonybai.com/2004/11/" title="2004 年十一月">2004 年十一月</a>&nbsp;(14)</li>
+	<li><a href="http://tonybai.com/2004/10/" title="2004 年十月">2004 年十月</a>&nbsp;(2)</li>
+	<li><a href="http://tonybai.com/2004/09/" title="2004 年九月">2004 年九月</a>&nbsp;(2)</li>
+		</ul>
+</section><section id="linkcat-2214" class="widget widget_links"><h3 class="widget-title">私人</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://daughter.tonybai.com/" rel="child" title="我的女儿的博客" target="_blank" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://daughter.tonybai.com/&#39;]);">我的女儿</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-1042" class="widget widget_links"><h3 class="widget-title">链接</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://douban.com/people/tony_bai" rel="me" title="我的豆瓣" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://douban.com/people/tony_bai&#39;]);">@douban</a></li>
+<li><a href="http://www.flickr.com/photos/bigwhite/" title="我的Flickr" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://www.flickr.com/photos/bigwhite/&#39;]);">@flickr</a></li>
+<li><a href="https://github.com/bigwhite" rel="me" title="我的Github" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;https://github.com/bigwhite&#39;]);">@github</a></li>
+<li><a href="http://code.google.com/p/bigwhite-code/" rel="me" title="我的Google Code" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/bigwhite-code/&#39;]);">@googlecode</a></li>
+<li><a href="http://picasaweb.google.com/bigwhite.cn" rel="me" title="我的PicasaWeb" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://picasaweb.google.com/bigwhite.cn&#39;]);">@picasa</a></li>
+<li><a href="http://www.slideshare.net/bigwhite20xx" rel="me" title="我的SlideShare" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://www.slideshare.net/bigwhite20xx&#39;]);">@slideshare</a></li>
+<li><a href="http://twitter.com/tony_bai" rel="me" title="我的Twitter" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://twitter.com/tony_bai&#39;]);">@twitter</a></li>
+<li><a href="http://weibo.com/bigwhite20xx" rel="me" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://weibo.com/bigwhite20xx&#39;]);">@weibo</a></li>
+<li><a href="http://www.hoterran.info/" rel="friend" title="Hoterran" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://www.hoterran.info/&#39;]);">Hoterran</a></li>
+<li><a href="http://leomessi.com/" title="Lionel Messi" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://leomessi.com&#39;]);">Lionel Messi</a></li>
+<li><a href="http://puras.cn/" rel="friend co-worker" title="Puras He" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://puras.cn&#39;]);">Puras He</a></li>
+<li><a href="http://dreamhead.blogbus.com/" rel="friend" title="梦想风暴" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://dreamhead.blogbus.com&#39;]);">梦想风暴</a></li>
+<li><a href="http://84tt.com/blog" rel="friend" title="过眼云烟" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://84tt.com/blog&#39;]);">过眼云烟</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-1043" class="widget widget_links"><h3 class="widget-title">开源项目</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://code.google.com/p/buildc" rel="me" title="An assistant tool for c project building and packing management" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/buildc&#39;]);">buildc</a></li>
+<li><a href="http://code.google.com/p/cbehave" rel="me" title="A Behavior Driven Development Framework for C" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/cbehave&#39;]);">cbehave</a></li>
+<li><a href="http://code.google.com/p/lcut" rel="me" title="a Lightweight C Unit Testing framework" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/lcut&#39;]);">lcut</a></li>
+
+	</ul>
+</section>
+<section id="linkcat-1057" class="widget widget_links"><h3 class="widget-title">翻译项目</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://code.google.com/p/recommended-c-style-and-coding-standards-cn/" title="C语言编码风格和标准" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/recommended-c-style-and-coding-standards-cn/&#39;]);">C语言编码风格和标准</a></li>
+<li><a href="http://code.google.com/p/programming-in-haskell-cn/" title="《Programming in Haskell》中文翻译项目" target="" onclick="javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-blogroll&#39;,&#39;http://code.google.com/p/programming-in-haskell-cn/&#39;]);">《Programming in Haskell》中文翻译项目</a></li>
+
+	</ul>
+</section>
+<section id="text-4" class="widget widget_text">			<div class="textwidget"><!-- Google Reader Share-->
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/publisher-zh_CN.js"></script>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/broadcast"></script>
+<br><br>
+
+<!-- sina weibo widget -->
+<iframe width="100%" height="550" class="share_self" frameborder="0" scrolling="no" src="./Go程序调试、分析与优化 _ Tony Bai_files/index.html"></iframe>
+<br><br>
+
+<!-- douban show -->
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/saved_resource"></script><div style=""><table cellspacing="0" cellpadding="4" style="&gt;&lt;tr align=" center"=""><tbody><tr><td style=""><a href="https://movie.douban.com/subject/25849480/" title="Cars 3
+
+赛车总动员3：极速挑战 / 反斗车王3(港)" target="_blank"><img src="./Go程序调试、分析与优化 _ Tony Bai_files/p2492869476.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/21624776/" title="分布式系统
+
+Distributed Systems: Concepts and Design， Fifth Edition" target="_blank"><img src="https://img7.doubanio.com/spic/s25802282.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/3863694/" title="一片叶子落下来
+
+The Fall of Freddie the Leaf" target="_blank"><img src="./Go程序调试、分析与优化 _ Tony Bai_files/s6049239.jpg" border="0"></a></td></tr><tr align="center"><td style=""><a href="https://movie.douban.com/subject/26304310/" title="American Made
+
+美国行动 / 美国制造" target="_blank"><img src="https://img7.doubanio.com/view/photo/s_ratio_poster/public/p2502316684.jpg" border="0"></a></td><td style=""><a href="https://movie.douban.com/subject/25808075/" title="War for the Planet of the Apes
+
+猩球崛起3：终极之战 / 猩球崛起：终极决战(台)" target="_blank"><img src="https://img7.doubanio.com/view/photo/s_ratio_poster/public/p2494093630.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/25873582/" title="演讲模式
+
+" target="_blank"><img src="https://img7.doubanio.com/spic/s28295615.jpg" border="0"></a></td></tr><tr align="center"><td style=""><a href="https://book.douban.com/subject/26598457/" title="复盘+:把经验转化为能力
+
+" target="_blank"><img src="./Go程序调试、分析与优化 _ Tony Bai_files/s28282307.jpg" border="0"></a></td><td style=""><a href="https://book.douban.com/subject/26383472/" title="你我皆凡人
+
+" target="_blank"><img src="./Go程序调试、分析与优化 _ Tony Bai_files/s28065718.jpg" border="0"></a></td><td style=""><a href="https://movie.douban.com/subject/26182910/" title="功夫瑜伽
+
+Kung Fu Yoga" target="_blank"><img src="./Go程序调试、分析与优化 _ Tony Bai_files/p2412371389.jpg" border="0"></a></td></tr><tr><td align="center" colspan="3"><a href="https://www.douban.com/people/tony_bai/" target="_blank">我的豆瓣主页</a></td></tr></tbody></table></div>
+<br>
+<!-- douban show end-->
+
+<!-- my clustrmap -->
+<!--
+<div id="clustrmaps-widget"></div><script type="text/javascript">var _clustrmaps = {'url' : 'http://tonybai.com', 'user' : 1075598, 'server' : '4', 'id' : 'clustrmaps-widget', 'version' : 1, 'date' : '2013-01-30', 'lang' : 'zh', 'corners' : 'square' };(function (){ var s = document.createElement('script'); s.type = 'text/javascript'; s.async = true; s.src = 'http://www4.clustrmaps.com/counter/map.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);})();</script><noscript><a href="http://www4.clustrmaps.com/user/8d910698e" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://www4.clustrmaps.com']);"><img src="http://www4.clustrmaps.com/stats/maps-no_clusters/tonybai.com-thumb.jpg" alt="Locations of visitors to this page" /></a></noscript>
+-->
+<!-- my clustrmap end-->
+<br>
+
+
+<br>
+<iframe scrolling="no" frameborder="0" style="background:transparent !important" width="130" height="130" src="./Go程序调试、分析与优化 _ Tony Bai_files/a2.html"></iframe><script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/2.js" async="async"></script>
+<br>
+
+<!-- Feedsky FEED 订阅统计发布代码开始 -->
+<!--
+<a href="http://feed.feedsky.com/bigwhite" onclick="javascript:_gaq.push(['_trackEvent','outbound-widget','http://feed.feedsky.com']);" title="Tony Bai" target="_blank"><img src="http://www.feedsky.com/feed/bigwhite/sc/orange.gif" style="border:0" alt="" /></a>
+-->
+<!-- Feedsky FEED 订阅统计发布代码结束 -->
+<br>
+
+<div id="statcounter_image" style="display:inline;"><a title="wordpress hit counter" href="http://statcounter.com/wordpress.org/" class="statcounter"><img src="./Go程序调试、分析与优化 _ Tony Bai_files/saved_resource(1)" alt="wordpress hit counter" style="border:none;"></a>
+<a href="http://statcounter.com/p7675050/?guest=1">View My
+Stats</a></div>
+<br>
+
+<!-- Baidu Button BEGIN -->
+<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
+<a class="bds_qzone" title="分享到QQ空间" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#"></a>
+<a class="bds_tsina" title="分享到新浪微博" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#"></a>
+<a class="bds_tqq" title="分享到腾讯微博" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#"></a>
+<a class="bds_renren" title="分享到人人网" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#"></a>
+<a class="bds_t163" title="分享到网易微博" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#"></a>
+<span class="bds_more">更多</span>
+<a class="shareCount" href="http://tonybai.com/2015/08/25/go-debugging-profiling-optimization/#" title="累计分享1次">1</a>
+</div>
+<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=456117" src="./Go程序调试、分析与优化 _ Tony Bai_files/bds_s_v2.js"></script>
+
+<script type="text/javascript">
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+<!-- page rank button -->
+<!--
+<a href="http://www.prchecker.info/" title="Page Rank" target="_blank">
+<img src="http://pr.prchecker.info/getpr.php?codex=aHR0cDovL3RvbnliYWkuY29t&tag=3" alt="Page Rank" style="border:0;" /></a>
+-->
+<!-- -- end of page rank button ----></div>
+		</section>    
+</div>		</div>
+    </div>
+</div>
+<footer id="footer">
+	<div class="container">
+		© 2017 <a href="http://tonybai.com/">Tony Bai</a>.
+		由 <a href="http://wordpress.org/">Wordpress</a> 强力驱动. 模板由<a href="http://pagecho.com/">cho</a>制作.
+	</div>
+</footer>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/wp-recentcomments.js"></script>
+<link rel="stylesheet" href="./Go程序调试、分析与优化 _ Tony Bai_files/myQaptcha.jquery.css" type="text/css">
+<script type="text/javascript">function loadJS(filename){var fileref=document.createElement("script");fileref.setAttribute("type","text/javascript");fileref.setAttribute("src", filename); document.getElementsByTagName("head")[0].appendChild(fileref);} if (typeof jQuery == "undefined") loadJS("http://libs.baidu.com/jquery/2.0.0/jquery.min.js"); </script><script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/jquery-ui.js"></script>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/jquery.ui.touch.js"></script>
+<script type="text/javascript">var myQaptchaJqueryPage="http://tonybai.com/wp-content/plugins/myqaptcha/jquery/myQaptcha.jquery.php";</script>
+<script type="text/javascript" src="./Go程序调试、分析与优化 _ Tony Bai_files/myqaptcha.jquery.js"></script>
+<script type="text/javascript">var newQapTcha = document.createElement("div");newQapTcha.className="QapTcha";var tagIDComment=document.getElementById("comment");if(tagIDComment){tagIDComment.parentNode.insertBefore(newQapTcha,tagIDComment);}else{var allTagP = document.getElementsByTagName("p");for(var p=0;p<allTagP.length;p++){var allTagTA = allTagP[p].getElementsByTagName("textarea");if(allTagTA.length>0){allTagP[p].parentNode.insertBefore(newQapTcha,allTagP[p]);}}}jQuery(document).ready(function(){jQuery('.QapTcha').QapTcha({disabledSubmit:true,autoRevert:true});});</script>
+<script>
+/* <![CDATA[ */
+var rcGlobal = {
+	serverUrl		:'http://tonybai.com',
+	infoTemp		:'%REVIEWER% 在 %POST%',
+	loadingText		:'正在加载',
+	noCommentsText	:'没有任何评论',
+	newestText		:'&laquo; 最新的',
+	newerText		:'&laquo; 上一页',
+	olderText		:'下一页 &raquo;',
+	showContent		:'1',
+	external		:'1',
+	avatarSize		:'32',
+	avatarPosition	:'left',
+	anonymous		:'匿名'
+};
+/* ]]> */
+</script>
+
+</body></html>

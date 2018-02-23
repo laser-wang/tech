@@ -1,0 +1,97 @@
+
+<!-- saved from url=(0094)http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle/ -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script>(function(){var g=this,l=function(a,b){var c=a.split("."),d=g;c[0]in d||!d.execScript||d.execScript("var "+c[0]);for(var e;c.length&&(e=c.shift());)c.length||void 0===b?d=d[e]?d[e]:d[e]={}:d[e]=b},m=function(a,b,c){return a.call.apply(a.bind,arguments)},n=function(a,b,c){if(!a)throw Error();if(2<arguments.length){var d=Array.prototype.slice.call(arguments,2);return function(){var c=Array.prototype.slice.call(arguments);Array.prototype.unshift.apply(c,d);return a.apply(b,c)}}return function(){return a.apply(b,arguments)}},p=function(a,b,c){p=Function.prototype.bind&&-1!=Function.prototype.bind.toString().indexOf("native code")?m:n;return p.apply(null,arguments)},q=Date.now||function(){return+new Date};var r=document,s=window;var t=function(a,b){for(var c in a)Object.prototype.hasOwnProperty.call(a,c)&&b.call(null,a[c],c,a)},w=function(a,b){a.google_image_requests||(a.google_image_requests=[]);var c=a.document.createElement("img");c.src=b;a.google_image_requests.push(c)};var x=function(a){return{visible:1,hidden:2,prerender:3,preview:4}[a.webkitVisibilityState||a.mozVisibilityState||a.visibilityState||""]||0},y=function(a){var b;a.mozVisibilityState?b="mozvisibilitychange":a.webkitVisibilityState?b="webkitvisibilitychange":a.visibilityState&&(b="visibilitychange");return b};var C=function(){this.g=r;this.k=s;this.j=!1;this.i=null;this.h=[];this.o={};if(z)this.i=q();else if(3==x(this.g)){this.i=q();var a=p(this.q,this);A&&(a=A("di::vch",a));this.p=a;var b=this.g,c=y(this.g);b.addEventListener?b.addEventListener(c,a,!1):b.attachEvent&&b.attachEvent("on"+c,a)}else B(this)},A;C.m=function(){return C.n?C.n:C.n=new C};var D=/^([^:]+:\/\/[^/]+)/m,G=/^\d*,(.+)$/m,z=!1,B=function(a){if(!a.j){a.j=!0;for(var b=0;b<a.h.length;++b)a.l.apply(a,a.h[b]);a.h=[]}};C.prototype.s=function(a,b){var c=b.target.u();(c=G.exec(c))&&(this.o[a]=c[1])};C.prototype.l=function(a,b){this.k.rvdt=this.i?q()-this.i:0;var c;if(c=this.t)t:{try{var d=D.exec(this.k.location.href),e=D.exec(a);if(d&&e&&d[1]==e[1]&&b){var f=p(this.s,this,b);this.t(a,f);c=!0;break t}}catch(u){}c=!1}c||w(this.k,a)};C.prototype.q=function(){if(3!=x(this.g)){B(this);var a=this.g,b=y(this.g),c=this.p;a.removeEventListener?a.removeEventListener(b,c,!1):a.detachEvent&&a.detachEvent("on"+b,c)}};var H=/^true$/.test("")?!0:!1;var I={},J=function(a){var b=a.toString();a.name&&-1==b.indexOf(a.name)&&(b+=": "+a.name);a.message&&-1==b.indexOf(a.message)&&(b+=": "+a.message);if(a.stack){a=a.stack;var c=b;try{-1==a.indexOf(c)&&(a=c+"\n"+a);for(var d;a!=d;)d=a,a=a.replace(/((https?:\/..*\/)[^\/:]*:\d+(?:.|\n)*)\2/,"$1");b=a.replace(/\n */g,"\n")}catch(e){b=c}}return b},M=function(a,b,c,d){var e=K,f,u=!0;try{f=b()}catch(h){try{var N=J(h);b="";h.fileName&&(b=h.fileName);var E=-1;h.lineNumber&&(E=h.lineNumber);var v;t:{try{v=c?c():"";break t}catch(S){}v=""}u=e(a,N,b,E,v)}catch(k){try{var O=J(k);a="";k.fileName&&(a=k.fileName);c=-1;k.lineNumber&&(c=k.lineNumber);K("pAR",O,a,c,void 0,void 0)}catch(F){L({context:"mRE",msg:F.toString()+"\n"+(F.stack||"")},void 0)}}if(!u)throw h;}finally{if(d)try{d()}catch(T){}}return f},K=function(a,b,c,d,e,f){a={context:a,msg:b.substring(0,512),eid:e&&e.substring(0,40),file:c,line:d.toString(),url:r.URL.substring(0,512),ref:r.referrer.substring(0,512)};P(a);L(a,f);return!0},L=function(a,b){try{if(Math.random()<(b||.01)){var c="/pagead/gen_204?id=jserror"+Q(a),d="http"+("https:"==s.location.protocol?"s":"")+"://pagead2.googlesyndication.com"+c,d=d.substring(0,2E3);w(s,d)}}catch(e){}},P=function(a){var b=a||{};t(I,function(a,d){b[d]=s[a]})},R=function(a,b,c,d,e){return function(){var f=arguments;return M(a,function(){return b.apply(c,f)},d,e)}},Q=function(a){var b="";t(a,function(a,d){if(0===a||a)b+="&"+d+"="+("function"==typeof encodeURIComponent?encodeURIComponent(a):escape(a))});return b};A=function(a,b,c,d){return R(a,b,void 0,c,d)};z=H;l("vu",R("vu",function(a,b){var c=a.replace("&amp;","&"),d=/(google|doubleclick).*\/pagead\/adview/.test(c),e=C.m();if(d){d="&vis="+x(e.g);b&&(d+="&ve=1");var f=c.indexOf("&adurl"),c=-1==f?c+d:c.substring(0,f)+d+c.substring(f)}e.j?e.l(c,b):e.h.push([c,b])}));l("vv",R("vv",function(){z&&B(C.m())}));})();</script><script>vu("http://pubads.g.doubleclick.net/pcs/view?xai\x3dAKAOjsvproXyXrAlOVHnO1ubPMv6b6jiDdPsOfZcq018SYvacz83_WXW7nOs3xlvTJsthnTQPA9qPCth97OLoViumCiTCggu3M4IrawZUKtAP62DPgrrOXGGvQWDZ4pyRQjWrx6ZJvWoP3cHv-FptMun1nAUYeqaWZ4hzOj6WMVKfEP7Nd7qay5UbVeVvXO8PjAIIlMUJUGMVxQizso1dR14mPrWAki6I4wwpF5uI2LnQ7we70Zm7CvqC-Z3rWY\x26sig\x3dCg0ArKJSzEHkqpASFS7FEAE\x26urlfix\x3d1\x26adurl\x3d")</script>
+
+
+
+<title>无标题文档</title>
+<title></title><style type="text/css">
+.bottom-banner {
+	display: block;
+	position: absolute;
+	bottom: 0pt;
+	left: 0;
+	width: 100%;
+	height:90px;
+	z-index: 100000;
+	background: #4985db  url('http://infoqstatic.b0.upaiyun.com/img/20160501/baidu63qigeo-04.jpg') repeat-x bottom;
+	padding: 5px;
+	display: block;
+	font-family: arial, sans-serif;
+	font-size: 15px;
+	text-shadow: 1px 1px 1px #23508f;
+	background-color: #0ba29a;
+	}
+.a{
+text-decoration: underline
+
+}
+.bottom-banner-content {
+	float: left;
+	color: #ffffff;
+	padding: 0 280px 0 200px;
+	cursor: pointer;
+}
+.bottom-banner-img {
+	position: absolute;
+	bottom: 0px;
+	left: -4px;
+	width: 160px;
+	height: 150px;
+	background: url('http://infoqstatic.b0.upaiyun.com/img/20160601/baidu64qigeo-05.png') no-repeat;
+	z-index: 900;
+}
+.bottom-banner-buttons {
+	position: absolute;
+	top: 5px;
+	right: 15px;
+	width: 160px !important;
+	}
+.bottom-banner-close {
+	display: block;
+	color: #f4fdaa;
+	text-decoration: none;
+	background: #0033CC;
+	padding: 3px 5px;
+	margin-bottom: 5px;
+	font-size: 11px;
+	border-radius: 4px;
+}
+.bottom-banner-close:hover {
+	background: #017670;
+}
+.bottom-banner-logo {
+	position: absolute;
+	right: 180px;
+	top: 15px;
+	cursor: pointer;
+}
+    </style></head>
+
+
+
+
+
+	
+	
+	
+
+<body marginwidth="0" marginheight="0">
+	<div class="bottom-banner" id="id_geo_banner">
+	<div class="bottom-banner-buttons">
+		<a class="bottom-banner-close" href="http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle/#" onclick="top.$(&#39;#id_geo_banner&#39;).hide(&#39;slow&#39;);top.Tracker.doTrackAdAction(&#39;QConBJ2016&#39;,&#39;Close&#39;,&#39;QConBJ2016&#39;);top.CookieManager.createDayCookie(&#39;igabgt&#39;, &#39;1&#39;, 4);return false;">立即关闭<span style="display: block; float: right; font-weight: bold; color:#ffffff; padding-left: 10px;">x</span></a>
+		<a class="bottom-banner-close" href="http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle/#" onclick="top.$(&#39;#id_geo_banner&#39;).hide(&#39;slow&#39;);top.Tracker.doTrackAdAction(&#39;QConBJ2016&#39;,&#39;CloseThanks&#39;,&#39;QConBJ2016&#39;);top.CookieManager.createDayCookie(&#39;igabgt&#39;, &#39;1&#39;, 7);return false;">感谢通知<span style="display: block; float: right; font-weight: bold; color:#ffffff; padding-left: 10px;">x</span></a>
+		<a class="bottom-banner-close" href="http://www.infoq.com/cn/articles/etcd-interpretation-application-scenario-implement-principle/#" onclick="top.$(&#39;#id_geo_banner&#39;).hide(&#39;slow&#39;);top.Tracker.doTrackAdAction(&#39;QConBJ2016&#39;,&#39;CloseHate&#39;,&#39;QConBJ2016&#39;);top.CookieManager.createDayCookie(&#39;igabgt&#39;, &#39;1&#39;, 1000);return false;">不再显示<span style="display: block; float: right; font-weight: bold; color:#ffffff; padding-left: 10px;">x</span></a>	</div>
+
+
+<div class="bottom-banner-content">
+		<div class="bottom-banner-img"></div>
+		<div style="margin-bottom: 5px;"><span style="font-size: 20px; font-weight: bold; color: #FFFF00;"><strong><a href="http://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsslSN16V3z-jL_UE7NQBTgU6x9eC9XFeFSlI9VatLA2oKbOYIriz3k6KhY4C3LwjRZ1aoJ6UtdlIDdEUBw3u7Ukarj396pPqDjdeMPQvjy2itdVn9lfQ9vTwv868lmzouy942RnJzIx1_R90jdxBaKnpyI7QqpmFusAUYbyVF2Bt3M6ezSofdyK9K4BQhZy57LLyTO_oNQ2ampF2vCsE6qkc3mryGg2-aTWwyTBG1Lyc-yv&amp;sig=Cg0ArKJSzHSW-6Wzwln4EAE&amp;urlfix=1&amp;adurl=https://jinshuju.net/f/kUjt9G?x_field_1=geobanner" style="text-decoration: none; color: #f4d822 ;" target="_blank">百度技术沙龙免费报名：百度人脸识别技术解析及典型行业应用</a></strong>
+</span>   </div>	
+<span style="font-size: 18px; text-decoration: none; color:#ffffff"><strong><a href="http://adclick.g.doubleclick.net/pcs/click?xai=AKAOjsslSN16V3z-jL_UE7NQBTgU6x9eC9XFeFSlI9VatLA2oKbOYIriz3k6KhY4C3LwjRZ1aoJ6UtdlIDdEUBw3u7Ukarj396pPqDjdeMPQvjy2itdVn9lfQ9vTwv868lmzouy942RnJzIx1_R90jdxBaKnpyI7QqpmFusAUYbyVF2Bt3M6ezSofdyK9K4BQhZy57LLyTO_oNQ2ampF2vCsE6qkc3mryGg2-aTWwyTBG1Lyc-yv&amp;sig=Cg0ArKJSzHSW-6Wzwln4EAE&amp;urlfix=1&amp;adurl=https://jinshuju.net/f/kUjt9G?x_field_1=geobanner" style="text-decoration: none; color: #FFFFFF" target="_blank">3月11日，由百度AI平台、IDL和百度FSG现金贷的专家聚集在车库咖啡，从第一视角解读人脸识别行业应用和发展，分享人脸识别技术细节和逻辑设计，并解答人脸识别在金融领域的落地和商业化过程。</a></strong></span></div>
+	</div>
+
+
+<ml>
+
+<script src="./osd_listener.js.下载"></script><script type="text/javascript">osdlfm(-1,'','B24yG5jm9WN2MJteaqAGvka2gCgAAAAAQATgByAEJwAIC4AIA4AQBoAYW','',3141829097,true,'efp\x3d1\x26ud\x3d1\x26la\x3d0\x26alp\x3dxai\x26alh\x3d1615860273\x26',3,'CAASFeRotbKpUlkvapyvKX7NfoHyqcV1QQ','//pagead2.googlesyndication.com/activeview?avi\x3dB24yG5jm9WN2MJteaqAGvka2gCgAAAAAQATgByAEJwAIC4AIA4AQBoAYW\x26cid\x3dCAASFeRotbKpUlkvapyvKX7NfoHyqcV1QQ');</script><script>if (window.top && window.top.postMessage) {window.top.postMessage('{"googMsgType":"adpnt"}','*');}</script></ml></body></html>

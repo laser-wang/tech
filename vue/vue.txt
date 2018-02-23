@@ -1,0 +1,37 @@
+
+#一凡安装
+http://192.168.0.9:8000/neal.wang/project-doc-vue 
+
+#安装安装Node.js
+https://nodejs.org/en/download/
+
+#安装cnpm
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+
+#安装Vue-Admin
+https://github.com/lanux/Vue-Admin
+cd /opt
+git clone https://github.com/lanux/Vue-Admin.git
+cd Vue-Admin
+cnpm install
+npm run mock
+npm run dev
+
+
+#======================
+console.log(Object.prototype.toString.apply(user));//[object Promise]
+
+
+
+40913788@qq.com
+======================
+
+          console.log('=======================1')
+
+    background-color: #00ffff;
+
+scp yingyue@yingyue:/Users/yingyue/vue/nms_admin/dist/index.html /usr/share/nginx/html/nms/
+scp -r yingyue@yingyue:/Users/yingyue/vue/nms_admin/dist/static /usr/share/nginx/html/nms/
+
+vertical-align: middle;
+text-align: center;

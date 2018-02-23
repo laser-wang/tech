@@ -1,0 +1,12 @@
+#virtual box 转vdi
+VBoxManage clonehd --format vdi /Users/yingyue/Documents/tools/win7_vmdk/win7.vmdk ./win7.vdi
+
+#Mac 安装 brew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+搜索软件：brew search 软件名，如brew search wget
+安装软件：brew install 软件名，如brew install wget
+卸载软件：brew remove 软件名，如brew remove wget
+
+
+
+

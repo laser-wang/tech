@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)http://www.liuhaihua.cn/archives/404914.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style id="znBdcsStyle" type="text/css">.bdcs-container .bdcs-main,.bdcs-container .bdcs-main *{box-sizing:content-box;margin:0;padding:0;float:none;clear:none;overflow:hidden;white-space:nowrap;word-wrap:normal;border:0;background:0 0;width:auto;height:auto;max-width:none;min-width:none;max-height:none;min-height:none;border-radius:0;box-shadow:none;transition:none;text-align:left}.bdcs-container .bdcs-clearfix:after{content:'';display:block;clear:both;height:0}.bdcs-container .bdcs-clearfix{zoom:1}.bdcs-container .bdcs-main{overflow:visible}.bdcs-container .bdcs-search{display:block;overflow:visible;position:relative;border-style:solid}.bdcs-container .bdcs-search-form-input-wrap{display:inline-block}.bdcs-container .bdcs-search-form-input{border-width:1px;border-style:solid;display:inline-block;vertical-align:top;text-indent:5px;background-color:#fff;float:left}.bdcs-container .bdcs-search-form-input:focus{border-width:1px;border-style:solid;outline:0}.bdcs-container .bdcs-search-form-submit-wrap{display:inline-block}.bdcs-container .bdcs-search-form-submit{display:inline-block;cursor:pointer;border-width:1px;border-style:solid;vertical-align:top;text-align:center;width:50px;//_overflow:hidden}.bdcs-container .bdcs-search-form-submit-magnifier{width:45px;padding:0;text-indent:-999em;overflow:hidden;background:url(http://znsv.baidu.com/static/customer-search/component/search/magnifier-icon.png) no-repeat center center;_background:url(http://znsv.baidu.com/static/customer-search/component/search/magnifier-icon_ie6.png) no-repeat center center}div#default-searchbox .default-channel-meun{position:relative;width:75px;display:inline-block;vertical-align:middle;cursor:pointer;background:#fff;float:left;overflow:visible}div#default-searchbox .default-channel-current{border:1px solid;position:relative;width:100%;border-right:0}div#default-searchbox .default-channel-current span{margin-left:8px}div#default-searchbox .default-channel-current i{overflow:hidden;width:0;height:0;border-width:6px 6px 0;border-color:#9E9E9E #fff;border-style:solid;display:block;position:absolute;right:10px;top:11px}div.cse-default-channel-container{display:block;position:absolute;z-index:30061000000}div.cse-default-channel-container .default-channel-list{display:none;width:99%;list-style:none;background:#fff;border:1px solid #DDD;border-top:0;margin:0;padding:0}div.cse-default-channel-container .default-channel-list li{background:0 0;line-height:24px;list-style:none;display:block;padding-left:7px;cursor:pointer}div.cse-default-channel-container .default-channel-list li:hover{background:#DDD}.bdcs-container .bdcs-search-form-input-wrap{}.bdcs-container .bdcs-search-form-input-notspan{margin-left:0px;font-family:Arial,SimSun,sans-serif;color:#000000;font-size:14px;}.bdcs-container .bdcs-search-form-input .icon-nofocus{left:;right:;top:;height:;width:;}.bdcs-container .bdcs-search{width:361px;height:34px;overflow:hidden;border-color:#eeffe6;border-radius:0px;border-width:5px;box-shadow:none;background-color:#eeffe6;}.bdcs-container .bdcs-search-form-input{border-color:#c9eeb7;margin-right:0px;width:288px;height:32px;line-height:32px;font-family:Arial,SimSun,sans-serif;color:#000000;font-size:14px;border-radius:0px;background-color:#FFFFFF;}.bdcs-container .bdcs-search-form-input:focus{border-color:#f79646;}.bdcs-container .bdcs-search-form-submit-wrap{}.bdcs-container .bdcs-search-form-submit{border-color:#82e059;height:32px;width:70px;background-color:#82e059;color:#ffffff;font-family:Arial,SimSun,sans-serif;font-size:14px;border-radius:0px;}.bdcs-container .bdcs-search-form-submit{*height:34px;*margin-top:1px;}.bdcs-container .bdcs-search-form-submit{line-height:32px;}.bdcs-container .bdcs-search-form-input{margin-right:-1px;}#bdcs-rec{display:none;}</style>
+<meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+<title>etcd 使用入门 | Harries Blog™</title>
+
+
+<!-- All in One SEO Pack 2.3.11.4 by Michael Torbert of Semper Fi Web Design[309,339] -->
+<meta name="description" content="1. etcd 简介 coreos 开发的分布式服务系统，内部采用 raft 协议作为一致性算法。作为服务发现系统，有以下的特点： 简单：安装配置简单，而且提供了 HTTP API 进行交互，使用也很简单 安全：支持 SSL 证书验证 快速：根据 官方提供的">
+
+<meta name="keywords" content="action,api,app,bootstrap,cat,client,core,cto,db,dns,docker,document,git,heartbeat,http,ide,ip,job,js,json,key,kubernetes,linux,list,message,mina,node,nsa,queue,rmi,ssl,swap,tar,uber,ui,update,urls,value,zookeeper,下载,删除,协议,参数,同步,安全,安装,安装配置,实例,开发,总结,数据,文章,时间,测试,目录,端口,管理,组织,统计,自动生成,配置,锁,集群">
+
+<link rel="canonical" href="http://www.liuhaihua.cn/archives/404914.html">
+<!-- /all in one seo pack -->
+<link rel="alternate" type="application/rss+xml" title="Harries Blog™ » etcd 使用入门评论Feed" href="http://www.liuhaihua.cn/archives/404914.html/feed">
+<link rel="stylesheet" id="wp-comments-vip-css" href="./etcd 使用入门 _ Harries Blog™_files/style.min.css" type="text/css" media="all">
+<link rel="stylesheet" id="main-css" href="./etcd 使用入门 _ Harries Blog™_files/style.css" type="text/css" media="all">
+<script src="./etcd 使用入门 _ Harries Blog™_files/hm.js.下载"></script><script type="text/javascript" async="" src="./etcd 使用入门 _ Harries Blog™_files/qccm"></script><script type="text/javascript" async="" src="./etcd 使用入门 _ Harries Blog™_files/js"></script><script type="text/javascript" async="" src="./etcd 使用入门 _ Harries Blog™_files/qccm(1)"></script><script type="text/javascript" src="./etcd 使用入门 _ Harries Blog™_files/jquery.min.js.下载"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.liuhaihua.cn/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.liuhaihua.cn/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="Uber将转战东南亚 转移150名中国工程师" href="http://www.liuhaihua.cn/archives/405049.html">
+<link rel="next" title="ES2015系列–块级作用域" href="http://www.liuhaihua.cn/archives/404915.html">
+<link rel="shortlink" href="http://www.liuhaihua.cn/?p=404914">
+
+<!-- Generated By Show-UserAgent 1.0.8 - http://zlz.im/show-useragent/ -->
+<link rel="stylesheet" href="./etcd 使用入门 _ Harries Blog™_files/show-useragent.css" type="text/css" media="screen">
+<meta name="keywords" content="Action, API, App, Bootstrap, cat, client, core, CTO, db, DNS, Docker, Document, git, heartbeat, http, IDE, ip, Job, js, json, key, Kubernetes, linux, list, message, mina, node, NSA, queue, rmi, ssl, swap, tar, Uber, UI, update, URLs, value, zookeeper, 下载, 删除, 协议, 参数, 同步, 安全, 安装, 安装配置, 实例, 开发, 总结, 数据, 文章, 时间, 测试, 目录, 端口, 管理, 组织, 统计, 自动生成, 配置, 锁, 集群, 编程技术, ">
+<meta name="description" content="1. etcd 简介   coreos 开发的分布式服务系统，内部采用 raft 协议作为一致性算法。作为服务发现系统，有以下的特点：        简单：安装">
+<!--ADD_CODE_HEADER_START-->
+<meta name="360_union_verify" content="1f20fec41812543f655d4fe3d593b245">
+<meta name="360_union_verify" content="278369baa6b0f3bacee16ajxauseawww.liuhaihua.cn">
+<meta property="wb:webmaster" content="cbdd0d2b14bdd069">
+<meta name="baidu-site-verification" content="fdHeUMPxqv">
+
+<!--ADD_CODE_HEADER_END-->
+<style type="text/css">.hacklogdownload_downlinks
+{
+    width:500px;
+}
+
+.hacklogdownload_down_link
+{
+    margin-top:10px;
+    background:#E0E2E4;
+    border:1px solid #330;
+    color:#222;
+    padding:5px 5px 5px 20px;
+}
+
+.hacklogdownload_down_link a
+{
+    color:#57d;
+}
+
+.hacklogdownload_views
+{
+    color:red;
+}
+
+.hacklogdownload_box
+{
+    border-bottom:1px solid #aaa;
+    padding:10px 0;
+}
+
+.hacklogdownload_box_content
+{
+    line-height:18px;
+    padding:0 0 0 10px;
+}
+
+.hacklogdownload_box_content p
+{
+    margin:5px 0;
+}
+
+.hacklogdownload_box_content a
+{
+    color:#D54E21;
+}
+
+.hacklogdownload_box_content a:hover
+{
+    color:#1d1d1d;
+}
+
+.hacklogdownload_left
+{
+    float:left;
+    width:320px;
+}
+
+.hacklogdownload_right
+{
+    width:160px;
+    float:right;
+    margin:0 auto;
+}
+
+.hacklogdownload_right img
+{
+    max-width:160px;
+}
+
+.hacklogdownload_notice
+{
+    padding-top:10px;
+    text-align:center;
+}
+
+#facebox .content
+{
+    width:600px;
+    background:none repeat scroll 0 0 #E0E2E4;
+    color:#333;
+}
+
+#facebox .popup
+{
+    border:6px solid #444;</style><link rel="shortcut icon" href="http://www.liuhaihua.cn/favicon.ico">
+<!--[if lt IE 9]><script src="http://www.liuhaihua.cn/wp-content/themes/xiu2/js/html5.js"></script><![endif]-->
+<script src="./etcd 使用入门 _ Harries Blog™_files/share.js.下载"></script><link href="./etcd 使用入门 _ Harries Blog™_files/share.css" rel="styleSheet" type="text/css"></head>
+<body class="single single-post postid-404914 single-format-standard search_not ui-navtop"><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./etcd 使用入门 _ Harries Blog™_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div>
+<header class="header">
+<div class="container">
+	<div class="logo"><a href="http://www.liuhaihua.cn/" title="Harries Blog™-追心中的海，逐世界的梦">Harries Blog™</a></div>	<ul class="nav"><li id="menu-item-16305" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-16305"><a href="http://www.liuhaihua.cn/"><span class="glyphicon glyphicon-home"></span>首页</a></li>
+<li id="menu-item-16304" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-16304"><a href="http://www.liuhaihua.cn/archives/category/itlearn"><span class="glyphicon glyphicon-fire"></span>IT教程</a>
+<ul class="sub-menu">
+	<li id="menu-item-121373" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121373"><a href="http://www.liuhaihua.cn/archives/404914.html#">分布式缓存</a>
+	<ul class="sub-menu">
+		<li id="menu-item-16324" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16324"><a href="http://www.liuhaihua.cn/archives/category/itlearn/memcached%e6%95%99%e7%a8%8b">memcached教程</a></li>
+		<li id="menu-item-16326" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16326"><a href="http://www.liuhaihua.cn/archives/category/itlearn/redis%e6%95%99%e7%a8%8b">Redis教程</a></li>
+	</ul>
+</li>
+	<li id="menu-item-121374" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121374"><a href="http://www.liuhaihua.cn/archives/404914.html#">JAVA技术框架</a>
+	<ul class="sub-menu">
+		<li id="menu-item-16317" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16317"><a href="http://www.liuhaihua.cn/archives/category/itlearn/hibernate%e6%95%99%e7%a8%8b">hibernate教程</a></li>
+		<li id="menu-item-16327" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16327"><a href="http://www.liuhaihua.cn/archives/category/itlearn/spring%e6%95%99%e7%a8%8b">Spring教程</a></li>
+		<li id="menu-item-16328" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16328"><a href="http://www.liuhaihua.cn/archives/category/itlearn/struts2%e6%95%99%e7%a8%8b">Struts2教程</a></li>
+		<li id="menu-item-16319" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16319"><a href="http://www.liuhaihua.cn/archives/category/itlearn/ibaties%e6%95%99%e7%a8%8b">ibaties教程</a></li>
+		<li id="menu-item-425033" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-425033"><a href="http://www.liuhaihua.cn/webservice-cxf%e5%ad%a6%e4%b9%a0">WebService CXF学习</a></li>
+		<li id="menu-item-254671" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-254671"><a href="http://www.liuhaihua.cn/quartz">Quartz指南</a></li>
+		<li id="menu-item-134293" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-134293"><a href="http://www.liuhaihua.cn/httpclient4-2%e5%ae%98%e6%96%b9%e6%96%87%e6%a1%a3%e7%a0%94%e7%a9%b6">httpClient4.2官方文档研究</a></li>
+		<li id="menu-item-232852" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-232852"><a href="http://www.liuhaihua.cn/archives/category/itlearn/jpa%e6%95%99%e7%a8%8b">JPA教程</a></li>
+		<li id="menu-item-150164" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-150164"><a href="http://www.liuhaihua.cn/archives/category/itlearn/bootstrap3">bootstrap3</a></li>
+		<li id="menu-item-121371" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-121371"><a href="http://www.liuhaihua.cn/archives/category/itlearn/solr">solr教程</a></li>
+		<li id="menu-item-265412" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-265412"><a href="http://www.liuhaihua.cn/actionmq">ActionMQ中文指南</a></li>
+		<li id="menu-item-325038" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-325038"><a href="http://www.liuhaihua.cn/mybatis">深入浅出MyBatis</a></li>
+	</ul>
+</li>
+	<li id="menu-item-121375" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121375"><a href="http://www.liuhaihua.cn/archives/404914.html#">数据库</a>
+	<ul class="sub-menu">
+		<li id="menu-item-16325" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16325"><a href="http://www.liuhaihua.cn/archives/category/itlearn/mongodb%e6%95%99%e7%a8%8b">MongoDB教程</a></li>
+		<li id="menu-item-16318" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16318"><a href="http://www.liuhaihua.cn/archives/category/itlearn/hive%e6%95%99%e7%a8%8b">Hive教程</a></li>
+		<li id="menu-item-16315" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16315"><a href="http://www.liuhaihua.cn/archives/category/itlearn/hadoop%e6%95%99%e7%a8%8b">Hadoop教程</a></li>
+		<li id="menu-item-16316" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16316"><a href="http://www.liuhaihua.cn/archives/category/itlearn/hbase%e6%95%99%e7%a8%8b">HBase教程</a></li>
+		<li id="menu-item-160215" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-160215"><a href="http://www.liuhaihua.cn/archives/category/itlearn/mysql-itlearn">mysql教程</a></li>
+	</ul>
+</li>
+	<li id="menu-item-121376" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121376"><a href="http://www.liuhaihua.cn/archives/404914.html#">开发语言</a>
+	<ul class="sub-menu">
+		<li id="menu-item-150769" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-150769"><a href="http://www.liuhaihua.cn/archives/category/itlearn/css">CSS</a></li>
+		<li id="menu-item-152277" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-152277"><a href="http://www.liuhaihua.cn/archives/category/itlearn/php-itlearn">php入门教程</a></li>
+		<li id="menu-item-159963" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-159963"><a href="http://www.liuhaihua.cn/archives/category/itlearn/python">Python</a></li>
+		<li id="menu-item-16320" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16320"><a href="http://www.liuhaihua.cn/archives/category/itlearn/java%e5%85%a5%e9%97%a8%e6%95%99%e7%a8%8b">Java入门教程</a></li>
+		<li id="menu-item-16321" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16321"><a href="http://www.liuhaihua.cn/archives/category/itlearn/java%e5%ae%9e%e4%be%8b%e6%95%99%e7%a8%8b">java实例教程</a></li>
+		<li id="menu-item-16322" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16322"><a href="http://www.liuhaihua.cn/archives/category/itlearn/java%e8%ae%be%e8%ae%a1%e6%a8%a1%e5%bc%8f">Java设计模式</a></li>
+		<li id="menu-item-134290" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-134290"><a href="http://www.liuhaihua.cn/%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3java%e5%86%85%e5%ad%98%e6%a8%a1%e5%9e%8b">深入理解Java内存模型</a></li>
+	</ul>
+</li>
+	<li id="menu-item-327114" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-327114"><a href="http://www.liuhaihua.cn/archives/404914.html#">前端开发</a>
+	<ul class="sub-menu">
+		<li id="menu-item-327122" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-327122"><a href="http://www.liuhaihua.cn/archives/category/itlearn/ionic-%e6%95%99%e7%a8%8b">ionic 教程</a></li>
+		<li id="menu-item-327121" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-327121"><a href="http://www.liuhaihua.cn/archives/category/itlearn/angularjs-%e6%95%99%e7%a8%8b">AngularJS 教程</a></li>
+	</ul>
+</li>
+	<li id="menu-item-121377" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121377"><a href="http://www.liuhaihua.cn/archives/404914.html#">集成工具</a>
+	<ul class="sub-menu">
+		<li id="menu-item-16313" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16313"><a href="http://www.liuhaihua.cn/archives/category/itlearn/ant%e6%95%99%e7%a8%8b">Ant教程</a></li>
+		<li id="menu-item-16323" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16323"><a href="http://www.liuhaihua.cn/archives/category/itlearn/maven%e6%95%99%e7%a8%8b">Maven教程</a></li>
+		<li id="menu-item-301800" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-301800"><a href="http://www.liuhaihua.cn/jenkins">Jenkins入门系列</a></li>
+	</ul>
+</li>
+	<li id="menu-item-121378" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-121378"><a href="http://www.liuhaihua.cn/archives/404914.html#">基础教程</a>
+	<ul class="sub-menu">
+		<li id="menu-item-160429" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-160429"><a href="http://www.liuhaihua.cn/archives/category/itlearn/eclipse">eclipse</a></li>
+		<li id="menu-item-134294" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-134294"><a href="http://www.liuhaihua.cn/svn%e6%95%99%e7%a8%8b%e5%85%a5%e9%97%a8">SVN教程入门</a></li>
+		<li id="menu-item-16314" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16314"><a href="http://www.liuhaihua.cn/archives/category/itlearn/git%e6%95%99%e7%a8%8b">Git教程</a></li>
+	</ul>
+</li>
+	<li id="menu-item-270085" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-270085"><a href="http://www.liuhaihua.cn/archives/404914.html#">系统运维</a>
+	<ul class="sub-menu">
+		<li id="menu-item-327124" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-327124"><a href="http://www.liuhaihua.cn/archives/category/maintenance/os/ubuntu-vps-guide">Ubuntu VPS系统配置</a></li>
+		<li id="menu-item-270147" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-270147"><a href="http://www.liuhaihua.cn/archives/category/itlearn/apachejiaocheng">Apache基础教程</a></li>
+	</ul>
+</li>
+</ul>
+</li>
+<li id="menu-item-15813" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-15813"><a href="http://www.liuhaihua.cn/archives/category/network-promotion"><span class="glyphicon glyphicon-globe"></span>互联网</a>
+<ul class="sub-menu">
+	<li id="menu-item-16339" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16339"><a href="http://www.liuhaihua.cn/archives/category/network-promotion/%e4%ba%92%e8%81%94%e7%bd%91-%e6%8a%95%e8%b5%84">互联网.投资</a></li>
+	<li id="menu-item-16340" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16340"><a href="http://www.liuhaihua.cn/archives/category/network-promotion/%e4%ba%92%e8%81%94%e7%bd%91-%e8%b5%84%e8%ae%af">互联网.资讯</a></li>
+	<li id="menu-item-16344" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16344"><a href="http://www.liuhaihua.cn/archives/category/network-promotion/website-keji">互联网.科技</a></li>
+	<li id="menu-item-16345" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16345"><a href="http://www.liuhaihua.cn/archives/category/network-promotion/seo-network-promotion">互联网.营销</a></li>
+</ul>
+</li>
+<li id="menu-item-16346" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-16346"><a href="http://www.liuhaihua.cn/archives/category/createbyway"><span class="glyphicon glyphicon-road"></span>创业路上</a>
+<ul class="sub-menu">
+	<li id="menu-item-214124" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-214124"><a href="http://www.liuhaihua.cn/archives/category/createbyway/chuangyebaodao">创业报道</a></li>
+	<li id="menu-item-16348" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16348"><a href="http://www.liuhaihua.cn/archives/category/createbyway/chuangyezhishi">创业知识</a></li>
+	<li id="menu-item-214125" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-214125"><a href="http://www.liuhaihua.cn/archives/category/createbyway/chuangyegushi">创业故事</a></li>
+</ul>
+</li>
+<li id="menu-item-161314" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-161314"><a href="http://www.liuhaihua.cn/archives/category/download"><span class="glyphicon glyphicon-cloud-download"></span>资源下载</a>
+<ul class="sub-menu">
+	<li id="menu-item-161317" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-161317"><a href="http://www.liuhaihua.cn/archives/category/download/tools">软件工具下载</a></li>
+	<li id="menu-item-161315" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-161315"><a href="http://www.liuhaihua.cn/archives/category/download/codedownload">开源软件</a></li>
+	<li id="menu-item-161316" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-161316"><a href="http://www.liuhaihua.cn/archives/category/download/ebook">电子书下载</a></li>
+</ul>
+</li>
+<li id="menu-item-15815" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-15815"><a href="http://www.liuhaihua.cn/archives/category/lifeapperception"><span class="glyphicon glyphicon-heart"></span>生活感悟</a>
+<ul class="sub-menu">
+	<li id="menu-item-206980" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-206980"><a href="http://www.liuhaihua.cn/archives/category/lifeapperception/read-book">一周一本书</a></li>
+	<li id="menu-item-270146" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-270146"><a href="http://www.liuhaihua.cn/archives/category/lifeapperception/onemonthonepeople">一月一个人</a></li>
+	<li id="menu-item-278373" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-278373"><a href="http://www.liuhaihua.cn/archives/category/lifeapperception/%e5%8d%9a%e4%b8%bb%e8%87%aa%e7%95%99%e5%9c%b0">博主自留地</a></li>
+</ul>
+</li>
+<li id="menu-item-15816" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-has-children menu-item-15816"><a href="http://www.liuhaihua.cn/archives/category/ittechnology"><span class="glyphicon glyphicon-tree-conifer"></span>编程技术</a>
+<ul class="sub-menu">
+	<li id="menu-item-16365" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16365"><a href="http://www.liuhaihua.cn/archives/category/ittechnology/%e5%89%8d%e7%ab%af">前端技术</a></li>
+	<li id="menu-item-16369" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16369"><a href="http://www.liuhaihua.cn/archives/category/ittechnology/java">后端技术</a></li>
+	<li id="menu-item-291343" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-291343"><a href="http://www.liuhaihua.cn/archives/category/ittechnology/mobile-dev">移动开发</a></li>
+	<li id="menu-item-16367" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16367"><a href="http://www.liuhaihua.cn/archives/category/ittechnology/database">数据库</a></li>
+	<li id="menu-item-16366" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16366"><a href="http://www.liuhaihua.cn/archives/category/ittechnology/bigdata">大数据</a></li>
+	<li id="menu-item-16308" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-has-children menu-item-16308"><a href="http://www.liuhaihua.cn/archives/category/maintenance">运维管理</a>
+	<ul class="sub-menu">
+		<li id="menu-item-16370" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16370"><a href="http://www.liuhaihua.cn/archives/category/maintenance/os/ubuntu-vps-guide">Ubuntu VPS系统配置</a></li>
+		<li id="menu-item-16372" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-16372"><a href="http://www.liuhaihua.cn/archives/category/maintenance/os/windows">windows</a></li>
+		<li id="menu-item-148748" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-148748"><a href="http://www.liuhaihua.cn/archives/category/maintenance/os/linux">Linux</a></li>
+	</ul>
+</li>
+</ul>
+</li>
+<li id="menu-item-261629" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-261629"><a href="http://www.liuhaihua.cn/archives/404914.html#"><span class="glyphicon glyphicon-eye-open"></span>其他频道</a>
+<ul class="sub-menu">
+	<li id="menu-item-261630" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-261630"><a href="http://ask.liuhaihua.cn/">Ask知识社区</a></li>
+	<li id="menu-item-318723" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-318723"><a href="http://learn.liuhaihua.cn/">网络课堂</a></li>
+	<li id="menu-item-261965" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-261965"><a href="http://so.liuhaihua.cn/">站内搜索</a></li>
+</ul>
+</li>
+</ul>			<div class="feeds">
+			<a class="feed feed-weixin" rel="external nofollow" href="javascript:;" title="" data-content="&lt;img src=&#39;http://www.liuhaihua.cn/wp-content/uploads/2015/01/qrcode_for_gh_8bc64b2878ca_258-2.jpg&#39;&gt;" data-original-title="关注”askHarries“"><i></i>微信公众号</a>
+					<a class="feed feed-weibo" rel="external nofollow" href="http://weibo.com/et59" target="_blank"><i></i>微博</a>
+					<a class="feed feed-tqq" rel="external nofollow" href="http://t.qq.com/harriesABC" target="_blank"><i></i>腾讯微博</a>
+					<a class="feed feed-rss" rel="external nofollow" href="http://www.liuhaihua.cn/feed" target="_blank"><i></i>RSS订阅</a>
+		
+			</div>
+	<div class="slinks">
+		<a href="http://www.liuhaihua.cn/links" title="友情链接">友情链接</a>|
+<a href="http://www.liuhaihua.cn/reader" title="读者墙">读者墙</a>|
+<a href="http://www.liuhaihua.cn/ads" title="商务合作">商务合作</a>|
+<a href="http://www.liuhaihua.cn/about" title="关于我们">关于我们</a>	</div>
+
+	</div>
+</header>
+<section class="container">
+<div class="content-wrap">
+	<div class="content">
+				<header class="article-header">
+			<h1 class="article-title"><a href="http://www.liuhaihua.cn/archives/404914.html">etcd 使用入门</a></h1>
+			<ul class="article-meta">
+								<li>yanxinchi 发布于 2016-08-02</li>
+				<li>分类：<a href="http://www.liuhaihua.cn/archives/category/ittechnology" rel="category tag" data-original-title="" title="">编程技术</a></li>
+								<li><span class="post-views">阅读(233)</span></li>
+				<li>评论(0)</li>
+				<li></li>
+			</ul>
+		</header>
+				<article class="article-content">
+
+			<div>
+<h2>1. etcd 简介</h2>
+<p><span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/core" title="View all posts in core" target="_blank">core</a></span>os <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%bc%80%e5%8f%91" title="View all posts in 开发" target="_blank">开发</a></span>的分布式服务系统，内部采用 raft <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/protocol" title="View all posts in 协议" target="_blank">协议</a></span>作为一致性算法。作为服务发现系统，有以下的特点：</p>
+<ul>
+<li>简单：<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/install" title="View all posts in 安装配置" target="_blank">安装配置</a></span>简单，而且提供了 HTTP <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/api" title="View all posts in API" target="_blank">API</a></span> 进行交互，使用也很简单</li>
+<li><span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%ae%89%e5%85%a8" title="View all posts in 安全" target="_blank">安全</a></span>：支持 SSL 证书验证</li>
+<li>
+快速：根据      官方提供的 benchmark <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e6%95%b0%e6%8d%ae" title="View all posts in 数据" target="_blank">数据</a></span><br>
+，单<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%ae%9e%e4%be%8b" title="View all posts in 实例" target="_blank">实例</a></span>支持每秒 2k+ 读操作    </li>
+<li>
+可靠：采用      raft 算法<br>
+，实现分布式系统数据的可用性和一致性    </li>
+</ul>
+<p>
+在这篇<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e6%96%87%e7%ab%a0" title="View all posts in 文章" target="_blank">文章</a></span>编写的时候，etcd 已经发布了    <code>3.0.4</code><br>
+版本，被被用在 CoreOS、kubernetes、Cloud Foundry 等项目中。  </p>
+<p>
+etcd 目前默认使用    <code>2379</code><br>
+<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/port" title="View all posts in 端口" target="_blank">端口</a></span>提供 HTTP API 服务，    <code>2380</code><br>
+端口和 peer 通信（这两个端口已经被    IANA 官方预留给 etcd<br>
+）；在之前的版本中，可能会分别使用    <code>4001</code><br>
+和    <code>7001</code><br>
+，在使用的过程中需要注意这个区别。  </p>
+<p>虽然 etcd 也支持单点部署，但是在生产环境中推荐<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e9%9b%86%e7%be%a4" title="View all posts in 集群" target="_blank">集群</a></span>方式部署，一般 etcd 节点数会选择 3、5、7。etcd 会保证所有的节点都会保存数据，并保证数据的一致性和正确性。</p>
+<h2>2. <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%ae%89%e8%a3%85" title="View all posts in 安装" target="_blank">安装</a></span></h2>
+<p>因为 etcd 是 go 语言编写的，安装只需要<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e4%b8%8b%e8%bd%bd" title="View all posts in 下载" target="_blank">下载</a></span>对应的二进制文件，并放到合适的路径就行。</p>
+<h3>单点安装</h3>
+<p>
+如果在<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/test" title="View all posts in 测试" target="_blank">测试</a></span>环境，启动一个单点的 etcd 服务，只需要运行    <code>etcd</code><br>
+命令就行。  </p>
+<pre>➜  etcd-v3.0.4-darwin-amd64 ./etcd
+2016-08-01 23:33:09.066930 I | etcdmain: etcd Version: 3.0.4
+2016-08-01 23:33:09.067085 I | etcdmain: Git SHA: d53923c
+2016-08-01 23:33:09.067092 I | etcdmain: Go Version: go1.6.3
+2016-08-01 23:33:09.067101 I | etcdmain: Go OS/Arch: darwin/amd64
+2016-08-01 23:33:09.067111 I | etcdmain: setting maximum number of CPUs to 4, total number of available CPUs is 4
+2016-08-01 23:33:09.067120 W | etcdmain: no data-dir provided, using default data-dir ./default.etcd
+2016-08-01 23:33:09.067803 I | etcdmain: <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/list" title="View all posts in list" target="_blank">list</a></span>ening for peers on <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/http" title="View all posts in http" target="_blank">http</a></span>://localhost:2380
+2016-08-01 23:33:09.068123 I | etcdmain: listening for <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/client" title="View all posts in client" target="_blank">client</a></span> requests on localhost:2379
+2016-08-01 23:33:09.069442 I | etcdserver: name = default
+2016-08-01 23:33:09.069465 I | etcdserver: data dir = default.etcd
+2016-08-01 23:33:09.069474 I | etcdserver: member dir = default.etcd/member
+2016-08-01 23:33:09.069480 I | etcdserver: <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/heartbeat" title="View all posts in heartbeat" target="_blank">heartbeat</a></span> = 100ms
+2016-08-01 23:33:09.069485 I | etcdserver: election = 1000ms
+2016-08-01 23:33:09.069491 I | etcdserver: snapshot count = 10000
+2016-08-01 23:33:09.069510 I | etcdserver: advertise client <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/urls" title="View all posts in URLs" target="_blank">URLs</a></span> = http://localhost:2379
+2016-08-01 23:33:09.069523 I | etcdserver: initial advertise peer URLs = http://localhost:2380
+2016-08-01 23:33:09.069536 I | etcdserver: initial cluster = default=http://localhost:2380
+2016-08-01 23:33:09.258167 I | etcdserver: s<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/tar" title="View all posts in tar" target="_blank">tar</a></span>ting member 8e9e05c52164694d in cluster cdf818194e3a8c32
+2016-08-01 23:33:09.258927 I | raft: 8e9e05c52164694d became follower at term 0
+2016-08-01 23:33:09.259395 I | raft: newRaft 8e9e05c52164694d [peers: [], term: 0, commit: 0, applied: 0, lastindex: 0, lastterm: 0]
+2016-08-01 23:33:09.259594 I | raft: 8e9e05c52164694d became follower at term 1
+2016-08-01 23:33:09.331125 I | etcdserver: starting server... [version: 3.0.4, cluster version: to_be_decided]
+2016-08-01 23:33:09.331800 E | etcdserver: cannot monitor file descr<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/ip" title="View all posts in ip" target="_blank">ip</a></span>tor usage (cannot get FDUsage on darwin)
+2016-08-01 23:33:09.334611 I | membership: added member 8e9e05c52164694d [http://localhost:2380] to cluster cdf818194e3a8c32
+2016-08-01 23:33:09.499412 I | raft: 8e9e05c52164694d is starting a new election at term 1
+2016-08-01 23:33:09.499450 I | raft: 8e9e05c52164694d became candidate at term 2
+2016-08-01 23:33:09.499462 I | raft: 8e9e05c52164694d received vote from 8e9e05c52164694d at term 2
+2016-08-01 23:33:09.499480 I | raft: 8e9e05c52164694d became leader at term 2
+2016-08-01 23:33:09.499493 I | raft: raft.<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/node" title="View all posts in node" target="_blank">node</a></span>: 8e9e05c52164694d elected leader 8e9e05c52164694d at term 2
+2016-08-01 23:33:09.499702 I | etcdserver: setting up the initial cluster version to 3.0
+2016-08-01 23:33:09.507070 N | membership: set the initial cluster version to 3.0
+2016-08-01 23:33:09.507129 I | api: enabled capabilities for version 3.0
+2016-08-01 23:33:09.507211 I | etcdserver: published {Name:default ClientURLs:[http://localhost:2379]} to cluster cdf818194e3a8c32
+2016-08-01 23:33:09.507221 I | etcdmain: ready to serve client requests
+2016-08-01 23:33:09.507811 N | etcdmain: serving insecure client requests on localhost:2379, this is strongly discouraged!</pre>
+<p>从上面的输出中，我们可以看到很多信息：</p>
+<ul>
+<li>
+etcd 默认将数据存放到当前路径的      <code>default.etcd/</code><br>
+<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/directory" title="View all posts in 目录" target="_blank">目录</a></span>下    </li>
+<li>
+在      <code>http://localhost:2380</code><br>
+和集群中其他节点通信    </li>
+<li>
+在      <code>http://localhost:2379</code><br>
+提供 HTTP API 服务，供客户端交互    </li>
+<li>
+该节点的名称默认为      <code>default</code>
+    </li>
+<li>heartbeat 为 100ms，后面会说明这个<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e9%85%8d%e7%bd%ae" title="View all posts in 配置" target="_blank">配置</a></span>的作用</li>
+<li>election 为 1000ms，后面会说明这个配置的作用</li>
+<li>snapshot count 为 10000，后面会说明这个配置的作用</li>
+<li>集群和每个节点都会生成一个 uuid</li>
+<li>启动的时候，会运行 raft，选举出 leader</li>
+</ul>
+<h3>集群安装</h3>
+<p>在安装和启动 etcd 服务的时候，各个节点需要知道集群中其他节点的信息（一般是 ip 和 port 信息）。根据你是否可以提前知道每个节点的 ip，有几种不同的启动方案：</p>
+<ul>
+<li>
+静态配置：在启动 etcd server 的时候，通过      <code>--initial-cluster</code><br>
+<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%8f%82%e6%95%b0" title="View all posts in 参数" target="_blank">参数</a></span>配置好所有的节点信息    </li>
+<li>
+使用已有的 etcd cluster 来注册和启动，比如官方提供的      <code>discovery.etcd.io</code>
+    </li>
+<li>使用 <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/dns" title="View all posts in DNS" target="_blank">DNS</a></span> 启动，</li>
+</ul>
+<p>
+    etcd 的安装文档<br>
+官网已经给出了，这里不再赘述。当然，你也可以通过 docker 来安装 etcd，具体的文档可以看    这里<br>
+。  </p>
+<p>下面给出可以常用配置的参数和它们的解释，方便理解：</p>
+<ul>
+<li>
+      <code>--name</code><br>
+：方便理解的节点名称，默认为      <code>default</code><br>
+，在集群中应该保持唯一，可以使用 hostname    </li>
+<li>
+      <code>--data-dir</code><br>
+：服务运行数据保存的路径，默认为      <code>${name}.etcd</code>
+    </li>
+<li>
+      <code>--snapshot-count</code><br>
+：指定有多少事务（transaction）被提交时，触发截取快照保存到磁盘    </li>
+<li>
+      <code>--heartbeat-interval</code><br>
+：leader 多久发送一次心跳到 followers。默认值是 100ms    </li>
+<li>
+      <code>--eletion-timeout</code><br>
+：重新投票的超时<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e6%97%b6%e9%97%b4" title="View all posts in 时间" target="_blank">时间</a></span>，如果 follow 在该时间间隔没有收到心跳包，会触发重新投票，默认为 1000 ms    </li>
+<li>
+      <code>--listen-peer-urls</code><br>
+：和同伴通信的地址，比如      <code>http://ip:2380</code><br>
+，如果有多个，使用逗号分隔。需要所有节点都能够访问，      <strong>所以不要使用 localhost！</strong>
+    </li>
+<li>
+      <code>--listen-client-urls</code><br>
+：对外提供服务的地址：比如      <code>http://ip:2379,http://127.0.0.1:2379</code><br>
+，客户端会连接到这里和 etcd 交互    </li>
+<li>
+      <code>--advertise-client-urls</code><br>
+：对外公告的该节点客户端监听地址，这个值会告诉集群中其他节点    </li>
+<li>
+      <code>--initial-advertise-peer-urls</code><br>
+：该节点同伴监听地址，这个值会告诉集群中其他节点    </li>
+<li>
+      <code>--initial-cluster</code><br>
+：集群中所有节点的信息，格式为      <code>node1=http://ip1:2380,node2=http://ip2:2380,…</code><br>
+。注意：这里的      <code>node1</code><br>
+是节点的      <code>--name</code><br>
+指定的名字；后面的      <code>ip1:2380</code><br>
+是      <code>--initial-advertise-peer-urls</code><br>
+指定的值    </li>
+<li>
+      <code>--initial-cluster-state</code><br>
+：新建集群的时候，这个值为      <code>new</code><br>
+；假如已经存在的集群，这个值为      <code>existing</code>
+    </li>
+<li>
+      <code>--initial-cluster-token</code><br>
+：创建集群的 token，这个值每个集群保持唯一。这样的话，如果你要重新创建集群，即使配置和之前一样，也会再次生成新的集群和节点 uuid；否则会导致多个集群之间的冲突，造成未知的错误    </li>
+</ul>
+<p>
+所有以    <code>--init</code><br>
+开头的配置都是在 bootstrap 集群的时候才会用到，后续节点的重启会被忽略。  </p>
+<p>
+NOTE：所有的参数也可以通过环境变量进行设置，    <code>--my-flag</code><br>
+对应环境变量的    <code>ETCD_MY_FLAG</code><br>
+；但是命令行指定的参数会覆盖环境变量对应的值。  </p>
+<p>
+在后面的文章中，为了简单起见，我们采用了单点的 etcd server，    <strong>请在生产环境中配置 etcd 集群，并使用 SSL 安全机制</strong><br>
+。  </p>
+<h2>3. etcd 基础知识</h2>
+<p>每个 etcd cluster 都是有若干个 member 组成的，每个 member 是一个独立运行的 etcd 实例，单台机器上可以运行多个 member。</p>
+<p>在正常运行的状态下，集群中会有一个 leader，其余的 member 都是 followers。leader 向 followers <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%90%8c%e6%ad%a5" title="View all posts in 同步" target="_blank">同步</a></span>日志，保证数据在各个 member 都有副本。leader 还会定时向所有的 member 发送心跳报文，如果在规定的时间里 follower 没有收到心跳，就会重新进行选举。</p>
+<p>客户端所有的请求都会先发送给 leader，leader 向所有的 followers 同步日志，等收到超过半数的确认后就把该日志存储到磁盘，并返回响应客户端。</p>
+<p>
+每个 etcd 服务有三大主要部分组成：raft 实现、WAL 日志存储、数据的存储和索引。WAL 会在本地磁盘（就是之前提到的    <code>--data-dir</code><br>
+）上存储日志内容（wal file）和快照（snapshot）。  </p>
+<h2>4. API 文档</h2>
+<p>etcd 对外通过 HTTP API 对外提供服务，这种方式方便测试（通过 curl 或者其他工具就能和 etcd 交互），也很容易集成到各种语言中（每个语言封装 HTTP API 实现自己的 client 就行）。</p>
+<p>
+这个部分，我们就介绍 etcd 通过 HTTP API 提供了哪些功能，并使用<br>
+      <code>httpie</code></p>
+<p>来交互（当然你也可以使用 curl 或者其他工具）。  </p>
+<h3>获取 etcd 服务的版本信息</h3>
+<pre>➜  http http://127.0.0.1:2379/version
+HTTP/1.1 200 OK
+Content-Length: 44
+Content-Type: appli<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/cat" title="View all posts in cat" target="_blank">cat</a></span>ion/<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/json" title="View all posts in json" target="_blank">json</a></span>
+Date: Tue, 02 Aug 2016 04:27:32 GMT
+
+{
+    "etcdcluster": "3.0.0",
+    "etcdserver": "3.0.4"
+}</pre>
+<h3><span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/key" title="View all posts in key" target="_blank">key</a></span> 的增删查改</h3>
+<p>
+etcd 的数据按照树形的结构<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e7%bb%84%e7%bb%87" title="View all posts in 组织" target="_blank">组织</a></span>，类似于 <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/linux-2" title="View all posts in linux" target="_blank">linux</a></span> 的文件系统，也有目录和文件的区别，不过一般被称为 nodes。数据的 endpoint 都是以    <code>/v2/keys</code><br>
+开头（v2 表示当前 API 的版本），比如    <code>/v2/keys/names/cizixs</code><br>
+。  </p>
+<p>
+要创建一个值，只要使用    <code>PUT</code><br>
+方法在对应的 url endpoint 设置就行。如果对应的 key 已经存在，    <code>PUT</code><br>
+也会对 key 进行更新。  </p>
+<pre>➜  http PUT http://127.0.0.1:2379/v2/keys/<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/message" title="View all posts in message" target="_blank">message</a></span> <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/value" title="View all posts in value" target="_blank">value</a></span>=="hello, etcd"
+HTTP/1.1 201 Created
+Content-Length: 100
+Content-Type: application/<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/js-2" title="View all posts in js" target="_blank">js</a></span>on
+Date: Tue, 02 Aug 2016 04:48:04 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 4
+X-Raft-Index: 28429
+X-Raft-Term: 2
+
+{
+    "action": "set",
+    "node": {
+        "createdIndex": 4,
+        "key": "/message",
+        "modifiedIndex": 4,
+        "value": "hello, etcd"
+    }
+}</pre>
+<p>
+上面这个命令通过    <code>PUT</code><br>
+方法把    <code>/message</code><br>
+设置为    <code>hello, etcd</code><br>
+。返回的格式中，各个字段的意义是：  </p>
+<ul>
+<li>
+      <code>action</code><br>
+：请求出发的动作，这里因为是新建一个 key 并设置它的值，所以是      <code>set</code>
+    </li>
+<li>
+      <code>node.key</code><br>
+：key 的 HTTP 路径    </li>
+<li>
+      <code>node.value</code><br>
+：请求处理之后，key 的值    </li>
+<li>
+      <code>node.createdIndex</code><br>
+： createdIndex 是一个递增的值，每次有 key 被创建的时候会增加    </li>
+<li>
+      <code>node.modifiedIndex</code><br>
+：同上，只不过每次有 key 被修改的时候增加    </li>
+</ul>
+<p>除返回的 json 体外，上面的情况还包含了一些特殊的 HTTP 头部信息，这些信息说明了 etcd cluster 的一些情况。它们的具体含义如下：</p>
+<ul>
+<li>
+      <code>X-Etcd-Index</code><br>
+：当前 etcd 集群的 index    </li>
+<li>
+      <code>X-Raft-Index</code><br>
+：raft 集群的 index    </li>
+<li>
+      <code>X-Raft-Term</code><br>
+：raft 集群的任期，每次有 leader 选举的时候，这个值就会增加    </li>
+</ul>
+<p>
+查看信息比较简单，使用    <code>GET</code><br>
+方法，url 指向要查看的值就行：  </p>
+<pre>➜  http GET http://127.0.0.1:2379/v2/keys/message
+HTTP/1.1 200 OK
+Content-Length: 97
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 05:23:14 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 7
+X-Raft-Index: 30801
+X-Raft-Term: 2
+
+{
+    "action": "get",
+    "node": {
+        "createdIndex": 7,
+        "key": "/message",
+        "modifiedIndex": 7,
+        "value": "hello, etcd"
+    }
+}</pre>
+<p>
+这里的    <code>action</code><br>
+变成了    <code>get</code><br>
+，其他返回的值和上面的含义一样，略过不提。  </p>
+<p>
+NOTE：这两个命令并不是连着执行的，中间我有执行其他操作，因此    <code>index</code><br>
+会出现不连续的情况。  </p>
+<p>
+前面已经提过，    <code>PUT</code><br>
+也可用来更新 key 的值我们就来看看例子。  </p>
+<pre>➜  http PUT http://127.0.0.1:2379/v2/keys/message value=="I'm changed"
+HTTP/1.1 200 OK
+Content-Length: 184
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 05:28:17 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 8
+X-Raft-Index: 31407
+X-Raft-Term: 2
+
+{
+    "action": "set",
+    "node": {
+        "createdIndex": 8,
+        "key": "/message",
+        "modifiedIndex": 8,
+        "value": "I'm changed"
+    },
+    "prevNode": {
+        "createdIndex": 7,
+        "key": "/message",
+        "modifiedIndex": 7,
+        "value": "hello, etcd"
+    }
+}</pre>
+<p>
+和第一次执行    <code>PUT</code><br>
+命令不同的是，返回中多了一个字段    <code>prevNode</code><br>
+，它保存着更新之前该 key 的信息。它的格式和    <code>node</code><br>
+是一样的，如果之前没有这个信息，这个字段会被省略。  </p>
+<p>
+<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e5%88%a0%e9%99%a4" title="View all posts in 删除" target="_blank">删除</a></span> key 可以通过    <code>DELETE</code><br>
+方法，，比如我们要删除上面创建的字段：  </p>
+<pre>➜  http DELETE http://127.0.0.1:2379/v2/keys/message
+HTTP/1.1 200 OK
+Content-Length: 168
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 05:31:56 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 9
+X-Raft-Index: 31847
+X-Raft-Term: 2
+
+{
+    "action": "delete",
+    "node": {
+        "createdIndex": 8,
+        "key": "/message",
+        "modifiedIndex": 9
+    },
+    "prevNode": {
+        "createdIndex": 8,
+        "key": "/message",
+        "modifiedIndex": 8,
+        "value": "I'm changed"
+    }
+}</pre>
+<p>
+注意，这里的    <code>action</code><br>
+是    <code>delete</code><br>
+，并且    <code>modifiedIndex</code><br>
+增加了，但是    <code>createdIndex</code><br>
+没有变化，因为这是一个修改操作，不是新建操作。  </p>
+<h3>TTL</h3>
+<p>etcd 中，key 可以有 TTL 属性，超过这个时间会被自动删除。我们来设置一个看看：</p>
+<pre>➜  http PUT http://127.0.0.1:2379/v2/keys/tempkey value=="Gone with wind" ttl==5
+
+HTTP/1.1 201 Created
+Content-Length: 159
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 05:48:17 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 10
+X-Raft-Index: 33810
+X-Raft-Term: 2
+
+{
+    "action": "set",
+    "node": {
+        "createdIndex": 10,
+        "expiration": "2016-08-02T05:48:22.618695843Z",
+        "key": "/tempkey",
+        "modifiedIndex": 10,
+        "ttl": 5,
+        "value": "Gone with wind"
+    }
+}</pre>
+<p>除了一般 key 返回的信息之外，上面多了两个字段：</p>
+<ul>
+<li>
+      <code>expiration</code><br>
+：代表 key 过期被删除的时间    </li>
+<li>
+      <code>ttl</code><br>
+：表示 key 还要多少秒可以存活（这个值是动态的，会根据你请求的时候和过期时间进行计算）    </li>
+</ul>
+<p>如果我们在 5s 之后再去请求查看该 key，会发现报错信息：</p>
+<pre>➜  http http://127.0.0.1:2379/v2/keys/tempkey
+HTTP/1.1 404 Not Found
+Content-Length: 74
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 05:48:28 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 11
+
+{
+    "cause": "/tempkey",
+    "errorCode": 100,
+    "index": 11,
+    "message": "Key not found"
+}</pre>
+<p>
+http 返回为    <code>404</code><br>
+，并且返回体中给出了    <code>errorCode</code><br>
+和错误信息。  </p>
+<p>
+TTL 也可通过    <code>PUT</code><br>
+方法进行取消，只要设置空值    <code>ttl=</code><br>
+就行，这样 key 就不会过期被删除。比如：  </p>
+<pre>➜  http PUT http://127.0.0.1:2379/v2/keys/foo value==bar ttl== prevExist==true</pre>
+<h4>注意：需要设置 value==bar，不然 key 会变成空值。</h4>
+<p>
+如果只是想更新 TTL，可以添加上    <code>refresh==true</code><br>
+参数：  </p>
+<pre>➜  etcd-v3.0.4-darwin-amd64 http -v PUT http://127.0.0.1:2379/v2/keys/tempkey
+
+HTTP/1.1 200 OK
+Content-Length: 305
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 06:05:12 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 20
+X-Raft-Index: 35849
+X-Raft-Term: 2
+
+{
+    "action": "set",
+    "node": {
+        "createdIndex": 20,
+        "expiration": "2016-08-02T06:13:32.370495212Z",
+        "key": "/tempkey",
+        "modifiedIndex": 20,
+        "ttl": 500,
+        "value": "hello, there"
+    },
+    "prevNode": {
+        "createdIndex": 19,
+        "expiration": "2016-08-02T06:10:05.366042396Z",
+        "key": "/tempkey",
+        "modifiedIndex": 19,
+        "ttl": 293,
+        "value": "hello, there"
+    }
+}</pre>
+<h3>监听变化</h3>
+<p>etcd 提供了监听的机制，可以让客户端使用 long pulling 监听某个 key，当发生变化的时候接接收通知因为 etcd 经常被用作服务发现，集群中的信息有更新的时候需要及时被检测，做出对应的处理。因此需要有监听机制，来告诉客户端特定 key 的变化情况。</p>
+<p>
+监听动作只需要    <code>GET</code><br>
+方法，添加上    <code>wait=true</code><br>
+参数就行.使用    <code>recursive=true</code><br>
+参数，也能监听某个目录。  </p>
+<pre>➜  http http://127.0.0.1:2379/v2/keys/foo wait==true
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 06:09:47 GMT
+Transfer-Encoding: chunked
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 22
+X-Raft-Index: 36401
+X-Raft-Term: 2</pre>
+<p>这个时候，客户端会阻塞在这里，如果在另外的 ter<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/mina" title="View all posts in mina" target="_blank">mina</a></span>l 修改 key 的值，监听的客户端会接收到消息，打印出更新的值：</p>
+<pre><span>{</span><span>
+    </span><span>"action"</span><span>:</span><span> </span><span>"set"</span><span>,</span><span>
+    </span><span>"node"</span><span>:</span><span> </span><span>{</span><span>
+        </span><span>"createdIndex"</span><span>:</span><span> </span><span>23</span><span>,</span><span>
+        </span><span>"key"</span><span>:</span><span> </span><span>"/foo"</span><span>,</span><span>
+        </span><span>"modifiedIndex"</span><span>:</span><span> </span><span>23</span><span>,</span><span>
+        </span><span>"value"</span><span>:</span><span> </span><span>"changed"</span><span>
+    </span><span>},</span><span>
+    </span><span>"prevNode"</span><span>:</span><span> </span><span>{</span><span>
+        </span><span>"createdIndex"</span><span>:</span><span> </span><span>22</span><span>,</span><span>
+        </span><span>"key"</span><span>:</span><span> </span><span>"/foo"</span><span>,</span><span>
+        </span><span>"modifiedIndex"</span><span>:</span><span> </span><span>22</span><span>,</span><span>
+        </span><span>"value"</span><span>:</span><span> </span><span>"bar"</span><span>
+    </span><span>}</span><span>
+</span><span>}</span><span>
+</span></pre>
+<p>
+除了这种最简单的监听之外，还可以提供基于 index 的监听。如果通过    <code>waitIndex</code><br>
+指定了 index，那么  </p>
+<p>会返回从 index 开始出现的第一个事件，这包含了两种情况：</p>
+<ul>
+<li>给出的 index 小于等于当前 index ，即事件已经发生，那么监听会立即返回该事件</li>
+<li>给出的 index 大于当前 index，等待 index 之后的事件发生并返回</li>
+</ul>
+<p>
+目前 etcd 只会保存最近 1000 个事件（整个集群范围内），再早之前的事件会被清理，如果监听被清理的事件会报错。如果出现漏过太多事件（超过 1000）的情况，需要重新获取当然的 index 值（    <code>X-Etcd-Index</code><br>
+），然后从    <code>X-Etcd-Index+1</code><br>
+开始监听。  </p>
+<p>因为监听的时候出现事件就会直接返回，因此需要客户端编写循环逻辑保持监听状态。在两次监听的间隔中出现的事件，很可能被漏过。所以最好把事件处逻辑做成异步的，不要阻塞监听逻辑。</p>
+<h4>注意：监听 key 时会出现因为长时间没有返回导致连接被 close 的情况，客户端需要处理这种错误并自动重试。</h4>
+<h3>自动创建有序的 keys</h3>
+<p>
+在有些情况下，我们需要 key 是有序的，etcd 提供了这个功能。对某个目录使用    <code>POST</code><br>
+方法，能<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e8%87%aa%e5%8a%a8%e7%94%9f%e6%88%90" title="View all posts in 自动生成" target="_blank">自动生成</a></span>有序的 key，这种模式可以用于队列处理等场景。  </p>
+<pre>➜  http POST http://127.0.0.1:2379/v2/keys/<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/queue" title="View all posts in queue" target="_blank">queue</a></span> value==job1
+HTTP/1.1 201 Created
+Content-Length: 121
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:08:38 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1030
+X-Raft-Index: 44470
+X-Raft-Term: 2
+
+{
+    "action": "create",
+    "node": {
+        "createdIndex": 1030,
+        "key": "/queue/00000000000000001030",
+        "modifiedIndex": 1030,
+        "value": "job1"
+    }
+}</pre>
+<p>
+创建的 key 会使用 etcd index，只能保证递增，无法保证是连续的（因为两次创建之间可能会有其他发生）。然后用相同的命令创建多个值，在获取值的时候使用    <code>sorted=true</code><br>
+参数就会返回已经排序的值：  </p>
+<pre>➜  http http://127.0.0.1:2379/v2/keys/queue sorted==true
+HTTP/1.1 200 OK
+Content-Length: 385
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:11:32 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1032
+X-Raft-Index: 44819
+X-Raft-Term: 2
+
+{
+    "action": "get",
+    "node": {
+        "createdIndex": 1030,
+        "dir": true,
+        "key": "/queue",
+        "modifiedIndex": 1030,
+        "nodes": [
+            {
+                "createdIndex": 1030,
+                "key": "/queue/00000000000000001030",
+                "modifiedIndex": 1030,
+                "value": "job1"
+            },
+            {
+                "createdIndex": 1031,
+                "key": "/queue/00000000000000001031",
+                "modifiedIndex": 1031,
+                "value": "job2"
+            },
+            {
+                "createdIndex": 1032,
+                "key": "/queue/00000000000000001032",
+                "modifiedIndex": 1032,
+                "value": "job3"
+            }
+        ]
+    }
+}</pre>
+<h3>设置目录的 TTL</h3>
+<p>
+和 key 类似，目录（dir）也可以有过期时间。设置的方法也一样，只不过多了    <code>dir=true</code><br>
+参数来说明这是一个目录。  </p>
+<pre>➜  http PUT http://127.0.0.1:2379/v2/keys/dir dir==true ttl==5 prevExist==true
+HTTP/1.1 200 OK
+Content-Length: 226
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:15:42 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1033
+X-Raft-Index: 45325
+X-Raft-Term: 2
+
+{
+    "action": "<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/update" title="View all posts in update" target="_blank">update</a></span>",
+    "node": {
+        "createdIndex": 1029,
+        "dir": true,
+        "expiration": "2016-08-02T07:15:47.970434032Z",
+        "key": "/dir",
+        "modifiedIndex": 1033,
+        "ttl": 5
+    },
+    "prevNode": {
+        "createdIndex": 1029,
+        "dir": true,
+        "key": "/dir",
+        "modifiedIndex": 1029
+    }
+}</pre>
+<p>目录过期的时候会被自动删除，包括它里面所有的子目录和 key，所有监听这个目录中内容的客户端都会收到对应的事件。</p>
+<h3>比较更新的原子操作</h3>
+<p>
+在分布式环境中，我们需要解决多个客户端的竞争问题，etcd 提供了原子操作    <code>CompareAndSwap</code><br>
+（CAS），通过这个操作可以很容易实现分布式<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e9%94%81" title="View all posts in 锁" target="_blank">锁</a></span>。  </p>
+<p>简单来说，这个命令只有在客户端提供的条件成立的情况下才会更新对应的值。目前支持的条件包括：</p>
+<ul>
+<li>
+      <code>preValue</code><br>
+：检查 key 之前的值是否和客户端提供的一致    </li>
+<li>
+      <code>prevIndex</code><br>
+：检查 key 之前的      <code>modifiedIndex</code><br>
+是否和客户端提供的一致    </li>
+<li>
+      <code>prevExist</code><br>
+：检查 key 是否已经存在。如果存在就执行更新操作，如果不存在，执行 create 操作    </li>
+</ul>
+<p>
+举个栗子，比如目前    <code>/foo</code><br>
+的值为    <code>bar</code><br>
+，要把它更新成    <code>changed</code><br>
+，可以使用：  </p>
+<pre>➜  http PUT http://127.0.0.1:2379/v2/keys/foo prevValue==bar value==changed
+HTTP/1.1 200 OK
+Content-Length: 190
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:37:05 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1036
+X-Raft-Index: 47893
+X-Raft-Term: 2
+
+{
+    "action": "compareAndSwap",
+    "node": {
+        "createdIndex": 1035,
+        "key": "/foo",
+        "modifiedIndex": 1036,
+        "value": "changed"
+    },
+    "prevNode": {
+        "createdIndex": 1035,
+        "key": "/foo",
+        "modifiedIndex": 1035,
+        "value": "bar"
+    }
+}</pre>
+<p>
+如果提供的条件不对，会报    <code>412</code><br>
+错误：  </p>
+<pre>➜ http PUT http://127.0.0.1:2379/v2/keys/foo prevValue==bar value==new
+HTTP/1.1 412 Precondition Failed
+Content-Length: 85
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:37:38 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1036
+
+{
+    "cause": "[bar != changed]",
+    "errorCode": 101,
+    "index": 1036,
+    "message": "Compare failed"
+}</pre>
+<p>
+注意：匹配条件是    <code>prevIndex=0</code><br>
+的话，也会通过检查。  </p>
+<p>这些条件也可以组合起来使用，只有当都满足的时候，才会执行对应的操作。</p>
+<h3>比较删除的原子操作</h3>
+<p>
+和条件更新类似，etcd 也支持条件删除操作：只有在客户端提供的条件成立的情况下，才会执行删除操作。支持    <code>prevValue</code><br>
+和    <code>prevIndex</code><br>
+两种条件检查，没有    <code>prevExist</code><br>
+，因为删除不存在的值本身就会报错。  </p>
+<p>
+我们来删除上面例子中更新的    <code>/foo</code><br>
+，先看一下提供的条件不对的情况：  </p>
+<pre>➜  http DELETE http://127.0.0.1:2379/v2/keys/foo prevValue==bar
+HTTP/1.1 412 Precondition Failed
+Content-Length: 85
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:49:13 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1043
+
+{
+    "cause": "[bar != changed]",
+    "errorCode": 101,
+    "index": 1043,
+    "message": "Compare failed"
+}</pre>
+<p>如果提供的条件成立，对应的 key 就会被删除：</p>
+<pre>➜  http DELETE http://127.0.0.1:2379/v2/keys/foo prevValue==changed
+HTTP/1.1 200 OK
+Content-Length: 178
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:51:27 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1044
+X-Raft-Index: 49629
+X-Raft-Term: 2
+
+{
+    "action": "compareAndDelete",
+    "node": {
+        "createdIndex": 1043,
+        "key": "/foo",
+        "modifiedIndex": 1044
+    },
+    "prevNode": {
+        "createdIndex": 1043,
+        "key": "/foo",
+        "modifiedIndex": 1043,
+        "value": "changed"
+    }
+}</pre>
+<h3>操作目录</h3>
+<p>
+在创建 key 的时候，如果它所在路径的目录不存在，会自动被创建，所以在多数情况下我们不需要关心目录的创建。目录的操作和 key 的操作基本一致，唯一的区别是需要加上    <code>dir=true</code><br>
+参数指明操作的对象是目录。  </p>
+<p>
+比如，如果想要显示地创建目录，可以使用    <code>PUT</code><br>
+方法，并设置    <code>dir=true</code><br>
+：  </p>
+<pre>➜ http PUT http://127.0.0.1:2379/v2/keys/anotherdir dir==true
+HTTP/1.1 201 Created
+Content-Length: 98
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:53:48 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1045
+X-Raft-Index: 49914
+X-Raft-Term: 2
+
+{
+    "action": "set",
+    "node": {
+        "createdIndex": 1045,
+        "dir": true,
+        "key": "/anotherdir",
+        "modifiedIndex": 1045
+    }
+}</pre>
+<p>
+创建目录的操作不能重复执行，再次执行上面的命令会报    <code>HTTP 403</code><br>
+错误。  </p>
+<p>
+如果    <code>GET</code><br>
+方法对应的 url 是目录的话，etcd 会列出该目录所有节点的信息（不需要指定    <code>dir=true</code><br>
+）。比如要列出根目录下所有的节点：  </p>
+<pre>➜  http http://127.0.0.1:2379/v2/keys/
+HTTP/1.1 200 OK
+Content-Length: 190
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:55:41 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1045
+X-Raft-Index: 50141
+X-Raft-Term: 2
+
+{
+    "action": "get",
+    "node": {
+        "dir": true,
+        "nodes": [
+            {
+                "createdIndex": 1045,
+                "dir": true,
+                "key": "/anotherdir",
+                "modifiedIndex": 1045
+            },
+            {
+                "createdIndex": 1030,
+                "dir": true,
+                "key": "/queue",
+                "modifiedIndex": 1030
+            }
+        ]
+    }
+}</pre>
+<p>
+如果添加上    <code>recursive=true</code><br>
+参数，就会递归地列出所有的值：  </p>
+<pre>➜  http http://127.0.0.1:2379/v2/keys//?recursive/=true
+HTTP/1.1 200 OK
+Content-Length: 482
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 07:57:48 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1045
+X-Raft-Index: 50394
+X-Raft-Term: 2
+
+{
+    "action": "get",
+    "node": {
+        "dir": true,
+        "nodes": [
+            {
+                "createdIndex": 1045,
+                "dir": true,
+                "key": "/anotherdir",
+                "modifiedIndex": 1045
+            },
+            {
+                "createdIndex": 1030,
+                "dir": true,
+                "key": "/queue",
+                "modifiedIndex": 1030,
+                "nodes": [
+                    {
+                        "createdIndex": 1031,
+                        "key": "/queue/00000000000000001031",
+                        "modifiedIndex": 1031,
+                        "value": "job2"
+                    },
+                    {
+                        "createdIndex": 1032,
+                        "key": "/queue/00000000000000001032",
+                        "modifiedIndex": 1032,
+                        "value": "job3"
+                    },
+                    {
+                        "createdIndex": 1030,
+                        "key": "/queue/00000000000000001030",
+                        "modifiedIndex": 1030,
+                        "value": "job1"
+                    }
+                ]
+            }
+        ]
+    }
+}</pre>
+<p>
+和 linux 删除目录的设计一样，要区别空目录和非空目录。删除空目录很简单，使用    <code>DELETE</code><br>
+方法，并添加上    <code>dir=true</code><br>
+参数，类似于    <code>rmdir</code><br>
+；而对于非空目录，需要添加上    <code>recursive=true</code><br>
+，类似于    <code>rm -rf</code><br>
+。  </p>
+<pre>➜  http DELETE http://127.0.0.1:2379/v2/keys/queue dir==true
+HTTP/1.1 403 Forbidden
+Content-Length: 80
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 08:06:44 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1045
+
+{
+    "cause": "/queue",
+    "errorCode": 108,
+    "index": 1045,
+    "message": "Directory not empty"
+}
+
+➜  http DELETE http://127.0.0.1:2379/v2/keys/queue dir==true recursive==true
+HTTP/1.1 200 OK
+Content-Length: 176
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 08:06:48 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+X-Etcd-Index: 1046
+X-Raft-Index: 51478
+X-Raft-Term: 2
+
+{
+    "action": "delete",
+    "node": {
+        "createdIndex": 1030,
+        "dir": true,
+        "key": "/queue",
+        "modifiedIndex": 1046
+    },
+    "prevNode": {
+        "createdIndex": 1030,
+        "dir": true,
+        "key": "/queue",
+        "modifiedIndex": 1030
+    }
+}</pre>
+<h3>隐藏的节点</h3>
+<p>
+etcd 中节点也可以是默认隐藏的，类似于 linux 中以    <code>.</code><br>
+开头的文件或者文件夹，以    <code>_</code><br>
+开头的节点也是默认隐藏的，不会在列出目录的时候显示。只有知道隐藏节点的完整路径，才能够访问它的信息。  </p>
+<h3>查看集群数据信息</h3>
+<p>etcd 还保存了集群的数据信息，包括节点之间的网络信息，操作的<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e7%bb%9f%e8%ae%a1" title="View all posts in 统计" target="_blank">统计</a></span>信息。</p>
+<ul>
+<li>
+      <code>/v2/stats/leader</code><br>
+会返回集群中 leader 的信息，以及 followers 的基本信息    </li>
+<li>
+      <code>/v2/stats/self</code><br>
+会返回当前节点的信息    </li>
+<li>
+      <code>/v2/state/store</code><br>
+：会返回各种命令的统计信息    </li>
+</ul>
+<h3>成员<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e7%ae%a1%e7%90%86" title="View all posts in 管理" target="_blank">管理</a></span></h3>
+<p>
+etcd 在    <code>/v2/members</code><br>
+下保存着集群中各个成员的信息，  </p>
+<pre>➜  http http://127.0.0.1:2379/v2/members
+HTTP/1.1 200 OK
+Content-Length: 133
+Content-Type: application/json
+Date: Tue, 02 Aug 2016 08:15:56 GMT
+X-Etcd-Cluster-Id: cdf818194e3a8c32
+
+{
+    "members": [
+        {
+            "clientURLs": [
+                "http://localhost:2379"
+            ],
+            "id": "8e9e05c52164694d",
+            "name": "default",
+            "peerURLs": [
+                "http://localhost:2380"
+            ]
+        }
+    ]
+}</pre>
+<p>
+可以通过    <code>POST</code><br>
+方法添加成员：  </p>
+<pre>curl http://10.0.0.10:2379/v2/members -XPOST /
+-H "Content-Type: application/json" -d '{"peerURLs":["http://10.0.0.10:2380"]}'</pre>
+<p>
+也可以通过    <code>DELETE</code><br>
+方法删除成员：  </p>
+<pre>curl http://10.0.0.10:2379/v2/members/272e204152 -XDELETE</pre>
+<p>或者通过 PUT 更新成员的 peer url：</p>
+<pre>curl http://10.0.0.10:2379/v2/members/272e204152 -XPUT /
+-H "Content-Type: application/json" -d '{"peerURLs":["http://10.0.0.10:2380"]}'</pre>
+<h2>5. etcdctl 命令行工具</h2>
+<p>
+除了 HTTP API 外，etcd 还提供了    <code>etcdctl</code><br>
+命令行工具和 etcd 服务交互。这个命令行用 go 语言编写，也是对 HTTP API 的封装，日常使用起来也更容易。  </p>
+<p>etcdctl 的安装就不说了，从官网下载二进制文件放到系统的 PATH 路径下就行了。</p>
+<pre># 设置一个 key 的值
+➜ ./etcdctl set /message "hello, etcd"
+hello, etcd
+
+# 获取 key 的值
+➜ ./etcdctl get /message
+hello, etcd
+
+# 获取 key 的值，包含更详细的元数据
+➜  ./etcdctl -o extended get /message
+Key: /message
+Created-Index: 1073
+Modified-Index: 1073
+TTL: 0
+Index: 1073
+
+hello, etcd
+
+# 获取不存在 key 的值，会报错
+➜  ./etcdctl get /notexist
+Error:  100: Key not found (/notexist) [1048]
+
+# 设置 key 的 ttl，过期后会被自动删除
+➜  ./etcdctl set /tempkey "gone with wind" --ttl 5
+gone with wind
+➜  ./etcdctl get /tempkey
+gone with wind
+➜  ./etcdctl get /tempkey
+Error:  100: Key not found (/tempkey) [1050]
+
+# 如果 key 的值是 "hello, etcd"，就把它替换为 "goo<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/db" title="View all posts in db" target="_blank">db</a></span>ye, etcd"
+➜  ./etcdctl set --<span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/swap" title="View all posts in swap" target="_blank">swap</a></span>-with-value "hello, world" /message "goodbye, etcd"
+Error:  101: Compare failed ([hello, world != hello, etcd]) [1050]
+➜  ./etcdctl set --swap-with-value "hello, etcd" /message "goodbye, etcd"
+goodbye, etcd
+
+# 仅当 key 不存在的时候创建
+➜  ./etcdctl mk /foo bar
+bar
+➜  ./etcdctl mk /foo bar
+Error:  105: Key already exists (/foo) [1052]
+
+# 自动创建排序的 key
+➜  ./etcdctl mk --in-order /queue job1
+job1
+➜  ./etcdctl mk --in-order /queue job2
+job2
+➜  ./etcdctl ls --sort /queue
+/queue/00000000000000001053
+/queue/00000000000000001054
+
+# 更新 key 的值或者 ttl，只有当 key 已经存在的时候才会生效，否则报错
+➜  ./etcdctl update /message "I'am changed"
+I'am changed
+➜  ./etcdctl get /message
+I'am changed
+➜  ./etcdctl update /notexist "I'am changed"
+Error:  100: Key not found (/notexist) [1055]
+➜  ./etcdctl update --ttl 3 /message "I'am changed"
+I'am changed
+➜  ./etcdctl get /message
+Error:  100: Key not found (/message) [1057]
+
+# 删除某个 key
+➜  ./etcdctl mk /foo bar
+bar
+➜  ./etcdctl rm /foo
+PrevNode.Value: bar
+➜  ./etcdctl get /foo
+Error:  100: Key not found (/foo) [1062]
+
+# 只有当 key 的值匹配的时候，才进行删除
+➜  ./etcdctl mk /foo bar
+bar
+➜  ./etcdctl rm --with-value wrong /foo
+Error:  101: Compare failed ([wrong != bar]) [1063]
+➜  ./etcdctl rm --with-value bar /foo
+
+# 创建一个目录
+➜  ./etcdctl mkdir /dir
+
+# 删除空目录
+➜  ./etcdctl mkdir /dir/subdir/
+➜  ./etcdctl rmdir /dir/subdir/
+
+# 删除非空目录
+➜  ./etcdctl rmdir /dir
+Error:  108: Directory not empty (/dir) [1071]
+➜  ./etcdctl rm --recursive /dir
+
+# 列出目录的内容
+➜  ./etcdctl ls /
+/queue
+/anotherdir
+/message
+
+# 递归列出目录的内容
+➜  ./etcdctl ls --recursive /
+/anotherdir
+/message
+/queue
+/queue/00000000000000001053
+/queue/00000000000000001054
+
+# 监听某个 key，当 key 改变的时候会打印出变化
+➜  ./etcdctl watch /message
+changed
+
+# 监听某个目录，当目录中任何 node 改变的时候，都会打印出来
+➜  ./etcdctl watch --recursive /
+[set] /message
+changed
+
+# 一直监听，除非 `CTL + C` 导致退出监听
+➜  ./etcdctl watch --forever /message
+new value
+chaned again
+Wola
+
+# 监听目录，并在发生变化的时候执行一个命令
+➜  ./etcdctl exec-watch --recursive / -- sh -c "echo change detected."
+change detected.
+change detected.</pre>
+<h2>6. <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/%e6%80%bb%e7%bb%93" title="View all posts in 总结" target="_blank">总结</a></span></h2>
+<p>etcd 默认只保存 1000 个历史事件，所以不适合有大量更新操作的场景，这样会导致数据的丢失。 etcd 典型的应用场景是配置管理和服务发现，这些场景都是读多写少的。</p>
+<p>相比于 <span class="wp_keywordlink_affiliate"><a href="http://www.liuhaihua.cn/archives/tag/zookeeper" title="View all posts in zookeeper" target="_blank">zookeeper</a></span>，etcd 使用起来要简单很多。不过要实现真正的服务发现功能，etcd 还需要和其他工具（比如 registrator、confd 等）一起使用来实现服务的自动注册和更新。</p>
+<p>目前 etcd 还没有图形化的工具。</p>
+<h2>7. 参考资料</h2>
+<ul>
+<li>
+<p>
+        CoreOS 实战：剖析 etcd
+      </p>
+</li>
+<li>
+<p>
+        CoreOS实践指南（五）：分布式数据存储Etcd（上）
+      </p>
+</li>
+<li>
+<p>
+        CoreOS实践指南（六）：分布式数据存储Etcd（下）
+      </p>
+</li>
+<li>
+<p>
+        etcd API document
+      </p>
+</li>
+<li>
+<p>
+        etcd members API document
+      </p>
+</li>
+<li>
+<p>
+        etcd configuration
+      </p>
+</li>
+</ul>
+</div>
+<p>                <i style="float:left;">原文</i>&nbsp; </p>
+<p>http://cizixs.com/2016/08/02/intro-to-etcd</p>
+
+<em><span style="color: #ff0000;"><strong>PS：如果您想和业内技术大牛交流的话，请加qq群(521571209)或者关注微信公众
+号(AskHarries)，谢谢！</strong></span></em>
+<p class="post-copyright">转载请注明原文出处：<a href="http://www.liuhaihua.cn/">Harries Blog™</a> » <a href="http://www.liuhaihua.cn/archives/404914.html">etcd 使用入门</a></p>
+
+		</article>
+						<div class="article-social">
+<img src="./etcd 使用入门 _ Harries Blog™_files/8A51F72C4C1D3FA774BDD0F0B436BB89.jpg" width="248" height="339" border="0" data-baiduimageplus-ignore="" style="margin-bottom:20px;"><p>
+			<a href="javascript:;" class="action action-like" data-pid="404914" data-event="like"><i class="glyphicon glyphicon-thumbs-up"></i>赞 (<span>0</span>)</a>					</p></div>
+		<div class="action-share bdsharebuttonbox bdshare-button-style0-16" data-bd-bind="1488792093841">
+			分享到：<a class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a><a class="bds_bdhome" data-cmd="bdhome" title="分享到百度新首页"></a><a class="bds_tqf" data-cmd="tqf" title="分享到腾讯朋友"></a><a class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a class="bds_diandian" data-cmd="diandian" title="分享到点点网"></a><a class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a class="bds_ty" data-cmd="ty" title="分享到天涯社区"></a><a class="bds_kaixin001" data-cmd="kaixin001" title="分享到开心网"></a><a class="bds_taobao" data-cmd="taobao"></a><a class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a><a class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a><a class="bds_twi" data-cmd="twi" title="分享到Twitter"></a><a class="bds_mail" data-cmd="mail" title="分享到邮件分享"></a><a class="bds_copy" data-cmd="copy" title="分享到复制网址"></a><a class="bds_more" data-cmd="more">更多</a> (<a class="bds_count" data-cmd="count" title="累计分享0次">0</a>)		</div>
+		<div class="article-tags">
+			标签：<a href="http://www.liuhaihua.cn/archives/tag/action" rel="tag" data-original-title="" title="">Action</a><a href="http://www.liuhaihua.cn/archives/tag/api" rel="tag" data-original-title="" title="">API</a><a href="http://www.liuhaihua.cn/archives/tag/app" rel="tag" data-original-title="" title="">App</a><a href="http://www.liuhaihua.cn/archives/tag/bootstrap" rel="tag" data-original-title="" title="">Bootstrap</a><a href="http://www.liuhaihua.cn/archives/tag/cat" rel="tag" data-original-title="" title="">cat</a><a href="http://www.liuhaihua.cn/archives/tag/client" rel="tag" data-original-title="" title="">client</a><a href="http://www.liuhaihua.cn/archives/tag/core" rel="tag" data-original-title="" title="">core</a><a href="http://www.liuhaihua.cn/archives/tag/cto" rel="tag" data-original-title="" title="">CTO</a><a href="http://www.liuhaihua.cn/archives/tag/db" rel="tag" data-original-title="" title="">db</a><a href="http://www.liuhaihua.cn/archives/tag/dns" rel="tag" data-original-title="" title="">DNS</a><a href="http://www.liuhaihua.cn/archives/tag/docker" rel="tag" data-original-title="" title="">Docker</a><a href="http://www.liuhaihua.cn/archives/tag/document" rel="tag" data-original-title="" title="">Document</a><a href="http://www.liuhaihua.cn/archives/tag/git" rel="tag" data-original-title="" title="">git</a><a href="http://www.liuhaihua.cn/archives/tag/heartbeat" rel="tag" data-original-title="" title="">heartbeat</a><a href="http://www.liuhaihua.cn/archives/tag/http" rel="tag" data-original-title="" title="">http</a><a href="http://www.liuhaihua.cn/archives/tag/ide" rel="tag" data-original-title="" title="">IDE</a><a href="http://www.liuhaihua.cn/archives/tag/ip" rel="tag" data-original-title="" title="">ip</a><a href="http://www.liuhaihua.cn/archives/tag/job" rel="tag" data-original-title="" title="">Job</a><a href="http://www.liuhaihua.cn/archives/tag/js-2" rel="tag" data-original-title="" title="">js</a><a href="http://www.liuhaihua.cn/archives/tag/json" rel="tag" data-original-title="" title="">json</a><a href="http://www.liuhaihua.cn/archives/tag/key" rel="tag" data-original-title="" title="">key</a><a href="http://www.liuhaihua.cn/archives/tag/kubernetes" rel="tag" data-original-title="" title="">Kubernetes</a><a href="http://www.liuhaihua.cn/archives/tag/linux-2" rel="tag" data-original-title="" title="">linux</a><a href="http://www.liuhaihua.cn/archives/tag/list" rel="tag" data-original-title="" title="">list</a><a href="http://www.liuhaihua.cn/archives/tag/message" rel="tag" data-original-title="" title="">message</a><a href="http://www.liuhaihua.cn/archives/tag/mina" rel="tag" data-original-title="" title="">mina</a><a href="http://www.liuhaihua.cn/archives/tag/node" rel="tag" data-original-title="" title="">node</a><a href="http://www.liuhaihua.cn/archives/tag/nsa" rel="tag" data-original-title="" title="">NSA</a><a href="http://www.liuhaihua.cn/archives/tag/queue" rel="tag" data-original-title="" title="">queue</a><a href="http://www.liuhaihua.cn/archives/tag/rmi" rel="tag" data-original-title="" title="">rmi</a><a href="http://www.liuhaihua.cn/archives/tag/ssl" rel="tag" data-original-title="" title="">ssl</a><a href="http://www.liuhaihua.cn/archives/tag/swap" rel="tag" data-original-title="" title="">swap</a><a href="http://www.liuhaihua.cn/archives/tag/tar" rel="tag" data-original-title="" title="">tar</a><a href="http://www.liuhaihua.cn/archives/tag/uber" rel="tag" data-original-title="" title="">Uber</a><a href="http://www.liuhaihua.cn/archives/tag/ui" rel="tag" data-original-title="" title="">UI</a><a href="http://www.liuhaihua.cn/archives/tag/update" rel="tag" data-original-title="" title="">update</a><a href="http://www.liuhaihua.cn/archives/tag/urls" rel="tag" data-original-title="" title="">URLs</a><a href="http://www.liuhaihua.cn/archives/tag/value" rel="tag" data-original-title="" title="">value</a><a href="http://www.liuhaihua.cn/archives/tag/zookeeper" rel="tag" data-original-title="" title="">zookeeper</a><a href="http://www.liuhaihua.cn/archives/tag/%e4%b8%8b%e8%bd%bd" rel="tag" data-original-title="" title="">下载</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%88%a0%e9%99%a4" rel="tag" data-original-title="" title="">删除</a><a href="http://www.liuhaihua.cn/archives/tag/protocol" rel="tag" data-original-title="" title="">协议</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%8f%82%e6%95%b0" rel="tag" data-original-title="" title="">参数</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%90%8c%e6%ad%a5" rel="tag" data-original-title="" title="">同步</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%ae%89%e5%85%a8" rel="tag" data-original-title="" title="">安全</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%ae%89%e8%a3%85" rel="tag" data-original-title="" title="">安装</a><a href="http://www.liuhaihua.cn/archives/tag/install" rel="tag" data-original-title="" title="">安装配置</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%ae%9e%e4%be%8b" rel="tag" data-original-title="" title="">实例</a><a href="http://www.liuhaihua.cn/archives/tag/%e5%bc%80%e5%8f%91" rel="tag" data-original-title="" title="">开发</a><a href="http://www.liuhaihua.cn/archives/tag/%e6%80%bb%e7%bb%93" rel="tag" data-original-title="" title="">总结</a><a href="http://www.liuhaihua.cn/archives/tag/%e6%95%b0%e6%8d%ae" rel="tag" data-original-title="" title="">数据</a><a href="http://www.liuhaihua.cn/archives/tag/%e6%96%87%e7%ab%a0" rel="tag" data-original-title="" title="">文章</a><a href="http://www.liuhaihua.cn/archives/tag/%e6%97%b6%e9%97%b4" rel="tag" data-original-title="" title="">时间</a><a href="http://www.liuhaihua.cn/archives/tag/test" rel="tag" data-original-title="" title="">测试</a><a href="http://www.liuhaihua.cn/archives/tag/directory" rel="tag" data-original-title="" title="">目录</a><a href="http://www.liuhaihua.cn/archives/tag/port" rel="tag" data-original-title="" title="">端口</a><a href="http://www.liuhaihua.cn/archives/tag/%e7%ae%a1%e7%90%86" rel="tag" data-original-title="" title="">管理</a><a href="http://www.liuhaihua.cn/archives/tag/%e7%bb%84%e7%bb%87" rel="tag" data-original-title="" title="">组织</a><a href="http://www.liuhaihua.cn/archives/tag/%e7%bb%9f%e8%ae%a1" rel="tag" data-original-title="" title="">统计</a><a href="http://www.liuhaihua.cn/archives/tag/%e8%87%aa%e5%8a%a8%e7%94%9f%e6%88%90" rel="tag" data-original-title="" title="">自动生成</a><a href="http://www.liuhaihua.cn/archives/tag/%e9%85%8d%e7%bd%ae" rel="tag" data-original-title="" title="">配置</a><a href="http://www.liuhaihua.cn/archives/tag/%e9%94%81" rel="tag" data-original-title="" title="">锁</a><a href="http://www.liuhaihua.cn/archives/tag/%e9%9b%86%e7%be%a4" rel="tag" data-original-title="" title="">集群</a>		</div>
+		<nav class="article-nav">
+			<span class="article-nav-prev">上一篇<br><a href="http://www.liuhaihua.cn/archives/405049.html" rel="prev">Uber将转战东南亚 转移150名中国工程师</a></span>
+			<span class="article-nav-next">下一篇<br><a href="http://www.liuhaihua.cn/archives/404915.html" rel="next">ES2015系列–块级作用域</a></span>
+		</nav>
+		<div class="ads ads-content ads-related"><script type="text/javascript">
+    /*960*90 创建于 2016/8/29*/
+    var cpro_id = "u2746676";
+</script>
+<script type="text/javascript" src="./etcd 使用入门 _ Harries Blog™_files/c.js.下载"></script><div id="BAIDU_SSP__wrapper_u2746676_0"><iframe id="iframeu2746676_0" src="./etcd 使用入门 _ Harries Blog™_files/qccm.html" width="960" height="90" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0;vertical-align:bottom;margin:0;width:960px;height:90px" allowtransparency="true"></iframe></div>
+</div>				<div class="sticky"><h3 class="title"><strong>热门推荐</strong></h3><ul><li class="item"><a target="_blank" href="http://www.liuhaihua.cn/archives/485570.html"><img data-original="http://img.blog.csdn.net/20170111103859040?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvemwxODMxMDk5OTU2Ng==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/thumbnail.png">spring-boot 集成 rabbitmq</a></li><li class="item"><a target="_blank" href="http://www.liuhaihua.cn/archives/484971.html"><img data-original="http://img.blog.csdn.net/20170207151746536?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjEzODcxNzE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/thumbnail.png">微服务之分布式跟踪系统（springboot+zipkin+mysql）</a></li><li class="item"><a target="_blank" href="http://www.liuhaihua.cn/archives/484969.html"><img data-original="http://img.blog.csdn.net/20161221165117355?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjEzODcxNzE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/thumbnail.png">微服务之分布式跟踪系统（springboot+zipkin）</a></li><li class="item"><a target="_blank" href="http://www.liuhaihua.cn/archives/474950.html"><img data-original="http://images2015.cnblogs.com/blog/870358/201608/870358-20160823141246698-37489453.png" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/thumbnail.png">Spring Boot——开发新一代Spring Java应用</a></li></ul></div>				<h3 class="title" id="comments">
+	<div class="text-muted pull-right">
+		</div>
+	<strong>评论 <b> 0 </b></strong>
+</h3>
+<div id="respond" class="no_webshot">
+		
+	<form action="http://www.liuhaihua.cn/wp-comments-post.php" method="post" id="commentform">
+		
+		<div class="comt-title">
+			<div class="comt-avatar">
+				<img alt="" data-original="http://0.gravatar.com/avatar/?d=http://www.liuhaihua.cn/wp-content/themes/xiu2/images/avatar-default.png&amp;s=50" class="avatar avatar-50 photo avatar-default" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/avatar-default.png">			</div>
+			<div class="comt-author">
+						</div>
+			<a id="cancel-comment-reply-link" href="javascript:;">取消</a>
+		</div>
+		
+		<div class="comt">
+			<div class="comt-box">
+				<textarea placeholder="你的评论可以一针见血" class="input-block-level comt-area" name="comment" id="comment" cols="100%" rows="3" tabindex="1" onkeydown="if(event.ctrlKey&amp;&amp;event.keyCode==13){document.getElementById(&#39;submit&#39;).click();return false};"></textarea>
+				<div class="comt-ctrl">
+					<div class="comt-tips"><input type="hidden" name="comment_post_ID" value="404914" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+<p style="display:none;"><input type="text" name="nxts" value="1488792090"><input type="text" name="nxts_signed" value="eab7a7da9eac653f0eb8fb2141ed9b473d64ddb2"><input type="text" name="a6641bb7b375429f4234bd" value="bb9257db81c243ea8fc1bab8956ca"><input type="text" name="7f5e1dcbb8d39" value=""></p><label for="comment_mail_notify" class="checkbox inline hide" style="padding-top:0"><input type="checkbox" name="comment_mail_notify" id="comment_mail_notify" value="comment_mail_notify" checked="checked">有人回复时邮件通知我</label><div class="comt-tip comt-loading" style="display: none;">正在提交, 请稍候...</div><div class="comt-tip comt-error" style="display: none;">#</div></div>
+					<button type="submit" name="submit" id="submit" tabindex="5"><i class="icon-ok-circle icon-white icon12"></i> 提交评论</button>
+					<!-- <span data-type="comment-insert-smilie" class="muted comt-smilie"><i class="icon-thumbs-up icon12"></i> 表情</span> -->
+				</div>
+			</div>
+
+												<div class="comt-comterinfo" id="comment-author-info">
+						<ul>
+							<li class="form-inline"><label class="hide" for="author">昵称</label><input class="ipt" type="text" name="author" id="author" value="" tabindex="2" placeholder="昵称"><span class="text-muted">昵称 (必填)</span></li>
+							<li class="form-inline"><label class="hide" for="email">邮箱</label><input class="ipt" type="text" name="email" id="email" value="" tabindex="3" placeholder="邮箱"><span class="text-muted">邮箱 (必填)</span></li>
+							<li class="form-inline"><label class="hide" for="url">网址</label><input class="ipt" type="text" name="url" id="url" value="" tabindex="4" placeholder="网址"><span class="text-muted">网址</span></li>
+						</ul>
+					</div>
+									</div>
+
+	</form>
+	</div>
+	</div>
+</div>
+<aside class="sidebar">	
+
+<ul>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2017/03">2017年三月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2017/02">2017年二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2017/01">2017年一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/12">2016年十二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/11">2016年十一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/10">2016年十月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/09">2016年九月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/08">2016年八月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/07">2016年七月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/06">2016年六月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/05">2016年五月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/04">2016年四月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/03">2016年三月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/02">2016年二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2016/01">2016年一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/12">2015年十二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/11">2015年十一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/10">2015年十月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/09">2015年九月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/08">2015年八月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/07">2015年七月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/06">2015年六月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/05">2015年五月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/04">2015年四月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/03">2015年三月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/02">2015年二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2015/01">2015年一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/12">2014年十二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/11">2014年十一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/10">2014年十月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/09">2014年九月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/08">2014年八月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/07">2014年七月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/04">2014年四月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/03">2014年三月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/02">2014年二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2014/01">2014年一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/12">2013年十二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/11">2013年十一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/09">2013年九月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/08">2013年八月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/06">2013年六月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/05">2013年五月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/04">2013年四月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/03">2013年三月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2013/02">2013年二月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2012/11">2012年十一月</a></li>
+	<li><a href="http://www.liuhaihua.cn/archives/date/2012/10">2012年十月</a></li>
+</ul>
+
+<div class="widget widget_text"><h3 class="title"><strong>站内搜索</strong></h3>			<div class="textwidget">
+<script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=4919816718407750240' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script><div id="bdcs"><div class="bdcs-container"><meta http-equiv="x-ua-compatible" content="IE=9">   <!-- 嵌入式 -->  <div class="bdcs-main bdcs-clearfix" id="default-searchbox">      <div class="bdcs-search bdcs-clearfix" id="bdcs-search-inline">          <form action="http://so.liuhaihua.cn/cse/search" method="get" target="_blank" class="bdcs-search-form" autocomplete="off" id="bdcs-search-form">              <input type="hidden" name="s" value="4919816718407750240">              <input type="hidden" name="entry" value="1">                                                                        <input type="text" name="q" class="bdcs-search-form-input" id="bdcs-search-form-input" placeholder="请输入关键词" style="height: 32px; line-height: 32px;">              <input type="submit" class="bdcs-search-form-submit " id="bdcs-search-form-submit" value="搜索">                       </form>      </div>                  </div>                           </div></div>
+</div>
+		</div><div class="widget widget_ads"><div class="widget_ads_inner"><script type="text/javascript">
+    /*360*300 创建于 2016/8/29*/
+    var cpro_id = "u2746668";
+</script>
+<script type="text/javascript" src="./etcd 使用入门 _ Harries Blog™_files/c.js.下载"></script><div id="BAIDU_SSP__wrapper_u2746668_0"><iframe id="iframeu2746668_0" src="./etcd 使用入门 _ Harries Blog™_files/qccm(2).html" width="360" height="300" align="center,center" vspace="0" hspace="0" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" style="border:0;vertical-align:bottom;margin:0;width:360px;height:300px" allowtransparency="true"></iframe></div>
+</div></div><div class="widget widget_text affix" style="top: 90px;"><h3 class="title"><strong>加入圈子</strong></h3>			<div class="textwidget"><div class="R-code-box">
+                <dl class="code-dl">
+                    <dd><img src="./etcd 使用入门 _ Harries Blog™_files/psb.jpg" width="150" height="130"></dd>
+<dt>&nbsp; &nbsp;&nbsp; 打开微信,扫描二维码</dt>
+                </dl>
+                <ul class="code-ul">
+<li>技术交流1群：473321150(满)</li>
+                                                             <li>技术交流2群：475811980(满)</li>
+                                                             <li>技术交流3群：521249302(满)</li>
+                                                             <li>技术交流4群：521571209</li>
+                                                             <li>JAVA架构班：521571787</li>
+
+<li>3D电子书城：527933790</li>
+
+<li>创繁投诉1群：479226165</li>
+ </ul>
+           </div></div>
+		</div><div class="widget widget_ads"><div class="widget_ads_inner"><a href="http://www.liuhaihua.cn/ads" target="_blank">                        
+<img src="./etcd 使用入门 _ Harries Blog™_files/jingjia.gif" width="360" height="120" border="0" data-baiduimageplus-ignore="" style="margin-bottom: 20px;"></a> 
+ 
+<a href="http://www.51bos.com/" target="_blank">                        
+<img src="./etcd 使用入门 _ Harries Blog™_files/148854797124238j.png" width="360" height="150" border="0" data-baiduimageplus-ignore=""></a> 
+</div></div><div class="widget widget_postlist"><h3 class="title"><strong>随机文章</strong></h3><ul class="items-01">		<li><a target="_blank" href="http://www.liuhaihua.cn/archives/161809.html"><span class="thumbnail"><span><img data-original="http://www.liuhaihua.cn/wp-content/themes/xiu2/images/thumbnail.png" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/thumbnail.png" style="display: inline;"></span></span><span class="text">基于Flask 实现RESTful API</span><span class="text-muted post-views">阅读(451)</span></a></li>
+				<li><a target="_blank" href="http://www.liuhaihua.cn/archives/243880.html"><span class="thumbnail"><img data-original="http://www.liuhaihua.cn/wp-content/uploads/2016/02/66372-20160218082617409-1457369837.jpg" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/66372-20160218082617409-1457369837.jpg" style="display: inline;"></span><span class="text">俄罗斯研制的两款太空机器人将部署在空间站</span><span class="text-muted post-views">阅读(39)</span></a></li>
+				<li><a target="_blank" href="http://www.liuhaihua.cn/archives/381569.html"><span class="thumbnail"><img data-original="http://www.liuhaihua.cn/wp-content/uploads/2016/07/byqIN3.jpg" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/byqIN3.jpg" style="display: inline;"></span><span class="text">levelDB 源码分析（四）：Arena</span><span class="text-muted post-views">阅读(102)</span></a></li>
+				<li><a target="_blank" href="http://www.liuhaihua.cn/archives/485533.html"><span class="thumbnail"><img data-original="http://images2015.cnblogs.com/news/66372/201703/66372-20170303085608532-1060951846.jpg" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/66372-20170303085608532-1060951846.jpg" style="display: inline;"></span><span class="text">你真的了解Snap吗？先来看看这些数据吧</span><span class="text-muted post-views">阅读(6)</span></a></li>
+				<li><a target="_blank" href="http://www.liuhaihua.cn/archives/67341.html"><span class="thumbnail"><img data-original="http://www.liuhaihua.cn/wp-content/uploads/2015/05/RBbyIf.png" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/RBbyIf.png" style="display: inline;"></span><span class="text">IOS开发之新浪微博OAuth2</span><span class="text-muted post-views">阅读(140)</span></a></li>
+				<li><a target="_blank" href="http://www.liuhaihua.cn/archives/25706.html"><span class="thumbnail"><img data-original="http://www.liuhaihua.cn/wp-content/uploads/2015/02/MrmUrq.png" class="thumb" src="./etcd 使用入门 _ Harries Blog™_files/MrmUrq.png" style="display: inline;"></span><span class="text">Docker 1.5 正式发布，完全支持 IPv6</span><span class="text-muted post-views">阅读(147)</span></a></li>
+		</ul></div><div class="widget widget_pages"><h3 class="title"><strong>IT教程</strong></h3>		<ul>
+			<li class="page_item page-item-94"><a href="http://www.liuhaihua.cn/ubuntu-vps">Ubuntu-VPS基础教程</a></li>
+<li class="page_item page-item-790"><a href="http://www.liuhaihua.cn/et-framework">ET-Framework教程</a></li>
+<li class="page_item page-item-1753"><a href="http://www.liuhaihua.cn/%e8%b7%9f%e6%88%91%e4%b8%80%e8%b5%b7%e5%ad%a6hbase">跟我一起学Hbase</a></li>
+<li class="page_item page-item-2380"><a href="http://www.liuhaihua.cn/jsoupjiaocheng">jsoup中文教程</a></li>
+<li class="page_item page-item-2464"><a href="http://www.liuhaihua.cn/javazhinan">Java指南</a></li>
+<li class="page_item page-item-2708"><a href="http://www.liuhaihua.cn/mybatis%e5%85%a5%e9%97%a8%e6%95%99%e7%a8%8b">mybatis入门教程</a></li>
+<li class="page_item page-item-2794"><a href="http://www.liuhaihua.cn/%e6%b7%b1%e5%85%a5%e7%90%86%e8%a7%a3java%e5%86%85%e5%ad%98%e6%a8%a1%e5%9e%8b">深入理解Java内存模型</a></li>
+<li class="page_item page-item-2843"><a href="http://www.liuhaihua.cn/httpclient4-2%e5%ae%98%e6%96%b9%e6%96%87%e6%a1%a3%e7%a0%94%e7%a9%b6">httpClient4.2官方文档研究</a></li>
+<li class="page_item page-item-12234"><a href="http://www.liuhaihua.cn/spring-%e6%95%99%e7%a8%8b">Spring 教程</a></li>
+<li class="page_item page-item-12344"><a href="http://www.liuhaihua.cn/ibaties%e6%95%99%e7%a8%8b">ibaties教程</a></li>
+<li class="page_item page-item-12411"><a href="http://www.liuhaihua.cn/mavenjiaocheng">Maven教程</a></li>
+<li class="page_item page-item-12489"><a href="http://www.liuhaihua.cn/struts2%e6%95%99%e7%a8%8b">struts2教程</a></li>
+<li class="page_item page-item-12566"><a href="http://www.liuhaihua.cn/ant-%e6%95%99%e7%a8%8b">Ant 教程</a></li>
+<li class="page_item page-item-12588"><a href="http://www.liuhaihua.cn/hive%e6%95%99%e7%a8%8b">Hive教程</a></li>
+<li class="page_item page-item-12611"><a href="http://www.liuhaihua.cn/hadoop%e6%95%99%e7%a8%8b">Hadoop教程</a></li>
+<li class="page_item page-item-12658"><a href="http://www.liuhaihua.cn/hbase%e6%95%99%e7%a8%8b">HBase教程</a></li>
+<li class="page_item page-item-12725"><a href="http://www.liuhaihua.cn/svn%e6%95%99%e7%a8%8b%e5%85%a5%e9%97%a8">SVN教程入门</a></li>
+<li class="page_item page-item-12763"><a href="http://www.liuhaihua.cn/git%e6%95%99%e7%a8%8b">Git教程</a></li>
+<li class="page_item page-item-12793"><a href="http://www.liuhaihua.cn/hibernate%e6%95%99%e7%a8%8b">hibernate教程</a></li>
+<li class="page_item page-item-12814"><a href="http://www.liuhaihua.cn/memcachedjiaocheng">memcached教程</a></li>
+<li class="page_item page-item-13293"><a href="http://www.liuhaihua.cn/mongodbjiaocheng">MongoDB教程</a></li>
+<li class="page_item page-item-13297"><a href="http://www.liuhaihua.cn/redis%e6%95%99%e7%a8%8b">Redis教程</a></li>
+<li class="page_item page-item-14336"><a href="http://www.liuhaihua.cn/javashejimoshi">Java设计模式</a></li>
+<li class="page_item page-item-14358"><a href="http://www.liuhaihua.cn/java%e5%85%a5%e9%97%a8%e6%95%99%e7%a8%8b">Java入门教程</a></li>
+<li class="page_item page-item-121335"><a href="http://www.liuhaihua.cn/121335-2">solr入门教程</a></li>
+<li class="page_item page-item-150133"><a href="http://www.liuhaihua.cn/bootstrap3">bootstrap3教程</a></li>
+<li class="page_item page-item-150653"><a href="http://www.liuhaihua.cn/css">css教程</a></li>
+<li class="page_item page-item-152124"><a href="http://www.liuhaihua.cn/php">php教程</a></li>
+<li class="page_item page-item-159964"><a href="http://www.liuhaihua.cn/python">Python 基础教程</a></li>
+<li class="page_item page-item-160198"><a href="http://www.liuhaihua.cn/mysql">MySQL教程</a></li>
+<li class="page_item page-item-160430"><a href="http://www.liuhaihua.cn/eclipse">Eclipse 教程</a></li>
+<li class="page_item page-item-232768"><a href="http://www.liuhaihua.cn/jpajiaocheng">JPA教程</a></li>
+<li class="page_item page-item-254660"><a href="http://www.liuhaihua.cn/quartz">Quartz指南</a></li>
+<li class="page_item page-item-265410"><a href="http://www.liuhaihua.cn/actionmq">ActionMQ中文指南</a></li>
+<li class="page_item page-item-269511"><a href="http://www.liuhaihua.cn/apache">Apache基础教程</a></li>
+<li class="page_item page-item-301733"><a href="http://www.liuhaihua.cn/jenkins">Jenkins入门系列</a></li>
+<li class="page_item page-item-325002"><a href="http://www.liuhaihua.cn/mybatis">深入浅出MyBatis</a></li>
+<li class="page_item page-item-327043"><a href="http://www.liuhaihua.cn/ionic">ionic教程</a></li>
+<li class="page_item page-item-327083"><a href="http://www.liuhaihua.cn/angularjs-%e6%95%99%e7%a8%8b">AngularJS 教程</a></li>
+<li class="page_item page-item-425032"><a href="http://www.liuhaihua.cn/webservice-cxf%e5%ad%a6%e4%b9%a0">WebService CXF学习</a></li>
+<li class="page_item page-item-438889"><a href="http://www.liuhaihua.cn/spring-boot-reference-guide">Spring Boot 参考指南（中文）</a></li>
+<li class="page_item page-item-480897"><a href="http://www.liuhaihua.cn/spring-boot%e6%95%99%e7%a8%8b">Spring boot教程</a></li>
+		</ul>
+		</div><div class="widget widget_comments"><h3 class="title"><strong>最新评论</strong></h3><ul><li><a target="_blank" href="http://www.liuhaihua.cn/archives/485703.html#comment-40989" title="" data-original-title="程序员「奇葩」说上的评论"><img data-original="https://secure.gravatar.com/avatar/a551c9ceb407ef55fc795be703074da6" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/a551c9ceb407ef55fc795be703074da6" style="display: block;">求包养伴游外围女 <span class="text-muted">2天前说：<br>新西兰旅游http://www.zxdoors.net/ 新西兰旅游签证http://www.zxdoors.net/ </span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/485703.html#comment-40988" title="" data-original-title="程序员「奇葩」说上的评论"><img data-original="https://secure.gravatar.com/avatar/a551c9ceb407ef55fc795be703074da6" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/a551c9ceb407ef55fc795be703074da6" style="display: block;">求包养伴游外围女 <span class="text-muted">2天前说：<br>包养http://www.ememe.cc/ 求包养http://www.ememe.cc/ 陪游网http://www</span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/14463.html#comment-40987" title="" data-original-title="Java语言包(java.lang)简介上的评论"><img data-original="https://secure.gravatar.com/avatar/92a4e4ae1101ff7234569fdac80ca28b" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/92a4e4ae1101ff7234569fdac80ca28b" style="display: block;">cialis_pills <span class="text-muted">3天前说：<br>You don’t have prescription for </span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/14439.html#comment-40986" title="" data-original-title="Java Graphics类的绘图方法上的评论"><img data-original="https://secure.gravatar.com/avatar/92a4e4ae1101ff7234569fdac80ca28b" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/92a4e4ae1101ff7234569fdac80ca28b" style="display: block;">cheap_cialis <span class="text-muted">3天前说：<br>cheap cialis</span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/485523.html#comment-40985" title="" data-original-title="分布式文件系统Go-IPFS v0.4.6 发布上的评论"><img data-original="https://secure.gravatar.com/avatar/76241b66267cea09f45d0b46ffa91b16" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/76241b66267cea09f45d0b46ffa91b16" style="display: block;">东方汇软膜天花吊顶 <span class="text-muted">4天前说：<br>写的很专业！网站框架设计的好，做什么推广都顺畅！</span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/485186.html#comment-40982" title="" data-original-title="餐饮创业者的痛：向老炮取了无数经，可我还是跳了这4个坑上的评论"><img data-original="https://secure.gravatar.com/avatar/870746c9822f72e1fe883dd714ceb6dc" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/870746c9822f72e1fe883dd714ceb6dc" style="display: block;">Harries <span class="text-muted">4天前说：<br>是的，成长必经之路</span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/404374.html#comment-40981" title="" data-original-title="别人的自由潜水AIDA2星课程学习日记--One意潜上的评论"><img data-original="https://secure.gravatar.com/avatar/fbc8b0e2feb26ede3b89e6111af76e63" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/fbc8b0e2feb26ede3b89e6111af76e63" style="display: block;">David <span class="text-muted">4天前说：<br>thx</span></a></li><li><a target="_blank" href="http://www.liuhaihua.cn/archives/404374.html#comment-40980" title="" data-original-title="别人的自由潜水AIDA2星课程学习日记--One意潜上的评论"><img data-original="https://secure.gravatar.com/avatar/894ff9094aedc59d8d27693913850848" class="avatar avatar-50" height="50" width="50" src="./etcd 使用入门 _ Harries Blog™_files/894ff9094aedc59d8d27693913850848" style="display: block;">Jessie <span class="text-muted">5天前说：<br>可以直接学2星的。你可以搜一下微信公众号OneFreediving，上面资料介绍的很全了。</span></a></li></ul></div></aside>
+</section>
+<footer class="footer">
+    © 2017 <a href="http://www.liuhaihua.cn/">Harries Blog™</a> &nbsp; @版权所有  备案号: 京ICP备14030975号-1 | 
+<a href="http://www.liuhaihua.cn/tags" title="网站标签" target"_blank"="">网站标签</a>|
+<a href="http://www.liuhaihua.cn/sitemap.xml" target"_blank"="">网站地图</a>    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?6d21b26ddcb2568a14683f0008080535";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+</footer>
+
+<script>
+window.jui = {
+	uri: 'http://www.liuhaihua.cn/wp-content/themes/xiu2',
+	roll: '3',
+	ajaxpager: '0'
+}
+</script>
+<!--ADD_CODE_FOOTER_START-->
+<script type="text/javascript">
+    /*自适应 创建于 2016/8/29*/
+    var cpro_id = "u2746674";
+</script>
+<script type="text/javascript" src="./etcd 使用入门 _ Harries Blog™_files/i.js.下载"></script>
+
+<!--ADD_CODE_FOOTER_END-->
+<script type="text/javascript" src="./etcd 使用入门 _ Harries Blog™_files/bootstrap.min.js.下载"></script>
+<script type="text/javascript" src="./etcd 使用入门 _ Harries Blog™_files/custom.js.下载"></script><div class="rollto" style="display: block;"><a href="javascript:;"></a></div>
+
+
+<!-- Dynamic page generated in 1.287 seconds. -->
+<!-- Cached page generated by WP-Super-Cache on 2017-03-06 17:21:31 -->
+
+<!-- Compression = gzip --></body></html>

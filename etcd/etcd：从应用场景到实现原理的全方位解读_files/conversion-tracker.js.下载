@@ -1,0 +1,97 @@
+function createCookie(name, value, millis, domain) {
+    var date = new Date();
+    date.setTime(date.getTime() + millis);
+    var expires = "; expires=" + date.toGMTString();
+    document.cookie = name + "=" + value + expires + "; path=/; Domain=" + domain + ";";
+}
+
+function createGuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+function createCookieForAsset(vcrLink) {
+    var customer = $(vcrLink).attr("data-conversion-tracker-customer");
+    var campaign = $(vcrLink).attr("data-conversion-tracker-campaign");
+    var asset = $(vcrLink).attr("data-conversion-tracker-asset");
+
+    var regExp = new RegExp("[=;,\\s\\|]", "g");
+    customer = customer.replace(regExp, "_");
+    campaign = campaign.replace(regExp, "_");
+    asset = asset.replace(regExp, "_");
+
+    if (customer == null || customer.trim() == "") {
+        return;
+    }
+
+    if (campaign == null || campaign.trim() == "") {
+        return;
+    }
+
+    if (asset == null || asset.trim() == "") {
+        return;
+    }
+
+    var clickId = createGuid();
+    var cookieValue = customer + "|" + campaign + "|" + clickId;
+
+    createCookie("ConversionTracking_" + asset, cookieValue, 30 * 24 * 60 * 60 * 1000, "infoq.com");
+}
+
+function finishedVcrWidgets() {
+    var finished = false;
+    if (device == "mobile") {
+        //for podacast index page there are no widgets to be built, track directly
+        if (window.isIndexPage ||
+                // on homepage, content pages, topic pages, rest of the index pages
+            (window.finishedMobileVcr || window.finishedMobileVcr === undefined)
+            && (window.finishedCategoryVcrs || window.finishedCategoryVcrs === undefined)) {
+            finished = true;
+        }
+    } else if (device == "desktop") {
+        // no vcr widgets on index pages
+        if (window.isIndexPage) {
+            finished = true;
+        } else
+        //on homepage, bottom widget + 2 native widgets
+        if (InfoQConstants.pageType == "HOMEPAGE" && window.finishedVcrOptional1 && window.finishedRelatedVcr && (window.finishedVcrOptional2 === undefined || window.finishedVcrOptional2)) {
+            finished = true;
+        } else
+        // rightbar widgets + native widgets + content vcr widgets
+        if ((InfoQConstants.pageType == "NEWS_PAGE" || InfoQConstants.pageType == "ARTICLE_PAGE")
+            && ((window.finishedRightbarVcr || window.finishedRightbarVcr === undefined) && window.contentVcrFinished)) {
+            finished = true;
+        } else
+        // native widgets + content widgets
+        if (window.contentVcrFinished && (window.finishedVcrOptional1 || window.finishedVcrOptional1 === undefined)
+            && (window.finishedVcrOptional2 || window.finishedVcrOptional2 === undefined)) {
+            finished = true;
+        }
+    }
+    return finished;
+}
+
+//check to see if the page has vcr widgets included
+if ((window.device !== undefined) && (window.vcrsLoaded != undefined)) {
+    var conversionTrackingTimer = setInterval(function () {
+        var shouldTrack = finishedVcrWidgets();
+        if (shouldTrack) {
+            clearInterval(conversionTrackingTimer);
+            $("[data-conversion-tracker-customer]").click(function () {
+                createCookieForAsset(this);
+                return true;
+            });
+        }
+    }, 500);
+} else {
+    $(document).ready(function () {
+
+        $("[data-conversion-tracker-customer]").click(function () {
+            createCookieForAsset(this);
+            return true;
+        });
+
+    });
+}

@@ -1,0 +1,47 @@
+
+wget https://releases.hashicorp.com/consul-template/0.15.0/consul-template_0.15.0_linux_386.zip
+unzip consul-template_0.15.0_linux_386.zip
+ln -s /opt/consul_template/consul-template /usr/local/bin/consul-template
+(mv consul-template /usr/bin/)
+
+
+vi /opt/consul/template/tmpl.json
+#
+consul = "192.168.0.11:8500"
+
+template {
+  source = "/opt/docker/haproxy/haproxy.ctmpl"
+  destination = "/opt/docker/haproxy/haproxy.cfg"
+  command = "docker kill -s HUP my-running-haproxy"
+}
+#
+
+vi /opt/consul_template/consul_template.sh
+#!/bin/sh
+consul-template -config /opt/consul/template/tmpl.json > /opt/consul/template/consul-template.out
+
+
+#设置开机启动
+vi /usr/lib/systemd/system/consul_template.service 
+chmod 644 /usr/lib/systemd/system/consul_template.service
+systemctl enable consul_template.service
+systemctl list-unit-files|grep consul_template
+systemctl start consul_template.service
+ps aux | grep consul_template
+tail /var/log/messages -f
+systemctl daemon-reload
+systemctl status consul_template.service
+
+[Unit]
+Description=consul_template
+After=network.target remote-fs.target nss-lookup.target consul.service registrator.service
+[Service]
+#Type=forking
+#PIDFile=/opt/consul_template/config/redis.pid
+ExecStart=/opt/consul_template/consul_template.sh
+#ExecReload=
+#ExecStop=
+[Install]
+WantedBy=multi-user.target
+
+

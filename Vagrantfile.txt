@@ -1,0 +1,53 @@
+Vagrant.configure("2") do |config|
+  config.vm.define :vmware11 do |vmware11|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    vmware11.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware11", "--memory", "1024"]
+    end
+    vmware11.vm.box = "vmware11"
+    vmware11.vm.hostname = "vmware11"
+    vmware11.vm.network "public_network", auto_config: false
+    vmware11.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.211 netmask 255.255.0.0 up"
+
+  end
+
+  config.vm.define :vmware13 do |vmware13|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    vmware13.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware13", "--memory", "1024"]
+    end
+    vmware13.vm.box = "vmware13"
+    vmware13.vm.hostname = "vmware13"
+    vmware13.vm.network "public_network", auto_config: false
+	vmware13.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.213 netmask 255.255.0.0 up"
+  end
+  config.vm.define :vmware14 do |vmware14|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    vmware14.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware14", "--memory", "1024"]
+    end
+    vmware14.vm.box = "vmware14"
+    vmware14.vm.hostname = "vmware14"
+    vmware14.vm.network "public_network", auto_config: false
+	vmware14.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.214 netmask 255.255.0.0 up"
+  end
+
+
+
+
+  config.vm.define :vmware110 do |vmware110|
+    config.ssh.username = "vagrant"
+    config.ssh.password = "vagrant"
+    vmware110.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vmware110", "--memory", "2048"]
+    end
+    vmware110.vm.box = "centos7"
+    vmware110.vm.hostname = "vmware110"
+    vmware110.vm.network "public_network", auto_config: false
+        vmware110.vm.provision "shell",run: "always",inline: "ifconfig eth1 192.168.10.110 netmask 255.255.0.0 up"
+  end
+
+end

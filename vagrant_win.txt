@@ -1,0 +1,60 @@
+
+https://www.virtualbox.org/wiki/Downloads
+https://www.vagrantup.com/downloads.html
+
+vagrant box list
+vagrant box add centos7 /home/virtualbox/CentOS-7-x86_64-Vagrant-1605_01.VirtualBox.box 
+vagrant init centos7
+vagrant up vboxlocal11
+vagrant box remove centos7
+vagrant destroy vboxlocal11
+vagrant package
+vagrant reload centos7
+vagrant resume
+vagrant ssh-config
+vagrant status vboxlocal11
+vagrant global-status
+vagrant suspend
+vagrant halt
+vagrant package --base vboxlocal11 --output /home/virtualbox/vboxlocal11.box
+
+#vagrant 密码：vagrant
+#修改root密码
+sudo passwd root
+
+
+
+#解决 "rsync" could not be found on your PATH.
+config.vm.synced_folder ".", "/home/vagrant/sync", type: "rsync"   
+改成
+config.vm.synced_folder ".", "/home/vagrant/sync", type: "virtualbox" 
+
+
+#vi Vagrantfile
+Vagrant.configure("2") do |config|
+  config.vm.define :vboxlocal11 do |vboxlocal11|
+    vboxlocal11.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vboxlocal11", "--memory", "1024"]
+    end
+    vboxlocal11.vm.box = "centos7"
+    vboxlocal11.vm.hostname = "vboxlocal11"
+    config.vm.network "public_network", ip:"192.168.10.11",  :netmask => "255.255.240.0"
+  end
+
+  config.vm.define :vboxlocal13 do |vboxlocal13|
+    vboxlocal13.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vboxlocal13", "--memory", "1024"]
+    end
+    vboxlocal13.vm.box = "centos7"
+    vboxlocal13.vm.hostname = "vboxlocal13"
+    config.vm.network "public_network", ip:"192.168.10.13", :netmask => "255.255.240.0"
+  end
+  config.vm.define :vboxlocal14 do |vboxlocal14|
+    vboxlocal14.vm.provider "virtualbox" do |v|
+          v.customize ["modifyvm", :id, "--name", "vboxlocal14", "--memory", "1024"]
+    end
+    vboxlocal14.vm.box = "centos7"
+    vboxlocal14.vm.hostname = "vboxlocal14"
+    config.vm.network "public_network", ip:"192.168.10.14", :netmask => "255.255.240.0"
+  end
+end

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)http://www.tuicool.com/articles/M3QFven -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="authenticity_token" name="csrf-param">
+<meta content="BeheSSliT4XKK4I5WApO5zhB4JPQ8g5UKbM+qaaYtgE=" name="csrf-token">
+    <title>
+            使用consul实现分布式服务注册和发现 - 推酷
+   </title>
+    <meta name="description" content="使用consul实现分布式服务注册和发现">
+  <link rel="shortcut icon" href="http://static0.tuicool.com/favicon.ico" type="image/x-icon">
+  <link href="http://static0.tuicool.com/images/icon114.png" rel="Bookmark">
+  <link rel="apple-touch-icon" sizes="57x57" href="http://static1.tuicool.com/images/icon57.png"> 
+  <link rel="apple-touch-icon" sizes="72x72" href="http://static2.tuicool.com/images/icon72.png">  
+  <link rel="apple-touch-icon" sizes="114x114" href="http://static0.tuicool.com/images/icon114.png">    
+  <link rel="apple-touch-icon" sizes="144x144" href="http://static1.tuicool.com/images/icon144.png">
+  <link href="./使用consul实现分布式服务注册和发现 - 推酷_files/pub.css" rel="stylesheet">
+  <link href="./使用consul实现分布式服务注册和发现 - 推酷_files/application-430b7c9d9486309f49f61a836eb3305e.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="./使用consul实现分布式服务注册和发现 - 推酷_files/font-awesome.min.css" rel="stylesheet">
+  <script src="./使用consul实现分布式服务注册和发现 - 推酷_files/ca-pub-7054762349007490.js.下载"></script><script type="text/javascript" src="./使用consul实现分布式服务注册和发现 - 推酷_files/pub.js.下载"></script>
+  <script src="./使用consul实现分布式服务注册和发现 - 推酷_files/application-bd2b33d0c2f5c5982c78a7d768c4219e.js.下载" type="text/javascript"></script>
+  
+      <style type="text/css">
+      .btn-large {
+        padding: 0;
+      }
+      .load-fail {
+        display: none;
+      }
+    </style>
+
+</head>
+<body class="  pace-done"><div class="pace  pace-inactive"><div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+  <div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div></div>
+  
+  <div id="header" class="navbar-fixed-top">
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+            <span class="icon-bar"></span> 
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span> 
+          </a>
+          <a href="http://www.tuicool.com/" class="brand">推酷</a>        
+        <nav class="nav-collapse collapse">
+            <ul class="nav navbar primary-nav">                            
+              <li class="active">
+                <a href="http://www.tuicool.com/ah">
+                  文章
+                </a>
+              </li>              
+              <li class="">
+                <a href="http://www.tuicool.com/sites/hot">
+                  站点
+                </a>
+              </li>
+              <li class="">
+                <a href="http://www.tuicool.com/topics">
+                  主题
+                </a>
+              </li>
+              <li class="">
+                <a href="http://huodong.tuicool.com/">
+                  活动
+                </a>
+              </li>
+              <li class="">
+                <a href="http://www.tuicool.com/mobile">
+                  APP
+                    <sup style="font-size:0.8em;color: #16A085;">荐</sup>
+                </a>
+              </li>
+              <li class="dropdown">
+                <a href="http://www.tuicool.com/articles/M3QFven#" class="dropdown-toggle" data-toggle="dropdown">周刊 <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.tuicool.com/mags">编程狂人</a></li>
+                  <li><a href="http://www.tuicool.com/mags/design">设计匠艺</a></li> 
+                  <li><a href="http://www.tuicool.com/mags/startup">创业周刊</a></li> 
+                  <li><a href="http://www.tuicool.com/mags/tech">科技周刊</a></li>      
+                  <li><a href="http://www.tuicool.com/mags/guru">Guru Weekly</a></li> 
+                  <li><a href="http://www.tuicool.com/articles/weekly">一周拾遗</a></li>                  
+                </ul>
+              </li>
+              <li class="dropdown">
+                <a href="http://www.tuicool.com/articles/M3QFven#" class="dropdown-toggle" data-toggle="dropdown">更多 <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://course.tuicool.com/">
+                    公开课
+                  </a>
+                  </li>
+                  <li><a href="http://www.tuicool.com/bbs/go/issues">意见反馈</a></li>
+                </ul>
+              </li>
+              </ul>
+            <form class="navbar-search pull-left" action="http://www.tuicool.com/search">
+              <input type="text" class="search-query span2" name="kw" placeholder="搜索">
+            </form>
+            <ul class="nav pull-right">
+                <li><a href="http://www.tuicool.com/login">登录</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+  </div>   
+</div>
+  <div id="flash_container" class="noPrint">    
+  </div>
+  
+  <div class="container-fluid">  
+      
+<div class="row-fluid article_row_fluid">
+    <div class="span8 contant article_detail_bg">
+        <h1>使用consul实现分布式服务注册和发现</h1>
+        <div class="article_meta">
+            <div style="margin-bottom: 5px;">
+            <span class="timestamp">时间&nbsp;2015-07-06 15:37:38
+            </span>
+            <span class="from">
+                <i class="icon-globe"></i>
+                    <a class="cut cut28 from" href="http://www.tuicool.com/sites/mYnQjam" target="_blank">Tony Bai
+                    </a>
+            </span>
+            </div>
+            <div class="source">
+                <i style="float:left;">原文</i>&nbsp; 
+                <a class="cut cut70" href="http://tonybai.com/2015/07/06/implement-distributed-services-registery-and-discovery-by-consul/?utm_source=tuicool&amp;utm_medium=referral" style="display:inline-block;">http://tonybai.com/2015/07/06/implement-distributed-services-registery-and-discovery-by-consul/</a>
+            </div>
+            <div>
+                <span>主题</span>
+                <a href="http://www.tuicool.com/topics/11090162" target="_blank">
+                    <span class="new-label">Consul</span>
+                </a>
+            </div>
+        </div>
+        <div class="article_body" id="nei">
+            <div> 
+ <p>七 06</p> 
+ <p> <span>bigwhite</span> <span> <a href="http://tonybai.com/category/technical-notes/" title="查看 技术志 中的全部文章" rel="nofollow,noindex">技术志</a> </span> <span> Airbnb,cluster,consul,docker,etcd,Go,Golang,haproxy,hashicorp,json,raft,SmartStack,ZooKeeper,分布式系统,强一致性,服务发现,服务注册,选主 </span> <span> <a href="http://tonybai.com/2015/07/06/implement-distributed-services-registery-and-discovery-by-consul/#respond" title="《使用consul实现分布式服务注册和发现》上的评论" rel="nofollow,noindex">No Comments</a> </span> </p> 
+ <p> <a href="https://github.com/hashicorp/consul" rel="nofollow,noindex">Consul</a> 是 <a href="https://www.hashicorp.com/" rel="nofollow,noindex">HashiCorp</a> 公司推出的开源工具，用于实现分布式系统的服务发现与配置。与其他分布式服务注册与发现的方案，比如 <a href="https://www.airbnb.com/" rel="nofollow,noindex">Airbnb</a> 的 <a href="http://nerds.airbnb.com%20/smartstack-service-discovery-cloud/" rel="nofollow,noindex">SmartStack</a> 等相比，Consul的方案更“一站式”，内置了服务注册与发现框 架、分布一致性协议实现、健康检查、Key/Value存储、多数据中心方案，不再需要依赖其他工具（比如ZooKeeper等）。使用起来也较 为简单。Consul用Golang实现，因此具有天然可移植性(支持Linux、windows和Mac OS X)；安装包仅包含一个可执行文件，方便部署，与Docker等轻量级容器可 <b>无缝配合</b> 。 </p> 
+ <p>本文是Consul的入门介绍，并用一些例子说明如何使用Consul实现服务的注册和发现。</p> 
+ <p>一、建立Consul Cluster</p> 
+ <p>要想利用Consul提供的服务实现服务的注册与发现，我们需要建立Consul Cluster。在Consul方案中，每个提供服务的节点上都要部署和运行Consul的agent，所有运行Consul agent节点的集合构成Consul Cluster。Consul agent有两种运行模式：Server和Client。这里的Server和Client只是Consul集群层面的区分，与搭建在Cluster之上 的应用服务无关。以Server模式运行的Consul agent节点用于维护Consul集群的状态，官方建议每个Consul Cluster至少有3个或以上的运行在Server mode的Agent，Client节点不限。</p> 
+ <p> <img src="./使用consul实现分布式服务注册和发现 - 推酷_files/UvEz2i6.png!web" class="alignCenter"> </p> 
+ <p>每个数据中心的Consul Cluster都会在运行于server模式下的agent节点中选出一个Leader节点，这个选举过程通过Consul实现的raft协议保证，多个 server节点上的Consul数据信息是强一致的。处于client mode的Consul agent节点比较简单，无状态，仅仅负责将请求转发给Server agent节点。</p> 
+ <p>下面我们就来搭建一个实验Consul Cluster。</p> 
+ <p>实验环境和节点角色如下：</p> 
+ <p> n1(Ubuntu 14.04 x86_64): 10.10.105.71&nbsp; server mode <br> n2(Ubuntu 12.04 x86_64): 10.10.126.101 server mode&nbsp;&nbsp;&nbsp; with Consul Web UI <br> n3(Ubuntu 9.04 i386): 10.10.126.187&nbsp;&nbsp;&nbsp; client mode </p> 
+ <p>在三台主机上分别下载和安装Consul包，安装包很简单，只是包含一个可执行文件consul。在n2主机上还要下载一份Consul Web UI包，支持图形化展示Consul cluster中的节点状态和服务状态。</p> 
+ <p>Consul Cluster的启动过程如下：</p> 
+ <p>n1主机：</p> 
+ <p> $ consul agent -server -bootstrap-expect 2 -data-dir /tmp/consul -node=n1 -bind=10.10.105.71 -dc=dc1 <br> ==&gt; WARNING: Expect Mode enabled, expecting 2 servers <br> ==&gt; WARNING: It is highly recommended to set GOMAXPROCS higher than 1 <br> ==&gt; Starting Consul agent… <br> ==&gt; Starting Consul agent RPC… <br> ==&gt; Consul agent running! <br> Node name: 'n1' <br> Datacenter: 'dc1' <br> Server: true (bootstrap: false) <br> Client Addr: 127.0.0.1 (HTTP: 8500, HTTPS: -1, DNS: 8600, RPC: 8400) <br> Cluster Addr: 10.10.105.71 (LAN: 8301, WAN: 8302) <br> Gossip encrypt: false, RPC-TLS: false, TLS-Incoming: false <br> Atlas: &lt;disabled&gt; </p> 
+ <p>==&gt; Log data will now stream in as it occurs:</p> 
+ <p> 2015/07/03 09:18:25 [INFO] serf: EventMemberJoin: n1 10.10.105.71 <br> 2015/07/03 09:18:25 [INFO] serf: EventMemberJoin: n1.dc1 10.10.105.71 <br> 2015/07/03 09:18:25 [INFO] raft: Node at 10.10.105.71:8300 [Follower] entering Follower state <br> 2015/07/03 09:18:25 [INFO] consul: adding server n1 (Addr: 10.10.105.71:8300) (DC: dc1) <br> 2015/07/03 09:18:25 [INFO] consul: adding server n1.dc1 (Addr: 10.10.105.71:8300) (DC: dc1) <br> 2015/07/03 09:18:25 [ERR] agent: failed to sync remote state: No cluster leader <br> 2015/07/03 09:18:26 [WARN] raft: EnableSingleNode disabled, and no known peers. Aborting election.1 </p> 
+ <p>n2主机：</p> 
+ <p> $ consul agent -server -bootstrap-expect 2 -data-dir /tmp/consul -node=n2 -bind=10.10.126.101 <b>-ui-dir ./dist</b> -dc=dc1 <br> ==&gt; WARNING: Expect Mode enabled, expecting 2 servers <br> ==&gt; WARNING: It is highly recommended to set GOMAXPROCS higher than 1 <br> ==&gt; Starting Consul agent… <br> ==&gt; Starting Consul agent RPC… <br> ==&gt; Consul agent running! <br> Node name: 'n2' <br> Datacenter: 'dc1' <br> Server: true (bootstrap: false) <br> Client Addr: 127.0.0.1 (HTTP: 8500, HTTPS: -1, DNS: 8600, RPC: 8400) <br> Cluster Addr: 10.10.126.101 (LAN: 8301, WAN: 8302) <br> Gossip encrypt: false, RPC-TLS: false, TLS-Incoming: false <br> Atlas: &lt;disabled&gt; </p> 
+ <p>==&gt; Log data will now stream in as it occurs:</p> 
+ <p> 2015/07/03 11:30:32 [INFO] serf: EventMemberJoin: n2 10.10.126.101 <br> 2015/07/03 11:30:32 [INFO] serf: EventMemberJoin: n2.dc1 10.10.126.101 <br> 2015/07/03 11:30:32 [INFO] raft: Node at 10.10.126.101:8300 [Follower] entering Follower state <br> 2015/07/03 11:30:32 [INFO] consul: adding server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 11:30:32 [INFO] consul: adding server n2.dc1 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 11:30:32 [ERR] agent: failed to sync remote state: No cluster leader <br> 2015/07/03 11:30:33 [WARN] raft: EnableSingleNode disabled, and no known peers. Aborting election. </p> 
+ <p>从两个server agent的启动日志可以看出，n1、n2启动后并不知道集群其他节点的存在。以n1为例，通过consul members和consul info查看当前agent状态：</p> 
+ <p> $ consul members <br> Node&nbsp; Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Status&nbsp; Type&nbsp;&nbsp;&nbsp; Build&nbsp; Protocol&nbsp; DC <br> n1&nbsp;&nbsp;&nbsp; 10.10.105.71:8301&nbsp; alive&nbsp;&nbsp; server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 </p> 
+ <p> $ consul info <br> … … <br> consul: <br> bootstrap = false <br> known_datacenters = 1 <br> leader = false <br> server = true <br> raft: <br> applied_index = 0 <br> commit_index = 0 <br> fsm_pending = 0 <br> last_contact = never <br> last_log_index = 0 <br> last_log_term = 0 <br> last_snapshot_index = 0 <br> last_snapshot_term = 0 <br> num_peers = 0 <br> state = <b>Follower</b> <br> term = 0 <br> … … </p> 
+ <p>可以看出，n1上的agent当前状态是Follower，bootstrap = false；n2同样也是这个情况。整个Cluster并未完成Bootstrap过程。</p> 
+ <p>我们用consul join命令触发Cluster bootstrap过程，我们在n1上执行如下命令：</p> 
+ <p> $ consul join 10.10.126.101 <br> Successfully joined cluster by contacting 1 nodes. </p> 
+ <p>我们通过consul join子命令将当前节点加入包含成员10.10.126.101（也就是n2)的集群中去。命令执行结果通过n1和n2的日志可以观察到：</p> 
+ <p>n1主机:</p> 
+ <p> 2015/07/03 09:29:48 [INFO] agent: (LAN) joining: [10.10.126.101] <br> 2015/07/03 09:29:48 [INFO] serf: EventMemberJoin: n2 10.10.126.101 <br> 2015/07/03 09:29:48 [INFO] agent: (LAN) joined: 1 Err: &lt;nil&gt; <br> 2015/07/03 09:29:48 [INFO] consul: adding server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 09:29:48 [INFO] consul: Attempting bootstrap with nodes: [10.10.126.101:8300 10.10.105.71:8300] <br> 2015/07/03 09:29:49 [INFO] consul: New leader elected: n2 <br> 2015/07/03 09:29:50 [INFO] agent: Synced service 'consul' </p> 
+ <p>n2主机:</p> 
+ <p> 2015/07/03 11:40:53 [INFO] serf: EventMemberJoin: n1 10.10.105.71 <br> 2015/07/03 11:40:53 [INFO] consul: adding server n1 (Addr: 10.10.105.71:8300) (DC: dc1) <br> 2015/07/03 11:40:53 [INFO] consul: Attempting bootstrap with nodes: [10.10.126.101:8300 10.10.105.71:8300] <br> 2015/07/03 11:40:54 [WARN] raft: Heartbeat timeout reached, starting election <br> 2015/07/03 11:40:54 [INFO] raft: Node at 10.10.126.101:8300 [Candidate] entering Candidate state <br> 2015/07/03 11:40:54 [INFO] raft: Election won. Tally: 2 <br> 2015/07/03 11:40:54 [INFO] raft: Node at 10.10.126.101:8300 [Leader] entering Leader state <br> 2015/07/03 11:40:54 [INFO] consul: cluster leadership acquired <br> 2015/07/03 11:40:54 [INFO] consul: New leader elected: n2 <br> 2015/07/03 11:40:54 [INFO] raft: pipelining replication to peer 10.10.105.71:8300 <br> 2015/07/03 11:40:54 [INFO] consul: member 'n2' joined, marking health alive <br> 2015/07/03 11:40:54 [INFO] consul: member 'n1' joined, marking health alive <br> 2015/07/03 11:40:55 [INFO] agent: Synced service 'consul' </p> 
+ <p>join后，两台主机互相知道了对方，并进行了leader election过程，n2被选举为Leader。</p> 
+ <p>在n2主机上通过consul info确认一下n2 agent的状态：</p> 
+ <p> $consul info <br> … … <br> consul: <br> bootstrap = false <br> known_datacenters = 1 <br> leader = true <br> server = true <br> raft: <br> applied_index = 10 <br> commit_index = 10 <br> fsm_pending = 0 <br> last_contact = never <br> last_log_index = 10 <br> last_log_term = 1 <br> last_snapshot_index = 0 <br> last_snapshot_term = 0 <br> num_peers = 1 <br> state = <b>Leader</b> <br> term = 1 <br> … … </p> 
+ <p> $ consul members <br> Node&nbsp; Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Status&nbsp; Type&nbsp;&nbsp;&nbsp; Build&nbsp; Protocol&nbsp; DC <br> n2&nbsp;&nbsp;&nbsp; 10.10.126.101:8301&nbsp; alive&nbsp;&nbsp; server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 <br> n1&nbsp;&nbsp;&nbsp; 10.10.105.71:8301&nbsp;&nbsp; alive&nbsp;&nbsp; server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 </p> 
+ <p>可以看到n2的state已经为Leader了，n1的state依旧是Follower。</p> 
+ <p>到这里，n1和n2就成为了dc1这个数据中心Consul Cluster的两个节点，而且是用来维护集群状态的Server node。n2被选举为Leader，n1是Folllower。</p> 
+ <p>如果作为Leader的n2退出集群，我们来看看集群状态会发生怎样变化。在n2上，我们通过consul leave命令告诉n2上的agent离开集群并退出：</p> 
+ <p> $ consul leave <br> Graceful leave complete </p> 
+ <p>n2上Agent的日志：</p> 
+ <p> 2015/07/03 14:04:40 [INFO] agent.rpc: Accepted client: 127.0.0.1:35853 <br> 2015/07/03 14:04:40 [INFO] agent.rpc: Graceful leave triggered <br> 2015/07/03 14:04:40 [INFO] consul: server starting leave <br> 2015/07/03 14:04:40 [INFO] raft: Removed peer 10.10.105.71:8300, stopping replication (Index: 7) <br> 2015/07/03 14:04:40 [INFO] raft: Removed ourself, transitioning to follower <br> 2015/07/03 14:04:40 [INFO] raft: Node at 10.10.126.101:8300 [Follower] entering Follower state <br> 2015/07/03 14:04:40 [INFO] serf: EventMemberLeave: n2.dc1 10.10.126.101 <br> 2015/07/03 14:04:40 [INFO] consul: cluster leadership lost <br> 2015/07/03 14:04:40 [INFO] raft: aborting pipeline replication to peer 10.10.105.71:8300 <br> 2015/07/03 14:04:40 [INFO] consul: removing server n2.dc1 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 14:04:41 [INFO] serf: EventMemberLeave: n2 10.10.126.101 <br> 2015/07/03 14:04:41 [INFO] consul: removing server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 14:04:41 [INFO] agent: requesting shutdown <br> 2015/07/03 14:04:41 [INFO] consul: shutting down server <br> 2015/07/03 14:04:42 [INFO] agent: shutdown complete </p> 
+ <p>n1上的日志：</p> 
+ <p> 2015/07/03 11:53:36 [INFO] serf: EventMemberLeave: n2 10.10.126.101 <br> 2015/07/03 11:53:36 [INFO] consul: removing server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 11:55:15 [ERR] agent: failed to sync remote state: No cluster leader </p> 
+ <p>这个时候我们在n1上通过consul info查看，n1的状态依旧是Follower，也就是说在双server节点的集群下，一个server退出，将产生无Leader状态。在三 server节点集群里，Leader退出，其余两个会再协商选出一个新Leader，但一旦再退出一个节点，同样集群就不会再有Leader了。 当然，如果是单节点bootstrap的集群( -bootstrap-expect 1 )，集群只有一个server节点，那这个server节点自然当选Leader。</p> 
+ <p>现在我们在n1上通过consul members查看集群状态：</p> 
+ <p> $ consul members <br> Node&nbsp; Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Status&nbsp; Type&nbsp;&nbsp;&nbsp; Build&nbsp; Protocol&nbsp; DC <br> n1&nbsp;&nbsp;&nbsp; 10.10.105.71:8301&nbsp;&nbsp; alive&nbsp;&nbsp; server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 <br> n2&nbsp;&nbsp;&nbsp; 10.10.126.101:8301&nbsp; <b>left&nbsp;</b> server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 </p> 
+ <p>执行结果显示：n2是Left状态。我们重新启动n2，再来看看集群的状态变化。</p> 
+ <p> $ consul agent -server -bootstrap-expect 2 -data-dir /tmp/consul -node=n2 -bind=10.10.126.101 -ui-dir ./dist&nbsp; -dc=dc1 <br> … … <br> ==&gt; Log data will now stream in as it occurs: </p> 
+ <p> 2015/07/03 14:13:46 [INFO] serf: EventMemberJoin: n2 10.10.126.101 <br> 2015/07/03 14:13:46 [INFO] raft: Node at 10.10.126.101:8300 [Follower] entering Follower state <br> 2015/07/03 14:13:46 [INFO] consul: adding server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 14:13:46 [INFO] serf: EventMemberJoin: n2.dc1 10.10.126.101 <br> 2015/07/03 14:13:46 [INFO] consul: adding server n2.dc1 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 14:13:46 [ERR] agent: failed to sync remote state: No cluster leader <br> 2015/07/03 14:13:48 [WARN] raft: EnableSingleNode disabled, and no known peers. Aborting election. <br> … … </p> 
+ <p>n2启动后，并未自动加入之前的cluster，而是依旧如第一次启动那样，看不到peers，孤立运行。</p> 
+ <p> 我们再来在n1上join一下：consul join 10.10.126.101 </p> 
+ <p>n1的日志变为：</p> 
+ <p> 2015/07/03 12:04:55 [INFO] consul: adding server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 12:04:56 [ERR] agent: failed to sync remote state: No cluster leader </p> 
+ <p>n2的日志变为：</p> 
+ <p> 2015/07/03 14:16:00 [INFO] serf: EventMemberJoin: n1 10.10.105.71 <br> 2015/07/03 14:16:00 [INFO] consul: adding server n1 (Addr: 10.10.105.71:8300) (DC: dc1) <br> 2015/07/03 14:16:00 [INFO] consul: New leader elected: n2 <br> 2015/07/03 14:16:01 [ERR] agent: failed to sync remote state: No cluster leader </p> 
+ <p>n1和n2无法再选出Leader，通过info命令看，两个节点都变成了Follower，集群仍然处于无Leader状态。</p> 
+ <p>这个问题在consul的github repositroy issues中被多人多次提及，但作者似乎不将此作为bug。产生这个问题的原因是当n2退出时，consul会将/tmp/consul/raft /peers.json的内容由：</p> 
+ <p>["10.10.105.71:8300", "10.10.126.101:8300"]</p> 
+ <p>改为</p> 
+ <p>null</p> 
+ <p>n2重启后，该文件并未改变，依旧为null，n2启动就不会重新自动join到n1的cluster中。</p> 
+ <p> 关于这个问题的cluster恢复方法，官方在 <a href="https://www.consul.io/docs/guides/outage.html" rel="nofollow,noindex">Outage Recovery</a> 一文中有明确说明。我们来测试一下： </p> 
+ <p>我们打开n1和n2的/tmp/consul/raft/peers.json，将其内容统一修改为：</p> 
+ <p>["10.10.126.101:8300","10.10.105.71:8300"]</p> 
+ <p>然后重启n2，但加上-rejoin命令：</p> 
+ <p> $ consul agent -server -bootstrap-expect 2 -data-dir /tmp/consul -node=n2 -bind=10.10.126.101 -ui-dir ./dist&nbsp; -dc=dc1 <b>-rejoin</b> </p> 
+ <p>…. …</p> 
+ <div> 
+  <div> 
+   <font face="Courier New"> <p>2015/07/03 14:56:02 [WARN] raft: Election timeout reached, restarting election</p> <p>2015/07/03 14:56:02 [INFO] raft: Node at 10.10.126.101:8300 [Candidate] entering Candidate state</p> <p>2015/07/03 14:56:02 [INFO] raft: Election won. Tally: 2</p> <p>2015/07/03 14:56:02 [INFO] raft: Node at 10.10.126.101:8300 [Leader] entering Leader state</p> <p>2015/07/03 14:56:02 [INFO] consul: cluster leadership acquired</p> </font> 
+  </div> 
+  <p>…….</p> 
+ </div> 
+ <p>n1上的日志：</p> 
+ <p> 2015/07/03 12:44:52 [INFO] serf: EventMemberJoin: n2 10.10.126.101 <br> 2015/07/03 12:44:52 [INFO] consul: adding server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 12:44:54 [INFO] consul: New leader elected: n2 <br> 2015/07/03 12:44:55 [WARN] raft: Rejecting vote from 10.10.126.101:8300 since we have a leader: 10.10.126.101:8300 <br> 2015/07/03 12:44:56 [WARN] raft: Heartbeat timeout reached, starting election <br> 2015/07/03 12:44:56 [INFO] raft: Node at 10.10.105.71:8300 [Candidate] entering Candidate state <br> 2015/07/03 12:44:56 [ERR] raft: Failed to make RequestVote RPC to 10.10.126.101:8300: EOF <br> 2015/07/03 12:44:57 [INFO] raft: Node at 10.10.105.71:8300 [Follower] entering Follower state <br> 2015/07/03 12:44:57 [INFO] consul: New leader elected: n2 </p> 
+ <p>这回集群的Leader重新选举成功，集群状态恢复。</p> 
+ <p>接下来我们启动n3上的client mode agent：</p> 
+ <p> $ consul agent&nbsp; -data-dir /tmp/consul -node=n3 -bind=10.10.126.187&nbsp; -dc=dc1 <br> ==&gt; WARNING: It is highly recommended to set GOMAXPROCS higher than 1 <br> ==&gt; Starting Consul agent… <br> ==&gt; Starting Consul agent RPC… <br> ==&gt; Consul agent running! <br> Node name: 'n3' <br> Datacenter: 'dc1' <br> Server: false (bootstrap: false) <br> Client Addr: 127.0.0.1 (HTTP: 8500, HTTPS: -1, DNS: 8600, RPC: 8400) <br> Cluster Addr: 10.10.126.187 (LAN: 8301, WAN: 8302) <br> Gossip encrypt: false, RPC-TLS: false, TLS-Incoming: false <br> Atlas: &lt;disabled&gt; </p> 
+ <p>==&gt; Log data will now stream in as it occurs:</p> 
+ <p> 2015/07/03 14:55:17 [INFO] serf: EventMemberJoin: n3 10.10.126.187 <br> 2015/07/03 14:55:17 [ERR] agent: failed to sync remote state: No known Consul servers </p> 
+ <p>在n3上join n1后，n3的日志输出如下：</p> 
+ <p> 2015/07/03 14:59:31 [INFO] agent: (LAN) joining: [10.10.105.71] <br> 2015/07/03 14:59:31 [INFO] serf: EventMemberJoin: n2 10.10.126.101 <br> 2015/07/03 14:59:31 [INFO] serf: EventMemberJoin: n1 10.10.105.71 <br> 2015/07/03 14:59:31 [INFO] agent: (LAN) joined: 1 Err: &lt;nil&gt; <br> 2015/07/03 14:59:31 [INFO] consul: adding server n2 (Addr: 10.10.126.101:8300) (DC: dc1) <br> 2015/07/03 14:59:31 [INFO] consul: adding server n1 (Addr: 10.10.105.71:8300) (DC: dc1) </p> 
+ <p>n3上consul members可以查看到如下内容：</p> 
+ <p> $ consul members <br> Node&nbsp; Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Status&nbsp; Type&nbsp;&nbsp;&nbsp; Build&nbsp; Protocol&nbsp; DC <br> n1&nbsp;&nbsp;&nbsp; 10.10.105.71:8301&nbsp;&nbsp; alive&nbsp;&nbsp; server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 <br> n3&nbsp;&nbsp;&nbsp; 10.10.126.187:8301&nbsp; alive&nbsp;&nbsp; client&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 <br> n2&nbsp;&nbsp;&nbsp; 10.10.126.101:8301&nbsp; alive&nbsp;&nbsp; server&nbsp; 0.5.2&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dc1 </p> 
+ <p>处于client mode的agent可以自由退出和启动，不会出现server mode下agent的问题。</p> 
+ <p>二、服务注册与发现</p> 
+ <p>我们建立Consul Cluster是为了实现服务的注册和发现。Consul支持两种服务注册的方式，一种是通过Consul的服务注册HTTP API，由服务自身在启动后调用API注册自己，另外一种则是通过在配置文件中定义服务的方式进行注册。Consul文档中建议使用后面一种方式来做服务 配置和服务注册。</p> 
+ <p>我们还是用例子来说明一下如何做服务配置。前面我们已经建立了Consul Cluster，Cluster里包含了三个Node：两个Server mode node，一个Client mode Node。我们计划在n2、n3上部署一类服务web3，于是我们需要分别在n2、n3上增加Consul agent的配置文件。</p> 
+ <p> Consul agent在启动时可以通过-config-dir来指定配置文件所在目录，比如以n3为例，我们可以如此启动n3： </p> 
+ <p>consul agent -data-dir /tmp/consul -node=n3 -bind=10.10.126.187 -dc=dc1 -config-dir=./conf</p> 
+ <p> 这样在 <font face="Courier New">./conf</font> 下的所有文件扩展为 <font face="Courier New">.json</font> 的文件都会被Consul agent作为配置文件读取。 </p> 
+ <p>我们以n3为例，我们在n3的consul agent的配置文件目录下创建web3.json文件：</p> 
+ <p> //web3.json <br> { <br> "service": { <br> "name": "web3", <br> "tags": ["master"], <br> "address": "127.0.0.1", <br> "port": 10000, <br> "checks": [ <br> { <br> "http": "http://localhost:10000/health", <br> "interval": "10s" <br> } <br> ] <br> } <br> } </p> 
+ <p> 这个配置就是我们在n3节点上为web3这个服务做的服务定义，定义中包含服务的name、address、port等，还包含一个服务检测的配置，这里 我们每隔10s对服务进行一次健康检查，这要求服务增加对/health的处理逻辑。同理，我们在n2上也建立同样配置文件（n2需重启，并带上 -config-dir命令行选项）， <b>服务注册</b> 就这么简单。 </p> 
+ <p>在重启后的n2、n3日志中，我们能发现如下的错误内容：</p> 
+ <p>2015/07/06 13:48:11 [WARN] agent: http request failed 'http://localhost:10000/health' : Get http://localhost:10000/health: dial tcp 127.0.0.1:10000: connect failed"</p> 
+ <p>这就是agent对定义的服务的check日志。为了避免这个错误日志刷屏，我们在n2、n3上各部署一个web3服务实例。以n3上的web3为例，其源码如下：</p> 
+ <p> //web3.go <br> package main </p> 
+ <p> import ( <br> "fmt" <br> "net/http" <br> ) </p> 
+ <p> func handler(w http.ResponseWriter, r *http.Request) { <br> fmt.Println("hello Web3! This is n3") <br> fmt.Fprintf(w, "Hello Web3! This is n3") <br> } </p> 
+ <p> func healthHandler(w http.ResponseWriter, r *http.Request) { <br> fmt.Println("health check!") <br> } </p> 
+ <p> func main() { <br> http.HandleFunc("/", handler) <br> http.HandleFunc("/health", healthHandler) <br> http.ListenAndServe(":10000", nil) <br> } </p> 
+ <p>一旦n2、n3上的web3服务实例启动，我们就可以尝试发现这些服务了。</p> 
+ <p>Consul提供了两种发现服务的方式，一种是通过HTTP API查看存在哪些服务；另外一种是通过consul agent内置的DNS服务来做。两者的差别在于后者可以根据服务check的实时状态动态调整available服务节点列表。我们这里也着重说明适用 DNS方式进行服务发现的具体步骤。</p> 
+ <p>在配置和部署完web3服务后，我们就可以通过DNS命令来查询服务的具体信息了。consul为服务编排的内置域名为 “NAME.service.consul"，这样我们的web3的域名为:web3.service.consul。我们在n1通过dig工具来查看一 下，注意是在n1上，n1上并未定义和部署web3服务，但集群中服务的信息已经被同步到n1上了，信息是一致的：</p> 
+ <p>$ dig @127.0.0.1 -p 8600 web3.service.consul SRV</p> 
+ <p> ; &lt;&lt;&gt;&gt; DiG 9.9.5-3-Ubuntu &lt;&lt;&gt;&gt; @127.0.0.1 -p 8600 web3.service.consul SRV <br> ; (1 server found) <br> ;; global options: +cmd <br> ;; Got answer: <br> ;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 6713 <br> ;; flags: qr aa rd; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 2 <br> ;; WARNING: recursion requested but not available </p> 
+ <p> ;; QUESTION SECTION: <br> ;web3.service.consul.&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; SRV </p> 
+ <p> ;; ANSWER SECTION: <br> web3.service.consul.&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; SRV&nbsp;&nbsp;&nbsp; 1 1 10000 n2.node.dc1.consul. <br> web3.service.consul.&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; SRV&nbsp;&nbsp;&nbsp; 1 1 10000 n3.node.dc1.consul. </p> 
+ <p> ;; ADDITIONAL SECTION: <br> n2.node.dc1.consul.&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; A&nbsp;&nbsp;&nbsp; 127.0.0.1 <br> n3.node.dc1.consul.&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; A&nbsp;&nbsp;&nbsp; 127.0.0.1 </p> 
+ <p> ;; Query time: 2 msec <br> ;; SERVER: 127.0.0.1#8600(127.0.0.1) <br> ;; WHEN: Mon Jul 06 12:12:53 CST 2015 <br> ;; MSG SIZE&nbsp; rcvd: 219 </p> 
+ <p>可以看到在ANSWER SECTION中，我们得到了两个结果：n2和n3上各有一个web3的服务。在dig命令中我们用了SRV标志，那是因为我们需要的服务信息不仅有ip地址，还需要有端口号。</p> 
+ <p>现在我们停掉n2上的web3服务，10s后，我们再来查一下：</p> 
+ <p>$ dig @127.0.0.1 -p 8600 web3.service.consul SRV</p> 
+ <p> ; &lt;&lt;&gt;&gt; DiG 9.9.5-3-Ubuntu &lt;&lt;&gt;&gt; @127.0.0.1 -p 8600 web3.service.consul SRV <br> ; (1 server found) <br> ;; global options: +cmd <br> ;; Got answer: <br> ;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 25136 <br> ;; flags: qr aa rd; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1 <br> ;; WARNING: recursion requested but not available </p> 
+ <p> ;; QUESTION SECTION: <br> ;web3.service.consul.&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; SRV </p> 
+ <p> ;; ANSWER SECTION: <br> web3.service.consul.&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; SRV&nbsp;&nbsp;&nbsp; 1 1 10000 n3.node.dc1.consul. </p> 
+ <p> ;; ADDITIONAL SECTION: <br> n3.node.dc1.consul.&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp; IN&nbsp;&nbsp;&nbsp; A&nbsp;&nbsp;&nbsp; 127.0.0.1 </p> 
+ <p> ;; Query time: 3 msec <br> ;; SERVER: 127.0.0.1#8600(127.0.0.1) <br> ;; WHEN: Mon Jul 06 12:16:39 CST 2015 <br> ;; MSG SIZE&nbsp; rcvd: 128 </p> 
+ <p>结果显示，只有n3上这一个web3服务可用了。通过下面Consul Agent日志：</p> 
+ <p>dns: node 'n2' failing health check 'service web3' check', dropping from service 'web3'</p> 
+ <p>我们可以看到consul agent将health check失败的web3从结果列表中剔除了，这样web3服务的客户端在服务发现过程中就只能获取到当前可用的web3服务节点了，这个好处是在实际应 用中大大降低了客户端实现”服务发现“时的难度。另外consul agent DNS在返回查询结果时也支持DNS Server常见的策略，至少是支持轮询。你可以多次执行dig命令，可以看到n2和n3的排列顺序是不同的。还有一点值得注意的是：由于考虑DNS cache对consul agent查询结果的影响，默认情况下所有由consul agent返回的结果TTL值均设为0，也就是说不支持dns结果缓存。</p> 
+ <p> 接下来，我们使用golang实现一个demo级别的服务发现的客户端，这里会用到第三方dns client库"github.com/miekg/dns"。 </p> 
+ <p> // servicediscovery.go <br> package main </p> 
+ <p> import ( <br> "fmt" <br> "log" </p> 
+ <p> "github.com/miekg/dns" <br> ) </p> 
+ <p> const ( <br> srvName = "web3.service.consul" <br> agentAddr = "127.0.0.1:8600" <br> ) </p> 
+ <p> func main() { <br> c := new(dns.Client) </p> 
+ <p> m := new(dns.Msg) <br> m.SetQuestion(dns.Fqdn(srvName), dns.TypeSRV) <br> m.RecursionDesired = true </p> 
+ <p> r, _, err := c.Exchange(m, agentAddr) <br> if r == nil { <br> log.Fatalf("dns query error: %s\n", err.Error()) <br> } </p> 
+ <p> if r.Rcode != dns.RcodeSuccess { <br> log.Fatalf("dns query error: %v\n", r.Rcode) <br> } <br> <br> for _, a := range r.Answer { <br> b, ok := a.(*dns.SRV) <br> if ok { <br> m.SetQuestion(dns.Fqdn(b.Target), dns.TypeA) <br> r1, _, err := c.Exchange(m, agentAddr) <br> if r1 == nil { <br> log.Fatalf("dns query error: %v, %v\n", r1.Rcode, err) <br> } <br> for _, a1 := range r1.Answer { <br> c, ok := a1.(*dns.A) <br> if ok { <br> fmt.Printf("%s – %s:%d\n", b.Target, c.A, b.Port) <br> } <br> } <br> } <br> } <br> } </p> 
+ <div> 
+  <p>我们执行该程序：</p> 
+  <font face="Courier New"> <p>$ go run servicediscovery.go</p> <p>n2.node.dc1.consul. – 10.10.126.101:10000</p> <p>n3.node.dc1.consul. – 10.10.126.187:10000</p> </font> 
+ </div> 
+ <p>注意各个node上的服务check是由其node上的agent上进行的，一旦那个node上的agent出现问题，则位于那个node上的所有 service也将会被置为unavailable状态。比如我们停掉n3上的agent，那么我们在进行web3服务节点查询时，就只能获取到n2这一 个节点上有可用的web3服务了。</p> 
+ <p>在真实的程序中，我们可以像上面demo中那样，每Request都做一次DNS查询，不过这样的代价也很高。稍复杂些，我们可以结合dns结果本地缓存+定期查询+每遇到Failed查询的方式来综合考量服务的发现方法或利用Consul提供的watch命令等。</p> 
+ <p> 以上仅仅是Consul的一个入门。真实场景中，理想的方案需要考虑的事情还有很多。Consul自身目前演进到0.5.2版本，还有不完善之处，但它已 经被很多公司用于production环境。Consul不是孤立的，要充分发挥出Consul的优势，在真实方案中，我们还要考虑与 <a href="https://www.docker.com/" rel="nofollow,noindex">Docker</a> ，HAProxy，Mesos等工具的结合。 </p> 
+ <p> © 2015,bigwhite. 版权所有. </p> 
+</div>
+        </div>
+        <div class="article_social">
+         <div class="article_like">
+    <div class="circle circle-like" id="my_zan" data_id="M3QFven">  </div>
+
+</div>
+        <div id="share_weixin_image">
+            <img width="100px" height="100px" src="./使用consul实现分布式服务注册和发现 - 推酷_files/qrcode.php">
+        </div>
+<div class="article_share_fav">
+    <div class="share" id="ckepop">
+        <span>分享</span>
+        <button class="share_weibo" id="share_weibo_id" title="分享到新浪微博"></button>
+        <button class="share_qq" id="share_qq_id" title="分享到QQ空间"></button>
+        <button class="share_weixin" id="share_weixin_id"></button>
+    </div>
+    <div class="fav_correct">
+        <button id="my_fav" data_id="M3QFven">
+            <i class="icon icon-star-empty"></i> <span id="fav_tip">收藏</span>
+        </button>
+        <button id="article-correct" data_id="M3QFven" uid="0">
+            <i class="icon icon-warning-sign"></i>
+            <span>纠错</span>
+        </button>
+    </div>
+</div>
+<script type="text/javascript">
+$("#share_weibo_id").click( function() {
+   window.open("http://share.baidu.com/s?type=text&searchPic=0&sign=on&to=tsina&url=http://www.tuicool.com/articles/M3QFven&title=%E4%BD%BF%E7%94%A8consul%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0++%28%E5%88%86%E4%BA%AB%E8%87%AA+%40%E6%8E%A8%E9%85%B7%E7%BD%91%29&key=3113829255");
+});
+$("#share_qq_id").click( function() {
+   window.open("http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.tuicool.com/articles/M3QFven&title=%E4%BD%BF%E7%94%A8consul%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0&desc=&summary=&site=");
+});
+$("#share_weixin_id").click( function() {
+  $("#share_weixin_image").toggle();
+});
+</script>
+
+
+            <div class="bottom_plink huodong-detail-plink-banner clearfix">
+                    <a href="http://www.opendigg.com/" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/aws700.jpg"></a>
+
+            </div>
+        </div>
+        <div id="site_articles" style="clear:both;">
+              <div class="article-part-title">
+                <span>推荐文章</span>
+              </div>
+          <ul class="side_article_list">
+                <li class="side_article_list_item">
+                    1.<a href="http://www.tuicool.com/articles/NBVZ3qA" target="_blank" title="Apache Ranger升级为顶级项目">
+                    Apache Ranger升级为顶级项目
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    2.<a href="http://www.tuicool.com/articles/Yja2Yjv" target="_blank" title="AWS Java Lambda 使用 Logback 记录日志">
+                    AWS Java Lambda 使用 Logback 记录日志
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    3.<a href="http://www.tuicool.com/articles/Jz6Jre7" target="_blank" title="TensorFlow架构与设计：概述">
+                    TensorFlow架构与设计：概述
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    4.<a href="http://www.tuicool.com/articles/UJNFFr3" target="_blank" title="HDFS NameNode重启优化">
+                    HDFS NameNode重启优化
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    5.<a href="http://www.tuicool.com/articles/re6nEbZ" target="_blank" title="中华万年历大数据平台演进">
+                    中华万年历大数据平台演进
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    6.<a href="http://www.tuicool.com/articles/uYreAfv" target="_blank" title="使用SMACK堆栈进行快速数据分析">
+                    使用SMACK堆栈进行快速数据分析
+                    </a>
+                </li>
+          </ul>
+        </div>
+        <div id="kan_articles"> <div class="article-part-title"> <span>相关推刊</span></div><div class="kan-list-container"><ul class="kan-list clearfix">          <li class="kan-item">            <a href="http://www.tuicool.com/kans/592852942" target="_blank" class="kan-item-head">              <small>by 陈文龙Alex</small>              <img class="kan-cover" src="./使用consul实现分布式服务注册和发现 - 推酷_files/jUVR3iY.png!kan">            </a>            <span class="kan-detail">              <a href="http://www.tuicool.com/kans/592852942" target="_blank">《架构》</a>              <i class="kan-num">29</i>            </span>          </li>                  <li class="kan-item">            <a href="http://www.tuicool.com/kans/2489938895" target="_blank" class="kan-item-head">              <small>by asnjudy</small>              <img class="kan-cover" src="./使用consul实现分布式服务注册和发现 - 推酷_files/nYNrqiA.png!kan">            </a>            <span class="kan-detail">              <a href="http://www.tuicool.com/kans/2489938895" target="_blank">《博文收藏》</a>              <i class="kan-num">3100</i>            </span>          </li>                  <li class="kan-item">            <span class="kan-item-head">              <small></small>              <img class="kan-cover" src="./使用consul实现分布式服务注册和发现 - 推酷_files/yMryIb.jpg!kan">            </span>            <span class="kan-detail">              <i>《匿名收藏》</i>              <i class="kan-num">459</i>            </span>          </li>        </ul></div><i class="clearfix"></i></div>
+        <div id="article_weibo" style="display:none;">
+            <div class="article-part-title">
+                <span>相关微博</span>
+                <sub>
+                    <a href="http://www.tuicool.com/articles/weibo_list/M3QFven" target="_blank">(<i id="weibo_num"></i>)</a> 
+               </sub>
+            </div>
+            <div class="related-weibo-list"></div>
+        </div>
+        <div class="comments">
+    <div class="comments-area">
+    <div class="comments-header">
+        <h5>我来评几句</h5>
+        <div class="alert comment-alert alert-error" style="display:none;">
+            错误
+        </div>
+            <textarea cols="60" rows="5" id="comment-body" placeholder="请输入评论内容..." style="resize: none;"></textarea>
+            <span class="btn btn-medium btn-submit" id="comment-submit">登录后评论</span>
+        <p style="margin-top: 5px;margin-left:10px;">
+            已发表评论数(<span class="comment_cnt">0</span>)
+        </p>
+    </div>
+    <div class="comments-list">
+        <div class="empty-cmts alert alert-success" style="display:none;">
+            没有更多评论了^^
+        </div>
+    </div>
+    <div class="more-comments" style="display:none;">
+        <a href="http://www.tuicool.com/articles/M3QFven">更多评论</a>
+    </div>
+    <div class="load-fail" style="display:none;">
+        评论加载失败，<a href="javascript:reload_comments(&#39;M3QFven&#39;,1,0,-1);">重新加载</a>
+    </div>
+    </div>
+</div>
+
+    </div>
+        <div class="span4 article_right_side">
+            <div class="right_top">
+    <div class="article_related_site article_detail_bg">
+    <h4 class="article-part-title">相关站点</h4>
+    <div class="article_related_site_body clearfix">
+        <div class="logo">
+            <img src="./使用consul实现分布式服务注册和发现 - 推酷_files/mYnQjam.png">
+        </div>
+        <div class="name">
+            <div>
+                <a href="http://www.tuicool.com/sites/mYnQjam" target="_blank"> Tony Bai</a>
+            </div>
+            <div>
+                <div class="btn btn-success right_site_follow" id="my_follow" data_id="mYnQjam">＋订阅</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="right_site_articles" class="article_detail_bg">
+    <div class="article-part-title">
+        <span>热门文章</span>
+    </div>
+    <ul class="side_article_list">
+        <li class="side_article_list_item">
+            1.<a href="http://www.tuicool.com/articles/NBVZ3qA" target="_blank" title="Apache Ranger升级为顶级项目"> Apache Ranger升级为顶级项目 </a>
+        </li>
+        <li class="side_article_list_item">
+            2.<a href="http://www.tuicool.com/articles/Yja2Yjv" target="_blank" title="AWS Java Lambda 使用 Logback 记录日志"> AWS Java Lambda 使用 Logback 记录日志 </a>
+        </li>
+        <li class="side_article_list_item">
+            3.<a href="http://www.tuicool.com/articles/Jz6Jre7" target="_blank" title="TensorFlow架构与设计：概述"> TensorFlow架构与设计：概述 </a>
+        </li>
+        <li class="side_article_list_item">
+            4.<a href="http://www.tuicool.com/articles/UJNFFr3" target="_blank" title="HDFS NameNode重启优化"> HDFS NameNode重启优化 </a>
+        </li>
+        <li class="side_article_list_item">
+            5.<a href="http://www.tuicool.com/articles/re6nEbZ" target="_blank" title="中华万年历大数据平台演进"> 中华万年历大数据平台演进 </a>
+        </li>
+    </ul>
+</div>
+
+
+      <div class="right-link">
+                <a href="http://www.tuicool.com/articles/aimMr2Y" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/tanzhou.jpg"></a>
+
+      </div>
+      <div class="right-link" style="margin-top: 5px">
+                <a href="http://click.aliyun.com/m/12887/" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/aliyun120.jpg"></a>
+
+      </div>
+      <div class="right-link" style="margin-top: 5px">
+                <a href="https://jinshuju.net/f/fCxb29?x_field_1=tuicool" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/aws300.jpg"></a>
+
+      </div>
+<div class="right-link" style="margin-top: 5px">
+        <a href="https://www.mysubmail.com/sms?s=tuicool" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/submail120.jpg"></a>
+
+</div>
+      <div class="right-link" style="margin-top: 5px">
+                <a href="https://mos.meituan.com/enterprise-authentication?site=tuicool&amp;campaign=20170317sales" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/meituan120.jpg"></a>
+
+      </div>
+</div>
+<div class="operate_zone" style="position: fixed; top: 50px;">
+      <div class="right-link" style="margin-top: 0px">
+                <a href="https://sspaas.com/" target="_blank"><img src="./使用consul实现分布式服务注册和发现 - 推酷_files/sspaas320.jpg"></a>
+
+      </div>
+        <div class="frd_pos">
+        <script async="" src="./使用consul实现分布式服务注册和发现 - 推酷_files/adsbygoogle.js.下载"></script>
+<ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-7054762349007490" data-ad-slot="5705695566" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" src="./使用consul实现分布式服务注册和发现 - 推酷_files/saved_resource.html"></iframe></ins></ins></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+        </div>
+</div>
+         </div>
+</div>
+
+<div>
+   <!-- add_article to kan -->
+<div id="add-article-to-kan" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <span class="add-title">收藏到推刊</span>
+    <a href="http://www.tuicool.com/articles/M3QFven#new-kan" class="btn pull-right" data-toggle="modal">创建推刊</a>
+    <i class="clearfix"></i>
+  </div>
+  <div class="modal-body">
+    <ul id="add-kan-list">
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <input type="hidden" value="M3QFven" class="article-id"> 
+    <button class="btn btn-primary pull-left add-to-btn">  收 藏  </button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true" style="margin-right: 15px">取消</button>
+  </div>
+</div>
+
+   <div id="new-kan" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-body">
+    <input type="text" name="name" id="new-kan-name" placeholder="推刊名(必填)" required="" data-validation-required-message="请填写推刊名">
+    <span class="new-ness-name">请填写推刊名</span>
+    <br>
+    <textarea name="desc" id="desc" rows="6" placeholder="推刊描述"></textarea>
+    <span class="new-ness-desc">描述不能大于100个字符!</span>
+    <br>
+    权限设置：<input type="radio" name="type" value="1" checked="checked"> 公开
+    <input type="radio" name="type" value="0"> 仅自己可见
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary pull-left create-kan-btn" disabled="">创建</button>
+    <button class="btn dismiss-new-kan" data-dismiss="modal" aria-hidden="true">取消</button>
+  </div>
+</div>
+
+
+</div>
+<div id="article-correct-modal" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>文章纠错</h3>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" value="M3QFven" id="article-correct-source">
+        <div>
+            <label for="article-correct-email">
+                邮箱地址
+            </label>
+            <input type="email" id="article-correct-email" class="input-large">
+        </div>
+        <div>
+            <label for="article-correct-select">
+                错误类型
+            </label>
+            <select id="article-correct-select">
+                <option value="正文不准确">正文不准确</option>
+                <option value="标题不准确">标题不准确</option>
+                <option value="排版有问题">排版有问题</option>
+                <option value="排版有问题">主题不准确</option>
+                <option value="没有分页内容">没有分页内容</option>
+                <option value="图片无法显示">图片无法显示</option>
+                <option value="视频无法显示">视频无法显示</option>
+                <option value="与原文不一致">与原文不一致</option>
+            </select>
+        </div>
+        <div>
+            <label for="article-correct-other">
+                补充信息
+            </label>
+            <textarea id="article-correct-other" class="span4"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right huodong_correct_submit" id="article-correct-submit">
+            &nbsp;&nbsp;提交&nbsp;&nbsp;
+        </button>
+    </div>
+</div>
+<script type="text/javascript">
+    $('table').each(function(i) {
+        var size = $(this).children().size();
+        if (size > 1) {
+            $(this).attr('class',"table table-bordered");
+        } else if (size == 1) {
+            var e11 = $(this).children(":first");
+            var e1 = e11[0];
+            var name = e1.nodeName.toLowerCase();
+            if ("tbody" == name) {
+                if (e1.children.length > 1) {
+                    $(this).attr('class',"table table-bordered");
+                } else if (e1.children.length == 1){
+                    var e12 = e1.children[0];
+                    var name2 = e12.nodeName.toLowerCase();
+                    if ("tr" == name2) {
+                       if (e12.children.length > 1) {
+                         $(this).attr('class',"table table-bordered");
+                       }
+                    }
+                }
+            }
+        }
+    });
+            related_kan("M3QFven");
+        window.page = 0;
+        window.last = 0;    
+        window.first = true;
+        resize_article_image('#nei', 550);
+                load_comments("M3QFven",1,0,-1);
+                window.uid = -1;
+        open_add_article_to_kan("false");
+        async_do_zan_article();
+          
+       handle_follow_site("#my_follow","已订阅","+ 订阅");
+</script>
+
+
+    <div class="loader-inner ball-pulse ball-loading-center" id="page-loading" style="display: none">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="read-later-alert"></div>
+  </div>
+
+        <div class="footer">
+      <div class="footer-inner" style="padding-top: 50px;padding-bottom: 50px">
+        <a href="http://www.tuicool.com/about" target="_blank">关于我们</a>
+        <a href="http://www.tuicool.com/mobile" target="_blank">移动应用</a>
+        <a href="http://www.tuicool.com/bbs/go/issues" target="_blank">意见反馈</a>
+        <a target="_blank" href="http://e.weibo.com/tuicool2012">官方微博</a>
+      </div>
+    </div>
+    <div style="display:none;">
+      <script src="./使用consul实现分布式服务注册和发现 - 推酷_files/stat.php" language="JavaScript"></script><script src="./使用consul实现分布式服务注册和发现 - 推酷_files/core.php" charset="utf-8" type="text/javascript"></script><a href="http://www.cnzz.com/stat/website.php?web_id=5541078" target="_blank" title="站长统计"><img border="0" hspace="0" vspace="0" src="./使用consul实现分布式服务注册和发现 - 推酷_files/pic.gif"></a>
+    </div>
+
+    <script type="text/javascript" src="./使用consul实现分布式服务注册和发现 - 推酷_files/tip.js.下载" async=""></script>
+
+
+<div class="return" title="返回顶部" style="display: block;"></div></body></html>

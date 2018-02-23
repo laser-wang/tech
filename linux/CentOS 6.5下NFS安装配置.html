@@ -1,0 +1,615 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0071)http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/5118.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=GBK">
+
+<title>CentOS 6.5下NFS安装配置</title>
+<meta name="keywords" content="CentOS,6.5下,NFS,安装,配置,环境,介绍,NF">
+<meta name="description" content="">
+<link href="./CentOS 6.5下NFS安装配置_files/dedecms.css" rel="stylesheet" media="screen" type="text/css">
+<script type="text/javascript" async="" src="./CentOS 6.5下NFS安装配置_files/dcgm"></script><script language="javascript" type="text/javascript">
+<!--
+function CheckLogin(){
+	  var taget_obj = document.getElementById('_ajax_feedback');
+	  myajax = new DedeAjax(taget_obj,false,false,'','','');
+	  myajax.SendGet2("/member/ajax_feedback.php");
+	  DedeXHTTP = null;
+}
+function postBadGood(ftype,fid)
+{
+	var taget_obj = document.getElementById(ftype+fid);
+	var saveid = GetCookie('badgoodid');
+	if(saveid != null)
+	{
+		var saveids = saveid.split(',');
+		var hasid = false;
+		saveid = '';
+		j = 1;
+		for(i=saveids.length-1;i>=0;i--)
+		{
+			if(saveids[i]==fid && hasid) continue;
+			else {
+				if(saveids[i]==fid && !hasid) hasid = true;
+				saveid += (saveid=='' ? saveids[i] : ','+saveids[i]);
+				j++;
+				if(j==10 && hasid) break;
+				if(j==9 && !hasid) break;
+			}
+		}
+		if(hasid) { alert('您刚才已表决过了喔！'); return false;}
+		else saveid += ','+fid;
+		SetCookie('badgoodid',saveid,1);
+	}
+	else
+	{
+		SetCookie('badgoodid',fid,1);
+	}
+	myajax = new DedeAjax(taget_obj,false,false,'','','');
+	myajax.SendGet2("/plus/feedback.php?aid="+fid+"&action="+ftype+"&fid="+fid);
+}
+function postDigg(ftype,aid)
+{
+	var taget_obj = document.getElementById('newdigg');
+	var saveid = GetCookie('diggid');
+	if(saveid != null)
+	{
+		var saveids = saveid.split(',');
+		var hasid = false;
+		saveid = '';
+		j = 1;
+		for(i=saveids.length-1;i>=0;i--)
+		{
+			if(saveids[i]==aid && hasid) continue;
+			else {
+				if(saveids[i]==aid && !hasid) hasid = true;
+				saveid += (saveid=='' ? saveids[i] : ','+saveids[i]);
+				j++;
+				if(j==20 && hasid) break;
+				if(j==19 && !hasid) break;
+			}
+		}
+		if(hasid) { alert("您已经顶过该帖，请不要重复顶帖 ！"); return; }
+		else saveid += ','+aid;
+		SetCookie('diggid',saveid,1);
+	}
+	else
+	{
+		SetCookie('diggid',aid,1);
+	}
+	myajax = new DedeAjax(taget_obj,false,false,'','','');
+	var url = "/plus/digg_ajax.php?action="+ftype+"&id="+aid;
+	myajax.SendGet2(url);
+}
+function getDigg(aid)
+{
+	var taget_obj = document.getElementById('newdigg');
+	myajax = new DedeAjax(taget_obj,false,false,'','','');
+	myajax.SendGet2("/plus/digg_ajax.php?id="+aid);
+	DedeXHTTP = null;
+}
+-->
+</script>
+</head>
+<body class="articleview"><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./CentOS 6.5下NFS安装配置_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div>
+<div class="header">
+ 	<div class="top w960 center">
+       <div class="title">
+         <h1> <a href="http://www.centoscn.com/"></a> </h1>
+       </div>
+       <div class="banner">
+ <a title="CentOS7.0.140" href="https://www.jingfengjiaoyu.com/linux/"><img src="./CentOS 6.5下NFS安装配置_files/1-1F212011R3A5.jpg"></a>
+</div>
+       <div class="rlink">
+         <ul>
+          <a title="CentOS7.0.140" href="http://www.centoscn.com/CentosSoft/iso/2015/0402/5070.html"><img src="./CentOS 6.5下NFS安装配置_files/donate.png"></a>
+         </ul>
+       </div>
+ 	</div><!-- //top -->
+ 	<!-- //菜单 -->
+ 	<div class="module blue mT10 wrapper w963">
+   	<div class="top" id="mytop">
+     	<div class="t_l"></div>
+     	<div class="t_r"></div>
+     	<!-- //如果不使用currentstyle，可以在channel标签加入 cacheid='channeltoplist' 属性提升性能 -->
+     <div id="navMenu">
+     	<ul>
+       	<li><a href="http://www.centoscn.com/">首页</a></li>
+       	
+       	<li><a href="http://www.centoscn.com/CentOS/" rel="dropmenu1">CentOS入门</a></li>
+       	
+       	<li><a href="http://www.centoscn.com/CentosSoft/" rel="dropmenu6">CentOS下载</a></li>
+       	
+       	<li><a href="http://www.centoscn.com/image-text/" rel="dropmenu8">CentOS教程</a></li>
+       	
+       	<li><a href="http://www.centoscn.com/CentosServer/" rel="dropmenu7">CentOS服务器</a></li>
+       	
+       	<li><a href="http://www.centoscn.com/shell/">shell编程</a></li>
+       	<li class="hover"><a href="http://www.centoscn.com/CentosSecurity/" rel="dropmenu9">安全防御</a></li>
+       	<li><a href="http://www.centoscn.com/CentosBug/" rel="dropmenu3">故障解决</a></li>
+       	
+       	<li><a href="http://www.centoscn.com/yunwei/" rel="dropmenu16">运维管理</a></li>
+       	
+       	<li><a href="http://www.centos.org/">官方网站</a></li>
+       	
+     	</ul>
+     </div>	
+      <!-- sonMenu 子栏目 开始-->
+     <link href="./CentOS 6.5下NFS安装配置_files/tabs.css" type="text/css" rel="stylesheet">
+ 
+     <div class="sonMenu">
+ 		<ul>
+ 		  <li><a>推荐:</a><a style="color: #FF0000;"> </a> 
+                          </li><li><a target="_blank" href="http://www.linuxprobe.com/">Linux就该这么学</a></li>
+                          <li><a target="_blank" href="https://www.jingfengjiaoyu.com/linux/">学习linux</a></li>
+                          <li><a target="_blank" href="http://cn.linux.vbird.org/">鸟哥linux私房菜</a></li>
+                         <li><a href="http://www.centoscn.com/yunwei/news/2012/1227/131.html">开源镜像大全</a></li>
+                             <li><a target="_blank" href="http://linux.51yip.com/">Linux命令查询</a></li>                    
+ 		  <li><a>Q群： 282491757</a></li>
+                         <li><a>微信公众号：centoscn </a></li>
+		</ul>
+ 		<!-- sonMenu 子栏目 结束-->    <!-- //search -->
+	 	
+ 	</div>
+ 
+     <div class="threead"><a target="_blank" href="http://www.centoscn.com/CentosSoft/iso/2015/0402/5070.html"><img src="./CentOS 6.5下NFS安装配置_files/new960.jpg.jpg"></a>
+
+ 	        </div>	
+ 	</div></div> 
+<a target="_blank" title="Linux就该这么学" href="http://www.linuxprobe.com/"><img src="./CentOS 6.5下NFS安装配置_files/1-1F2261I14H21.gif"></a>
+
+<!-- //header -->
+ 
+ <div style="margin-top:2px;padding-top:0px;border:solid 1px #9FD1F6;width:958px;" class="header">
+ <div style="margin-top:0px;padding-top:0px;" class="module blue mT10 wrapper w963">
+   <div style="margin-top:0px;padding-top:0px;" class="search">
+       <form action="http://www.centoscn.com/plus/search.php" name="formsearch">
+         <div class="form">
+           <h4>搜索</h4>
+            <input type="hidden" name="kwtype" value="0">
+            <input name="keyword" type="text" class="search-keyword" id="search-keyword">
+            <select name="searchtype" class="search-option" id="search-option">
+                <option value="titlekeyword" selected="1">智能模糊搜索</option>
+                <option value="title">仅搜索标题</option>
+            </select>
+           <button type="submit" class="search-submit">搜索</button>
+         </div>
+         </form>
+       <div class="tags">
+         <h4>热门标签</h4>
+         <ul>
+           
+         </ul>
+         </div>
+         </div>
+     </div>
+     </div><!-- //search -->
+ </div>
+<!-- /header -->
+
+
+<!-- /channel-nav -->
+
+<div class="w960 center clear mt1">
+	<div class="pleft">
+		<div class="place">
+			<strong>当前位置:</strong> <a href="http://www.centoscn.com/"></a> &gt; <a href="http://www.centoscn.com/CentosSecurity/">安全防御</a> &gt; <a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/">软件安全防御</a> &gt; 
+		</div><!-- /place -->
+		<div class="viewbox">
+			<div class="title">
+				<h2>CentOS 6.5下NFS安装配置</h2>
+			</div><!-- /title -->
+			<div class="info">
+				<small>时间:</small>2015-04-08 16:14<small>来源:</small>heminjie.com  <small>作者:</small>heminjie.com <a href="http://www.centoscn.com/plus/erraddsave.php?aid=5118&amp;title=CentOS%206.5%CF%C2NFS%B0%B2%D7%B0%C5%E4%D6%C3" target="_blank">举报</a>   <small>点击:</small><script src="./CentOS 6.5下NFS安装配置_files/count.php" type="text/javascript" language="javascript"></script>10364次</div><!-- /info -->
+
+			<div class="content">
+
+
+
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	<strong style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">一、环境介绍</strong><br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	&nbsp;<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	　　NFS服务器：CentOS6.5 192.168.0.10<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	　　NFS客户端：CentOS6.5 192.168.0.11<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	&nbsp;<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	<strong style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">二、服务器端安装配置</strong><br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	&nbsp;<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	1、先用<span id="7_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">rpm</span></span>&nbsp;-qa命令查看所需安装包（nfs-utils、rpcbind）是否已经安装：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+2
+3
+4
+5
+6
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@local /]# <span id="3_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">rpm</span></span> -qa | grep "rpcbind"
+rpcbind-0.2.0-11.el6.x86_64
+[root@local /]# rpm -qa | grep "nfs"
+nfs-utils-1.2.3-39.el6.x86_64
+nfs4-acl-tools-0.3.3-6.el6.x86_64
+nfs-utils-lib-1.1.5-6.el6.x86_64</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	2、如查询结果如上，说明服务器自身已经安装了NFS，如果没有安装，则用yum命令来安装：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@local /]# yum -y install nfs-utils rpcbind</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	3、创建共享目录：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@local /]# mkdir /sharestore</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	4、NFS共享文件路径配置：<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	编辑/<span id="6_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">etc</span></span>/exports添加下面一行，添加后保存退出。</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+2
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@local /]# vi /<span id="1_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">etc</span></span>/exports
+/share<span id="2_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">store</span></span>     *(rw,sync,no_root_squash)</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	5、启动NFS服务（先启动rpcbind，再启动nfs；如果<span id="4_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">服务器</span></span>自身已经<span id="5_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">安装</span></span>过NFS，那就用restart重启两个服务）：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@local /]# service rpcbind start
+Starting rpcbind:                                          [  OK  ]
+[root@local /]# service nfs start
+Starting NFS services:                                     [  OK  ]
+Starting NFS quotas:                                       [  OK  ]
+Starting NFS mountd:                                       [  OK  ]
+Stopping RPC idmapd:                                       [  OK  ]
+Starting RPC idmapd:                                       [  OK  ]
+Starting NFS daemon:                                       [  OK  ]
+[root@local /]#</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	6、设置NFS服务开机自启动：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+2
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@local /]# chkconfig rpcbind on
+[root@local /]# chkconfig nfs on</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	<strong style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">三、客户端挂载配置</strong><br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	&nbsp;<br style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+	1、创建一个挂载点：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@localhost ~]# mkdir /mnt/store</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	2、查看NFS服务器上的共享：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+2
+3
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@localhost /]# showmount -e 192.168.0.10
+Export list for 192.168.0.10:
+/sharestore *</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	3、挂载：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 592px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 568px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@localhost ~]# mount -t nfs 192.168.0.10:/sharestore /mnt/store</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<p style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(51, 51, 51); font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px;">
+	4、查看已挂载共享：</p>
+<div class="wp_syntax" style="padding: 0px; margin: 0px 0px 1.5em; outline: none; list-style: none; border: 1px solid silver; color: rgb(17, 0, 0); overflow-y: hidden; overflow-x: auto; width: 592.015625px; font-family: &#39;Microsoft Yahei&#39;, &#39;Helvetica Neue&#39;, Helvetica, Arial, sans-serif; font-size: 13px; line-height: 19.5px; background-color: rgb(249, 249, 249);">
+	<table style="outline: none; list-style: none; border-radius: 3px; font-family: Arial, &#39;Bitstream Vera Sans&#39;, Helvetica, Verdana, sans-serif; color: rgb(51, 51, 51); border-spacing: 0px; width: 668px; padding: 0px !important; margin: 0px !important; border: none !important; border-collapse: collapse !important;">
+		<tbody style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+			<tr style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none;">
+				<td class="line_numbers" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important;">
+					<pre style="outline: none; list-style: none; direction: ltr; font-stretch: normal; padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; color: gray !important; width: 16px !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; text-align: right !important; background: rgb(221, 238, 255) !important;">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre>
+				</td>
+				<td class="code" style="margin: 0px; outline: none; list-style: none; border-top-width: 0px; border-top-style: solid; border-top-color: white; vertical-align: top; color: rgb(85, 85, 85); width: 644px; padding: 0px !important; border-right-style: none !important; border-bottom-style: none !important; border-left-style: none !important; line-height: normal !important; background-image: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.901961) 50%); background-color: rgb(238, 238, 238); background-size: 1px 32px;">
+					<pre class="html" style="outline: none; list-style: none; direction: ltr; font-stretch: normal; color: rgb(102, 102, 102); padding: 0px 4px !important; margin-top: 0px !important; margin-bottom: 0px !important; border: none !important; font-size: 12px !important; line-height: 16px !important; overflow: visible !important; width: auto !important; float: none !important; clear: none !important; -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px !important; border-radius: 0px !important; background: transparent !important;">[root@localhost ~]# mount
+/dev/mapper/VolGroup-lv_root on / type ext4 (rw)
+proc on /proc type proc (rw)
+sysfs on /sys type sysfs (rw)
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)
+tmpfs on /dev/shm type tmpfs (rw)
+/dev/sda1 on /boot type ext4 (rw)
+/dev/mapper/VolGroup-lv_home on /home type ext4 (rw)
+none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw)
+nfsd on /proc/fs/nfsd type nfsd (rw)
+192.168.0.10:/mail<span id="0_nwp" style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; width: auto; height: auto; float: none;"><span style="padding: 0px; margin: 0px; outline: none; list-style: none; border: 0px none; color: rgb(0, 0, 255); width: auto; height: auto;">store</span></span>1/ on /mailstore_new type nfs (rw,vers=4,addr=192.168.0.10,clientaddr=192.</pre>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<br>
+
+			<table width="100%">
+				
+			</table>
+			</div><!-- /content --><div class="dede_pages">
+				<ul class="pagelist">
+          
+				</ul>
+			</div><!-- /pages -->
+			
+			<!-- //顶踩 -->
+			<div class="newdigg" id="newdigg">
+
+<!-- //顶踩部份的源码结束 -->
+			
+			<div class="boxoff">				<strong>------分隔线----------------------------</strong>
+			</div>
+			<div class="handle"></div>
+				<div class="context">
+					<ul>
+						<li>上一篇：<a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0407/5104.html">CentOS下tomcat安全配置</a> </li>
+						<li>下一篇：<a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0412/5159.html">CentOS服务器确保Apache Web服务器安全的8种安全设置技巧</a> </li>
+					</ul>
+				</div><!-- /context -->
+				<div class="actbox">
+					<ul>
+						<li id="act-fav"><a href="http://www.centoscn.com/plus/stow.php?aid=5118" target="_blank">收藏</a></li>
+						<li id="act-err"><a href="http://www.centoscn.com/plus/erraddsave.php?aid=5118&amp;title=CentOS%206.5%CF%C2NFS%B0%B2%D7%B0%C5%E4%D6%C3" target="_blank">举报</a></li>
+						<li id="act-pus"><a href="http://www.centoscn.com/plus/recommend.php?aid=5118" target="_blank">推荐</a></li>
+						<li id="act-pnt"><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/5118.html#" onclick="window.print();">打印</a></li>
+					</ul>
+				</div><!-- /actbox -->
+			</div><!-- /handle -->
+		</div><!-- /viewbox -->
+
+<!-- //AJAX评论区 -->
+<!-- //主模板必须要引入/include/dedeajax2.js -->
+<a name="postform"></a>
+<div class="mt1">
+		<dl class="tbox">
+			<dt>
+				<strong>发表评论</strong>
+				<span class="more"></span>
+			</dt>
+			<dd>
+				<div class="dede_comment_post">
+          <form action="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/5118.html#" method="post" name="feedback">
+          <input type="hidden" name="dopost" value="send">
+          <input type="hidden" name="comtype" value="comments">
+          <input type="hidden" name="aid" value="5118">
+          <input type="hidden" name="fid" id="feedbackfid" value="0">
+          <div class="dcmp-title">
+						<small>为了和诣的生活，我关闭了评论页面，请大家到QQ群里交流吧：348944156,也欢迎关注本站微信公众号：centoscn </small>
+					
+				
+			</div></form></div></dd>
+		</dl>
+	</div><!-- //评论表单区结束 -->
+
+
+
+</div><!-- //左边内容结束 -->
+
+<!-- //右边内容开始 -->
+<div class="pright">
+ 		
+
+<div class="commend mt1"><dl class="tbox light">
+				<dt class="light"><strong>栏目分类</strong></dt>
+				<dd class="light">
+					<ul class="c1 ico2">
+             <ul>
+                    
+                    <li><a href="http://www.centoscn.com/CentosSecurity/CentosSafe/" target="_blank">系统安全防御<span></span></a></li>
+                     
+                    <li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/" target="_blank">软件安全防御<span></span></a></li>
+                     </ul>					</ul>
+				</dd>
+			</dl>
+		</div><!-- /commend -->
+
+		<div class="commend mt1"><dl class="tbox light">
+				<dt class="light"><strong>本月热点</strong></dt>
+				<dd class="light">
+					<ul class="c1 ico2">
+             <li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0812/3483.html">CentOS6.5下web服务安装配置</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/5118.html">CentOS 6.5下NFS安装配置</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0926/3854.html">CentOS下Bash严重安全漏洞修复方</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0525/5528.html">Nginx 防御CC攻击的两种方法</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0422/2840.html">CentOS基于Web服务器性能优化</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0407/5104.html">CentOS下tomcat安全配置</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2013/0805/1060.html">CentOS下MySql优化及安全设置</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0421/2835.html">CentOS6.5 yum快速修复OpenSSL h</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0916/3752.html">CentOS下文件共享服务ftp,nfs,sa</a></li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0926/3853.html">ShellShock: CVE-2014-6271漏洞</a></li>
+
+					</ul>
+				</dd>
+			</dl>
+		</div><!-- /commend -->
+
+		<div class="hot mt1">
+			<dl class="tbox light">
+
+
+				<dt class="light"><strong>推荐内容</strong></dt>
+				<dd class="light">
+					<ul class="d4">
+           <li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0924/3838.html">CentOS下打造最安全的Nginx Web服务器</a>
+            	<p>...</p>
+            </li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2014/0718/3312.html">CentOS服务器下mysql安全设置</a>
+            	<p>...</p>
+            </li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2013/1028/1993.html">Apache站点安全配置</a>
+            	<p>...</p>
+            </li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2013/1018/1888.html">nginx 自动封 ip 过高连接</a>
+            	<p>...</p>
+            </li>
+<li><a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2013/1001/1760.html">伪装nginx版本防止入侵web服务器</a>
+            	<p>...</p>
+            </li>
+
+					</ul>
+				</dd>
+			</dl>
+		</div></div></div>
+<!-- //二级子类下拉菜单，考虑SEO原因放置于底部  -->
+
+<!-- //底部模板 -->
+
+<div class="footer w960 center mt1 clear">
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">关于我们</a> -
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">联系我们</a> -
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">广告服务</a> -<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F65a70808534a9fe419a0a120e9bef073' type='text/javascript'%3E%3C/script%3E"));
+</script><script src="./CentOS 6.5下NFS安装配置_files/h.js" type="text/javascript"></script>
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">免责申明</a> -
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">版权申明</a> -
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">TAG标签</a> -
+
+<a target="_blank" href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/about.html">网站地图</a> -
+
+<a href="http://www.centoscn.com/CentosSecurity/SoftSecurity/2015/0408/5118.html#top">返回顶部</a> <p></p>
+
+<!-- /powered -->
+
+	<p class="copyright">
+
+		Copyright 2012-2013(CentOS中文网) CentOScn.Com <a target="_blank" href="http://www.miibeian.gov.cn/">粤ICP备16045568号-1</a> Powered by DedeCMS 1.0 
+
+  </p>
+
+ 
+<script type="text/javascript">
+/*120*270*/
+var cpro_id = "u1486028";
+</script>
+<script src="./CentOS 6.5下NFS安装配置_files/f.js" type="text/javascript"></script><div id="BAIDU_SSP__wrapper_u1486028_0"></div></div>
+
+<!-- /footer -->
+</body></html>

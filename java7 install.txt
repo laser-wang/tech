@@ -1,0 +1,29 @@
+rpm -ivh jdk-8u151-linux-x64.rpm
+
+vi /etc/bashrc 
+#加入下面内容
+#set java environment
+export JAVA_HOME=/usr/java/jdk1.8.0_151/
+export JRE_HOME=${JAVA_HOME}/jre
+export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib
+export PATH=${JAVA_HOME}/bin:$PATH
+
+source /etc/bashrc
+update-alternatives --install /usr/bin/java java /usr/java/jdk1.8.0_151/bin/java 300 
+update-alternatives --install /usr/bin/javac javac /usr/java/jdk1.8.0_151/bin/javac 300 
+update-alternatives --config java
+
+java -version 
+
+
+
+#查看java软连接
+update-alternatives --display java
+
+
+#javadoc乱码的解决
+如果提示：编码 GBK 的不可映射字符 
+eclipse 生成javadoc乱码问题解决 
+如果源文件编码使用了utf-8编码，那么生成的文档可会有乱码，解决办法如下：
+Generate javadoc时， 在第三个对话框的"Extra Javadoc options" 文本框里面加上
+-encoding UTF-8 -charset UTF-8
