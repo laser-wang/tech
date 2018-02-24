@@ -65,10 +65,11 @@ docker save -o centos7.tar centos
 docker load --input ./haproxy.tar
 docker run --name webserver -d -p 81:80 nginx
 docker run --privileged -tid --name centostest centos /usr/sbin/init   #支持systemctl
-docker run --privileged -tid --name centos_redis_v1 centos_redis:v1 /usr/sbin/init 
+docker run --privileged -tid --name centos_redis_mysql_ins -v /home/docker/tools:/opt/tools centos_redis_mysql_ins:v1 /usr/sbin/init 
 docker rm $(docker ps -a -q) #清理所有容器
-docker save centos_redis | gzip  > centos_redis.tar.gz #导出镜像到文件
+docker save centos_redis | gzip  > centos_redis_mysql_image.tar.gz #导出镜像到文件
 docker load -i centos_redis.tar.gz #导入文件到镜像
+docker export 915 | gzip  > centos_redis_mysql_instance.tar.gz #导出容器到文件
 
 
 #haproxy自动例子
@@ -90,8 +91,8 @@ docker logs my-running-haproxy
 
 #安装nsenter
 yum -y install util-linux
-echo PID=$(docker inspect --format "{{ .State.Pid }}" centos_redis_v1)
-sudo nsenter --target 14379 --mount --uts --ipc --net --pid
+echo PID=$(docker inspect --format "{{ .State.Pid }}" b18)
+sudo nsenter --target 18306 --mount --uts --ipc --net --pid
 exit
 
 
