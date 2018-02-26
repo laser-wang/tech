@@ -71,6 +71,13 @@ docker save centos_redis | gzip  > centos_redis_mysql_image.tar.gz #导出镜像
 docker load -i centos_redis.tar.gz #导入文件到镜像
 docker export 915 | gzip  > centos_redis_mysql_instance.tar.gz #导出容器到文件
 
+#安装nsenter
+yum -y install util-linux
+echo PID=$(docker inspect --format "{{ .State.Pid }}" b18)
+sudo nsenter --target 18306 --mount --uts --ipc --net --pid
+exit
+
+
 
 #haproxy自动例子
 docker build -t my-haproxy .
@@ -85,15 +92,8 @@ docker images
 docker ps -a
 
 
-
 docker run -d --name my-running-haproxy -p 80:80 -v /opt/docker/haproxy:/usr/local/etc/haproxy haproxy:1.7
 docker logs my-running-haproxy
-
-#安装nsenter
-yum -y install util-linux
-echo PID=$(docker inspect --format "{{ .State.Pid }}" b18)
-sudo nsenter --target 18306 --mount --uts --ipc --net --pid
-exit
 
 
 #如果关闭centos7防火墙后，dock会报错:

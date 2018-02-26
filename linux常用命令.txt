@@ -25,11 +25,7 @@ grep -R "10.168.104.77" ./					搜索
 sed -i 's/10.168.104.77/10.168.30.15/' jdbc.properties		替换
 find ./ -type d -name "del_dir" -exec rm -r {} \;		批量删除文件或目录
 
-iftop  -i eth1							看网络输入输出
-nload
-nload eth1							看网络输入输出
-tcpdump
-tcpdump -i eth1 -n udp						抓包
+
 
 lsof -i:2211 | wc -l						调试
 netstat -anp | grep java | wc -l
@@ -189,6 +185,11 @@ cat /etc/passwd|awk -F":" '{ print $1 }'|more			查看用户列表
  netstat -ant |grep TIME_WAIT | wc -l 				查看time_wait个数
 iostat -d -k 1 1000						看磁盘繁忙程度
 iostat -d -k -x 1 10000						看磁盘繁忙程度
+iftop  -i eth1							看网络输入输出
+nload
+nload eth1							看网络输入输出
+tcpdump
+tcpdump -i eth1 -n udp						抓包
 	
 tail -n +3000 | head -n 1000					从第3000行开始，显示1000行。即显示3000~3999行 
 
