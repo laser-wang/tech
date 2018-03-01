@@ -99,6 +99,18 @@ SHOW FULL PROCESSLIST;
 CREATE DATABASE `db_nms` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 drop database db_sl_user;
 
+#改时区
+#方法一
+select curtime();  #或select now()也可以
+show variables like "%time_zone%";
+set global time_zone = '+8:00';
+set time_zone = '+8:00'; ##修改当前会话时区
+flush privileges; #立即生效
+方法二：
+vi /etc/my.cnf
+default-time_zone = '+8:00'
+
+
 #查看数据库编码以及其他状态
 status;
 
