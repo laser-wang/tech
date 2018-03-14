@@ -208,6 +208,10 @@ chmod +x speedtest.py
 ./speedtest.py
 
 
+last reboot							查看最近重启时间点
+dmesg								查看日志
+
+
 
 #配置系统可以打开文件数以及shell打开文件数
 /etc/sysctl.conf
