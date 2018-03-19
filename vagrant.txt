@@ -15,7 +15,7 @@ vagrant global-status
 vagrant suspend
 vagrant halt
 vagrant ssh vmware11
-vagrant package --base vmware11 --output /home/virtualbox/vmware11.box
+vagrant package --base vmware11 --output /home/virtualbox/vmware11_0.0.2.box
 
 #关闭dhcp
 VBoxManage list dhcpservers
@@ -159,6 +159,9 @@ The error message is shown below. In many cases, errors from this
 library are caused by ssh-agent issues. Try disabling your SSH
 agent or removing some keys and try again.
 删除虚拟机重新做虚拟机就好了
+
+#vagrant does not match the value stored in the media registry
+VBoxManage internalcommands sethduuid "/home/VirtualBox VMs/vmware11/box-disk001.vmdk" 1b36ebc6-d2a2-426d-a404-20b6f4b617e9
 
 
 
